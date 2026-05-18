@@ -382,15 +382,16 @@ function drawChart() {
 
   const visible=hist.slice(-VISIBLE_CANDLES);
 
-  // TIGHT price scale — only use candle prices, not level prices
-  // Levels get drawn only if they fall within the visible range
+  // Price scale: include candles + nearest levels (within 4%)
   const candlePrices=visible.flatMap(c=>[c.high,c.low]);
   const candleMin=Math.min(...candlePrices);
   const candleMax=Math.max(...candlePrices);
   const candleRange=candleMax-candleMin;
-  // Add 15% padding so candles don't touch edges
-  const minP=candleMin - candleRange*0.15;
-  const maxP=candleMax + candleRange*0.15;
+  // Include level prices that are within 4% of current price
+  const nearLevels=levels.filter(l=>Math.abs(l.price-price)/price<=0.04);
+  const allPrices=[...candlePrices, ...nearLevels.map(l=>l.price)];
+  const minP=Math.min(...allPrices) - candleRange*0.08;
+  const maxP=Math.max(...allPrices) + candleRange*0.08;
   const range=maxP-minP;
 
   const padL=78, padR=55, padT=18, padB=46;
@@ -417,7 +418,7 @@ function drawChart() {
     ctx.fillText(d.toUTCString().split(' ')[4].slice(0,5), toX(i), h-padB+14);
   });
 
-  // Liq level lines — only draw if within visible price range
+  // Liq level lines — draw all that fall within price scale
   levels.forEach(l=>{
     if(l.price<minP||l.price>maxP) return;
     const y=toY(l.price);
