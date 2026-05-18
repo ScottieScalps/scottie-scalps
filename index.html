@@ -203,6 +203,11 @@ function addLiquidation(asset, price, side, value) {
     clusters.push({ price, side, value, count: 1, time: Date.now() });
   }
 
+  // Remove nearby seeded levels now that we have real data
+  liquidationClusters[asset] = liquidationClusters[asset].filter(c =>
+    !c.seeded || Math.abs(c.price - price) / price > 0.003
+  );
+
   // Keep only last 200 clusters, remove old ones older than 4 hours
   const cutoff = Date.now() - 4 * 60 * 60 * 1000;
   liquidationClusters[asset] = clusters
@@ -227,6 +232,35 @@ function getDisplayLevels(asset) {
     value: c.value,
     count: c.count
   })).sort((a,b) => b.price - a.price);
+}
+
+// ── Seed estimated levels on load (replaced by real data over time) ─
+function seedLevels(asset) {
+  const price = prices[asset];
+  if (!price) return;
+  const bands = [
+    { pct:0.005, side:'SELL', value:180000 },
+    { pct:0.010, side:'SELL', value:320000 },
+    { pct:0.018, side:'SELL', value:650000 },
+    { pct:0.028, side:'SELL', value:120000 },
+    { pct:0.005, side:'BUY',  value:210000 },
+    { pct:0.010, side:'BUY',  value:290000 },
+    { pct:0.018, side:'BUY',  value:580000 },
+    { pct:0.028, side:'BUY',  value:140000 },
+  ];
+  bands.forEach(b => {
+    const p = b.side === 'SELL' ? price*(1+b.pct) : price*(1-b.pct);
+    // Only seed if no real cluster nearby
+    const existing = liquidationClusters[asset].find(c =>
+      Math.abs(c.price - p) / price < 0.003
+    );
+    if (!existing) {
+      liquidationClusters[asset].push({
+        price: p, side: b.side, value: b.value,
+        count: 1, time: Date.now(), seeded: true
+      });
+    }
+  });
 }
 
 // ── Binance REST ──────────────────────────────────────────────────
@@ -584,6 +618,7 @@ async function init(){
     await fetchKlines(k);
     await fetchOI(k);
     await fetchFunding(k);
+    seedLevels(k); // seed estimated levels until real data arrives
   }));
   setInterval(async()=>{
     await fetchOI(activeAsset);
