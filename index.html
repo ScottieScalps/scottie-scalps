@@ -15,7 +15,6 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:1000;}
-
   header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;box-shadow:0 1px 20px rgba(74,222,128,0.05);}
   .logo-wrap{display:flex;align-items:center;gap:12px;}
   .logo-img{height:44px;width:44px;object-fit:contain;border-radius:6px;}
@@ -31,6 +30,8 @@
   .conn-status.connected{color:var(--green);border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07);}
   .conn-status.error{color:var(--red);border:1px solid rgba(255,59,59,0.3);background:rgba(255,59,59,0.07);}
   .timestamp{font-size:10px;color:var(--muted);letter-spacing:1px;}
+  .liq-counter{font-size:9px;letter-spacing:1px;color:var(--muted);}
+  .liq-counter span{color:var(--accent);}
 
   .legend{display:flex;align-items:center;gap:16px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
   .legend-item{display:flex;align-items:center;gap:7px;color:var(--muted);}
@@ -62,7 +63,7 @@
   .level-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
   .level-type{font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
   .level-price{font-weight:600;letter-spacing:0.5px;}
-  .level-size{font-size:9px;color:var(--muted);}
+  .level-count{font-size:9px;color:var(--muted);}
   .level-direction{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 5px;border-radius:2px;}
   .short-dir{background:rgba(255,59,59,0.12);color:var(--red);}
   .long-dir{background:rgba(74,222,128,0.1);color:var(--accent);}
@@ -100,6 +101,7 @@
     </div>
   </div>
   <div class="header-right">
+    <div class="liq-counter">Liquidations: <span id="liqCount">0</span></div>
     <div class="conn-status connecting" id="connStatus">Connecting</div>
     <div class="live-badge"><div class="live-dot"></div>Live</div>
     <div class="timestamp" id="clock">--:--:-- UTC</div>
@@ -107,9 +109,9 @@
 </header>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-line" style="background:var(--red)"></div><span>High Liq Zone</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--yellow)"></div><span>Mid Liq Zone</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--blue)"></div><span>Low Liq Zone</span></div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--red)"></div><span>Large Liq &gt;$500k</span></div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--yellow)"></div><span>Mid Liq $100k-500k</span></div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--blue)"></div><span>Small Liq &lt;$100k</span></div>
   <div class="legend-item"><div class="legend-line" style="background:rgba(74,222,128,0.5)"></div><span>Price</span></div>
   <div class="chart-toggle">
     <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
@@ -127,9 +129,9 @@
     </div>
   </div>
   <div class="sidebar">
-    <div class="flush-alert hidden" id="flushAlert">⚡ FLUSH DETECTED — HIGH PROB ENTRY</div>
+    <div class="flush-alert hidden" id="flushAlert">⚡ LARGE LIQUIDATION — WATCH FOR REVERSAL</div>
     <div class="sidebar-section">
-      <div class="sidebar-title">Key Levels</div>
+      <div class="sidebar-title">Recent Liquidations</div>
       <div id="levelsList"></div>
     </div>
     <div class="sidebar-section">
@@ -140,7 +142,7 @@
       <div class="sidebar-title">Scalp Commentary</div>
       <div class="commentary-box">
         <div class="commentary-time" id="commentaryTime">--:-- UTC</div>
-        <div id="commentaryText">Connecting to Binance...</div>
+        <div id="commentaryText">Connecting to Binance liquidation stream...</div>
       </div>
     </div>
   </div>
@@ -155,68 +157,94 @@ const ASSETS = {
   HYPE: { symbol:'HYPEUSDT', label:'HYPE', decimals:3, prefix:'$' }
 };
 const assetKeys = Object.keys(ASSETS);
-const CANDLE_INTERVAL = '30s'; // 30 second candles
 const CANDLE_MS = 30000;
 const VISIBLE_CANDLES = 80;
-// Tighter price scale — only show levels within 2% of price
-const LEVEL_RANGE_PCT = 0.02;
+const CLUSTER_PCT = 0.001; // cluster liquidations within 0.1% of each other
 
 let activeAsset = 'BTC';
 let chartType = 'candle';
-let prices = {}, priceHistory = {}, liquidationLevels = {}, openInterest = {}, fundingRates = {};
+let prices = {}, priceHistory = {}, fundingRates = {};
+let openInterest = {};
+
+// Real liquidation data — accumulated from Binance forceOrder stream
+// Structure: { asset: [ { price, side, value, time, count } ] }
+let liquidationClusters = {};
+let recentLiqs = {}; // last 10 for sidebar
+let totalLiqCount = 0;
+
 let canvasCtx, chartCanvas;
 
 assetKeys.forEach(k => {
   prices[k] = 0;
   priceHistory[k] = [];
-  liquidationLevels[k] = [];
-  openInterest[k] = 0;
   fundingRates[k] = 0;
+  openInterest[k] = 0;
+  liquidationClusters[k] = [];
+  recentLiqs[k] = [];
 });
 
-// ── Liquidation level calculation ─────────────────────────────────
-function calculateLiqLevels(asset) {
-  const price = prices[asset];
-  if (!price) return [];
-  const levels = [];
-  const oi = openInterest[asset] || 0;
-  const bands = [
-    { lev:'100x', pct:0.005, risk:'red',    sizeMulti:0.35 },
-    { lev:'100x', pct:0.008, risk:'red',    sizeMulti:0.28 },
-    { lev:'50x',  pct:0.012, risk:'yellow', sizeMulti:0.22 },
-    { lev:'50x',  pct:0.018, risk:'yellow', sizeMulti:0.18 },
-    { lev:'25x',  pct:0.025, risk:'blue',   sizeMulti:0.14 },
-    { lev:'25x',  pct:0.035, risk:'blue',   sizeMulti:0.10 },
-  ];
-  bands.forEach(b => {
-    const baseSize = oi > 0 ? (oi * b.sizeMulti / 1e6).toFixed(1) + 'M' : '--';
-    levels.push({ price: price*(1+b.pct), direction:'SHORT', risk:b.risk, lev:b.lev, size:baseSize });
-    levels.push({ price: price*(1-b.pct), direction:'LONG',  risk:b.risk, lev:b.lev, size:baseSize });
-  });
-  return levels.sort((a,b) => b.price - a.price);
+// ── Cluster liquidations by price proximity ───────────────────────
+function addLiquidation(asset, price, side, value) {
+  const clusters = liquidationClusters[asset];
+  const threshold = price * CLUSTER_PCT;
+
+  // Find existing cluster nearby
+  const existing = clusters.find(c =>
+    c.side === side && Math.abs(c.price - price) < threshold
+  );
+
+  if (existing) {
+    // Update cluster — weighted average price
+    existing.price = (existing.price * existing.count + price) / (existing.count + 1);
+    existing.value += value;
+    existing.count++;
+    existing.time = Date.now();
+  } else {
+    clusters.push({ price, side, value, count: 1, time: Date.now() });
+  }
+
+  // Keep only last 200 clusters, remove old ones older than 4 hours
+  const cutoff = Date.now() - 4 * 60 * 60 * 1000;
+  liquidationClusters[asset] = clusters
+    .filter(c => c.time > cutoff)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 200);
+
+  // Add to recent list
+  recentLiqs[asset].unshift({ price, side, value, time: Date.now() });
+  if (recentLiqs[asset].length > 10) recentLiqs[asset].pop();
+
+  totalLiqCount++;
+  document.getElementById('liqCount').textContent = totalLiqCount;
+}
+
+// ── Get display levels from clusters ─────────────────────────────
+function getDisplayLevels(asset) {
+  return liquidationClusters[asset].map(c => ({
+    price: c.price,
+    direction: c.side === 'BUY' ? 'LONG' : 'SHORT', // BUY = long liquidated, SELL = short liquidated
+    risk: c.value > 500000 ? 'red' : c.value > 100000 ? 'yellow' : 'blue',
+    value: c.value,
+    count: c.count
+  })).sort((a,b) => b.price - a.price);
 }
 
 // ── Binance REST ──────────────────────────────────────────────────
 async function fetchKlines(asset) {
   try {
-    const sym = ASSETS[asset].symbol;
-    // Use 1m klines then downsample to 30s via aggTrades — or use 1m as base
-    const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${sym}&interval=1m&limit=120`;
+    const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${ASSETS[asset].symbol}&interval=1m&limit=120`;
     const res = await fetch(url);
     const data = await res.json();
-    // Convert 1m candles to approximate 30s by splitting each
     priceHistory[asset] = [];
     data.forEach(k => {
       const o=parseFloat(k[1]),h=parseFloat(k[2]),l=parseFloat(k[3]),c=parseFloat(k[4]),v=parseFloat(k[5]);
-      const mid = (o+c)/2;
-      // First 30s of the minute
-      priceHistory[asset].push({ time:k[0],       open:o,   high:Math.max(o,mid), low:Math.min(o,mid), close:mid, volume:v*0.5 });
-      // Second 30s of the minute
-      priceHistory[asset].push({ time:k[0]+30000, open:mid, high:Math.max(mid,c), low:Math.min(mid,c), close:c,   volume:v*0.5 });
+      const mid=(o+c)/2;
+      priceHistory[asset].push({time:k[0],       open:o,   high:Math.max(o,mid),  low:Math.min(o,mid),  close:mid, volume:v*0.5});
+      priceHistory[asset].push({time:k[0]+30000, open:mid, high:Math.max(mid,c),  low:Math.min(mid,c),  close:c,   volume:v*0.5});
     });
     if (priceHistory[asset].length > 0)
       prices[asset] = priceHistory[asset][priceHistory[asset].length-1].close;
-  } catch(e) { console.warn('klines fail', asset, e); }
+  } catch(e) { console.warn('klines fail', asset); }
 }
 
 async function fetchOI(asset) {
@@ -235,8 +263,8 @@ async function fetchFunding(asset) {
   } catch(e) {}
 }
 
-// ── WebSocket ─────────────────────────────────────────────────────
-function connectWebSocket() {
+// ── WebSocket — price + liquidations ─────────────────────────────
+function connectPriceWS() {
   const streams = assetKeys.map(k => `${ASSETS[k].symbol.toLowerCase()}@aggTrade`).join('/');
   const ws = new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
   setStatus('connecting');
@@ -254,9 +282,8 @@ function connectWebSocket() {
         const last = hist[hist.length-1];
         const now = Date.now();
         if (now - last.time >= CANDLE_MS) {
-          hist.push({ time:now, open:p, high:p, low:p, close:p, volume:0 });
+          hist.push({time:now, open:p, high:p, low:p, close:p, volume:0});
           if (hist.length > 300) hist.shift();
-          if (Math.random() < 0.1) { fetchOI(asset); fetchFunding(asset); }
         } else {
           last.close = p;
           last.high = Math.max(last.high, p);
@@ -264,11 +291,44 @@ function connectWebSocket() {
           last.volume += parseFloat(trade.q||0);
         }
       }
-      liquidationLevels[asset] = calculateLiqLevels(asset);
     } catch(e) {}
   };
   ws.onerror = () => setStatus('error');
-  ws.onclose = () => { setStatus('connecting'); setTimeout(connectWebSocket, 3000); };
+  ws.onclose = () => { setStatus('connecting'); setTimeout(connectPriceWS, 3000); };
+}
+
+function connectLiquidationWS() {
+  // All market liquidation stream — free, no auth needed
+  const streams = assetKeys.map(k => `${ASSETS[k].symbol.toLowerCase()}@forceOrder`).join('/');
+  const ws = new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
+
+  ws.onmessage = (evt) => {
+    try {
+      const msg = JSON.parse(evt.data);
+      const order = msg.data?.o;
+      if (!order) return;
+
+      const symbol = order.s;
+      const asset = assetKeys.find(k => ASSETS[k].symbol === symbol);
+      if (!asset) return;
+
+      const price = parseFloat(order.p);  // average price
+      const qty   = parseFloat(order.q);  // quantity
+      const side  = order.S;              // BUY or SELL
+      const value = price * qty;          // USD value
+
+      addLiquidation(asset, price, side, value);
+
+      // Flash flush alert for large liquidations
+      if (asset === activeAsset && value > 200000) {
+        const alert = document.getElementById('flushAlert');
+        alert.classList.remove('hidden');
+        alert.textContent = `⚡ $${(value/1000).toFixed(0)}K ${side === 'BUY' ? 'LONG' : 'SHORT'} LIQ @ $${Math.round(price).toLocaleString()} — WATCH FOR REVERSAL`;
+        setTimeout(() => alert.classList.add('hidden'), 8000);
+      }
+    } catch(e) {}
+  };
+  ws.onclose = () => setTimeout(connectLiquidationWS, 3000);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
@@ -291,17 +351,27 @@ function fmtP(p, asset) {
   if(p<1000) return p.toFixed(2);
   return Math.round(p).toLocaleString();
 }
+function fmtVal(v) {
+  if(v>=1000000) return '$'+(v/1000000).toFixed(1)+'M';
+  if(v>=1000)    return '$'+(v/1000).toFixed(0)+'K';
+  return '$'+Math.round(v);
+}
+function timeAgo(t) {
+  const s = Math.floor((Date.now()-t)/1000);
+  if(s<60) return s+'s ago';
+  return Math.floor(s/60)+'m ago';
+}
 
 // ── Tabs ──────────────────────────────────────────────────────────
 function renderTabs() {
   const c = document.getElementById('tabs'); c.innerHTML='';
   assetKeys.forEach(k => {
     const price=prices[k], hist=priceHistory[k];
-    const prev = hist.length>2 ? hist[hist.length-2]?.close : price;
-    const up = price >= (prev||price);
+    const prev = hist.length>2?hist[hist.length-2]?.close:price;
+    const up = price>=(prev||price);
     const btn = document.createElement('button');
     btn.className = `tab ${up?'up':'down'} ${k===activeAsset?'active':''}`;
-    btn.innerHTML = `${k}<span class="tab-price">${price ? ASSETS[k].prefix+fmtP(price,k) : '...'}</span>`;
+    btn.innerHTML = `${k}<span class="tab-price">${price?ASSETS[k].prefix+fmtP(price,k):'...'}</span>`;
     btn.onclick = () => { activeAsset=k; renderTabs(); renderSidebar(); };
     c.appendChild(btn);
   });
@@ -309,31 +379,44 @@ function renderTabs() {
 
 // ── Sidebar ───────────────────────────────────────────────────────
 function renderSidebar() {
-  const levels=liquidationLevels[activeAsset], price=prices[activeAsset];
+  const price=prices[activeAsset];
+  const recent=recentLiqs[activeAsset];
+  const levels=getDisplayLevels(activeAsset);
+
+  // Recent liquidations list
   const list=document.getElementById('levelsList'); list.innerHTML='';
-  if (!price || !levels.length) {
-    list.innerHTML='<div style="color:var(--muted);font-size:10px">Loading...</div>';
+  if (!recent.length) {
+    list.innerHTML=`<div style="color:var(--muted);font-size:10px;line-height:1.8">
+      Waiting for liquidations...<br>
+      <span style="font-size:9px;opacity:0.6">Levels build up as real liquidations occur on Binance. Active during volatile markets.</span>
+    </div>`;
   } else {
-    levels.slice(0,8).forEach(l => {
-      const color=l.risk==='red'?'var(--red)':l.risk==='yellow'?'var(--yellow)':'var(--blue)';
-      const dist=Math.abs(((l.price-price)/price)*100).toFixed(2);
+    recent.slice(0,8).forEach(l => {
+      const isSell = l.side === 'SELL'; // short liquidated = price went up
+      const color = l.value>500000?'var(--red)':l.value>100000?'var(--yellow)':'var(--blue)';
       list.innerHTML+=`<div class="level-row">
         <div class="level-left">
           <div class="level-dot" style="background:${color}"></div>
-          <div><div class="level-type">${l.lev} · ${dist}%</div>
-          <div class="level-price">${ASSETS[activeAsset].prefix}${fmtP(l.price,activeAsset)}</div></div>
+          <div>
+            <div class="level-type">${timeAgo(l.time)}</div>
+            <div class="level-price">${ASSETS[activeAsset].prefix}${fmtP(l.price,activeAsset)}</div>
+          </div>
         </div>
         <div style="text-align:right">
-          <div class="level-direction ${l.direction==='SHORT'?'short-dir':'long-dir'}">${l.direction}</div>
-          <div class="level-size">${l.size}</div>
+          <div class="level-direction ${isSell?'short-dir':'long-dir'}">${isSell?'SHORT':'LONG'}</div>
+          <div class="level-count">${fmtVal(l.value)}</div>
         </div></div>`;
     });
   }
+
+  // Stats
   const hist=priceHistory[activeAsset];
   const open24=hist.length>96?hist[hist.length-96]?.open:hist[0]?.open;
   const change=open24&&price?((price-open24)/open24*100):0;
   const high24=hist.length>0?Math.max(...hist.slice(-96).map(c=>c.high)):0;
   const fr=fundingRates[activeAsset]||0;
+  const totalLiqValue=recentLiqs[activeAsset].reduce((s,l)=>s+l.value,0);
+
   document.getElementById('statGrid').innerHTML=`
     <div class="stat-box"><div class="stat-label">24h Change</div>
       <div class="stat-value ${change>=0?'up':'down'}">${change>=0?'+':''}${change.toFixed(2)}%</div></div>
@@ -341,24 +424,29 @@ function renderSidebar() {
       <div class="stat-value ${fr>=0?'up':'down'}">${fr>=0?'+':''}${fr.toFixed(4)}%</div></div>
     <div class="stat-box"><div class="stat-label">24h High</div>
       <div class="stat-value up">${price?ASSETS[activeAsset].prefix+fmtP(high24,activeAsset):'--'}</div></div>
-    <div class="stat-box"><div class="stat-label">Liq Zones</div>
+    <div class="stat-box"><div class="stat-label">Liq Clusters</div>
       <div class="stat-value neutral">${levels.length}</div></div>`;
-  const ns=levels.filter(l=>l.direction==='SHORT').sort((a,b)=>a.price-b.price)[0];
-  const nl=levels.filter(l=>l.direction==='LONG').sort((a,b)=>b.price-a.price)[0];
-  document.getElementById('commentaryTime').textContent=new Date().toUTCString().split(' ')[4]+' UTC';
-  if (price&&ns&&nl) {
-    const ds=(((ns.price-price)/price)*100).toFixed(2);
-    const dl=(((price-nl.price)/price)*100).toFixed(2);
-    const frNote=Math.abs(fr)>0.05?` Funding ${fr>0?'positive — longs paying':'negative — shorts paying'}.`:'';
+
+  // Commentary
+  const now=new Date();
+  document.getElementById('commentaryTime').textContent=now.toUTCString().split(' ')[4]+' UTC';
+  const longLiqs=recent.filter(l=>l.side==='BUY');
+  const shortLiqs=recent.filter(l=>l.side==='SELL');
+  const longVal=longLiqs.reduce((s,l)=>s+l.value,0);
+  const shortVal=shortLiqs.reduce((s,l)=>s+l.value,0);
+
+  if (!recent.length) {
     document.getElementById('commentaryText').innerHTML=
-      `Nearest short wall <strong>${ASSETS[activeAsset].prefix}${fmtP(ns.price,activeAsset)}</strong> (${ds}% above). `+
-      `Nearest long wall <strong>${ASSETS[activeAsset].prefix}${fmtP(nl.price,activeAsset)}</strong> (${dl}% below). `+
-      `Watch for flush through red zones before entering.${frNote}`;
+      'Live liquidation stream connected. Clusters will appear as real Binance liquidations occur. Most active during high volatility — London/NY overlap is your best window.';
   } else {
-    document.getElementById('commentaryText').innerHTML='Fetching live data...';
+    const bias = longVal > shortVal ? 'long' : 'short';
+    const biasStr = longVal > shortVal
+      ? `<strong>${fmtVal(longVal)}</strong> in long liquidations — shorts in control`
+      : `<strong>${fmtVal(shortVal)}</strong> in short liquidations — longs in control`;
+    document.getElementById('commentaryText').innerHTML=
+      `Recent session: ${biasStr}. ${levels.length} liquidation clusters tracked. `+
+      `${change>=0?'Price pushing up':'Price pushing down'} — watch clusters near current price for reversal zones.`;
   }
-  const nearRed=price&&levels.some(l=>l.risk==='red'&&Math.abs(l.price-price)/price<0.004);
-  document.getElementById('flushAlert').classList.toggle('hidden',!nearRed);
 }
 
 // ── Chart ─────────────────────────────────────────────────────────
@@ -373,7 +461,9 @@ function drawChart() {
   const canvas=chartCanvas, ctx=canvasCtx, w=canvas.width, h=canvas.height;
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle='#0b0f0c'; ctx.fillRect(0,0,w,h);
-  const hist=priceHistory[activeAsset], price=prices[activeAsset], levels=liquidationLevels[activeAsset];
+
+  const hist=priceHistory[activeAsset], price=prices[activeAsset];
+  const levels=getDisplayLevels(activeAsset);
 
   if (hist.length<2||!price) {
     ctx.fillStyle='rgba(74,107,82,0.4)'; ctx.font='12px JetBrains Mono,monospace'; ctx.textAlign='center';
@@ -381,20 +471,19 @@ function drawChart() {
   }
 
   const visible=hist.slice(-VISIBLE_CANDLES);
-
-  // Price scale: include candles + nearest levels (within 4%)
   const candlePrices=visible.flatMap(c=>[c.high,c.low]);
   const candleMin=Math.min(...candlePrices);
   const candleMax=Math.max(...candlePrices);
-  const candleRange=candleMax-candleMin;
-  // Include level prices that are within 4% of current price
-  const nearLevels=levels.filter(l=>Math.abs(l.price-price)/price<=0.04);
-  const allPrices=[...candlePrices, ...nearLevels.map(l=>l.price)];
-  const minP=Math.min(...allPrices) - candleRange*0.08;
-  const maxP=Math.max(...allPrices) + candleRange*0.08;
-  const range=maxP-minP;
+  const candleRange=candleMax-candleMin||price*0.001;
 
-  const padL=78, padR=55, padT=18, padB=46;
+  // Include nearby liquidation clusters in scale
+  const nearLevels=levels.filter(l=>Math.abs(l.price-price)/price<=0.03);
+  const allPrices=[...candlePrices,...nearLevels.map(l=>l.price)];
+  const minP=Math.min(...allPrices)-candleRange*0.1;
+  const maxP=Math.max(...allPrices)+candleRange*0.1;
+  const range=maxP-minP||price*0.002;
+
+  const padL=78,padR=60,padT=18,padB=46;
   const cW=w-padL-padR, cH=h-padT-padB;
   const toY=p=>padT+cH-((p-minP)/range)*cH;
   const toX=i=>padL+(i/(visible.length-1))*cW;
@@ -414,27 +503,27 @@ function drawChart() {
   ctx.fillStyle='rgba(74,107,82,0.7)'; ctx.font='8px JetBrains Mono,monospace'; ctx.textAlign='center';
   [0,Math.floor(visible.length/4),Math.floor(visible.length/2),Math.floor(3*visible.length/4),visible.length-1].forEach(i=>{
     if(!visible[i]) return;
-    const d=new Date(visible[i].time);
-    ctx.fillText(d.toUTCString().split(' ')[4].slice(0,5), toX(i), h-padB+14);
+    ctx.fillText(new Date(visible[i].time).toUTCString().split(' ')[4].slice(0,5), toX(i), h-padB+14);
   });
 
-  // Liq level lines — draw all that fall within price scale
+  // Liquidation cluster lines — only those within visible range
   levels.forEach(l=>{
     if(l.price<minP||l.price>maxP) return;
     const y=toY(l.price);
     const col=l.risk==='red'?'rgba(255,59,59,':l.risk==='yellow'?'rgba(245,197,24,':'rgba(59,158,255,';
-    ctx.strokeStyle=col+(l.risk==='blue'?'0.5)':'0.75)');
-    ctx.lineWidth=l.risk==='red'?1.5:1;
+    // Line thickness by value
+    ctx.strokeStyle=col+(l.risk==='blue'?'0.5)':'0.8)');
+    ctx.lineWidth=l.risk==='red'?2:l.risk==='yellow'?1.5:1;
     ctx.setLineDash(l.risk==='blue'?[4,4]:[]);
     ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
     ctx.setLineDash([]);
-    // Label on right side
+    // Label
     const fmt=l.price<10?l.price.toFixed(ASSETS[activeAsset].decimals):l.price<1000?l.price.toFixed(2):Math.round(l.price).toLocaleString();
-    ctx.fillStyle=col+'0.85)'; ctx.font='7px JetBrains Mono,monospace'; ctx.textAlign='left';
-    ctx.fillText(ASSETS[activeAsset].prefix+fmt+' '+l.lev, w-padR+3, y+3);
+    ctx.fillStyle=col+'0.9)'; ctx.font='7px JetBrains Mono,monospace'; ctx.textAlign='left';
+    ctx.fillText(ASSETS[activeAsset].prefix+fmt+' '+fmtVal(l.value), w-padR+3, y+3);
   });
 
-  // Candles or line
+  // Candles or clean line
   if(chartType==='candle'){
     const cw=Math.max(2,(cW/visible.length)*0.65);
     visible.forEach((c,i)=>{
@@ -445,37 +534,33 @@ function drawChart() {
       ctx.fillRect(x-cw/2,Math.min(oY,clY),cw,Math.max(1,Math.abs(clY-oY)));
     });
   } else {
-    // Clean solid line — no fill, no gradient
-    ctx.strokeStyle='rgba(74,222,128,0.9)';
-    ctx.lineWidth=1.5;
-    ctx.setLineDash([]);
+    ctx.strokeStyle='rgba(74,222,128,0.9)'; ctx.lineWidth=1.5; ctx.setLineDash([]);
     ctx.beginPath();
     visible.forEach((c,i)=>{ const x=toX(i),y=toY(c.close); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.stroke();
   }
 
-  // Current price dashed line
+  // Current price
   const curY=toY(price);
   if(curY>=padT&&curY<=padT+cH){
-    ctx.strokeStyle='rgba(74,222,128,0.35)'; ctx.lineWidth=1; ctx.setLineDash([5,4]);
+    ctx.strokeStyle='rgba(74,222,128,0.3)'; ctx.lineWidth=1; ctx.setLineDash([5,4]);
     ctx.beginPath(); ctx.moveTo(padL,curY); ctx.lineTo(w-padR,curY); ctx.stroke(); ctx.setLineDash([]);
-    // Price tag left side
     const fmt2=price<10?price.toFixed(ASSETS[activeAsset].decimals):price<1000?price.toFixed(2):Math.round(price).toLocaleString();
     ctx.fillStyle='rgba(74,222,128,0.95)'; ctx.fillRect(padL-76,curY-9,70,16);
     ctx.fillStyle='#080c09'; ctx.font='bold 9px JetBrains Mono,monospace'; ctx.textAlign='center';
     ctx.fillText(ASSETS[activeAsset].prefix+fmt2, padL-41, curY+3);
   }
 
-  // Volume bars
+  // Volume
   const maxVol=Math.max(...visible.map(c=>c.volume),1);
+  const cw2=Math.max(2,(cW/visible.length)*0.65);
   visible.forEach((c,i)=>{
     const x=toX(i),vH=(c.volume/maxVol)*22,up=c.close>=c.open;
-    const cw=Math.max(2,(cW/visible.length)*0.65);
     ctx.fillStyle=up?'rgba(74,222,128,0.1)':'rgba(255,59,59,0.1)';
-    ctx.fillRect(x-cw/2,padT+cH-vH,cw,vH);
+    ctx.fillRect(x-cw2/2,padT+cH-vH,cw2,vH);
   });
 
-  // 30s label
+  // Timeframe label
   ctx.fillStyle='rgba(74,107,82,0.4)'; ctx.font='8px JetBrains Mono,monospace'; ctx.textAlign='left';
   ctx.fillText('30s', padL+6, padT+12);
 }
@@ -499,14 +584,13 @@ async function init(){
     await fetchKlines(k);
     await fetchOI(k);
     await fetchFunding(k);
-    liquidationLevels[k]=calculateLiqLevels(k);
   }));
   setInterval(async()=>{
     await fetchOI(activeAsset);
     await fetchFunding(activeAsset);
-    liquidationLevels[activeAsset]=calculateLiqLevels(activeAsset);
   },30000);
-  connectWebSocket();
+  connectPriceWS();
+  connectLiquidationWS();
   loop();
 }
 init();
