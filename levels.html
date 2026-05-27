@@ -289,64 +289,71 @@ async function fetchFunding(asset) {
 }
 
 // ═══════════════════════════════════════
-// WEBSOCKET — with heartbeat and auto-reconnect
+// COINCAP WEBSOCKET — stable price feed
 // ═══════════════════════════════════════
+const COINCAP_IDS = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+  XRP: "xrp"
+};
+
 let wsInstance = null;
-let wsHeartbeat = null;
-let lastWsMessage = Date.now();
+let wsReconnectTimer = null;
 
 function connectWebSocket() {
   if (wsInstance) {
     try { wsInstance.close(); } catch(e) {}
   }
+  if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
 
-  const streams=assetKeys.map(k=>`${ASSETS[k].symbol.toLowerCase()}@aggTrade`).join("/");
-  const ws=new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
+  // CoinCap WebSocket — free, stable, no auth needed
+  const assets = assetKeys.map(k => COINCAP_IDS[k]).join(",");
+  const ws = new WebSocket(`wss://ws.coincap.io/prices?assets=${assets}`);
   wsInstance = ws;
   setStatus("connecting");
 
-  ws.onopen=()=>{
+  ws.onopen = () => {
     setStatus("connected");
-    lastWsMessage = Date.now();
-    // Heartbeat — check every 10s if we got a message in last 20s
-    if (wsHeartbeat) clearInterval(wsHeartbeat);
-    wsHeartbeat = setInterval(() => {
-      if (Date.now() - lastWsMessage > 20000) {
-        console.log("WS timeout — reconnecting");
-        setStatus("connecting");
-        connectWebSocket();
-      }
-    }, 10000);
+    console.log("CoinCap WS connected");
   };
 
-  ws.onmessage=(evt)=>{
-    lastWsMessage = Date.now();
+  ws.onmessage = (evt) => {
     try {
-      const trade=JSON.parse(evt.data).data;
-      if(!trade?.s) return;
-      const asset=assetKeys.find(k=>ASSETS[k].symbol===trade.s);
-      if(!asset) return;
-      const p=parseFloat(trade.p);
-      prices[asset]=p;
-      const hist=priceHistory[asset];
-      if(hist.length>0){
-        const last=hist[hist.length-1],now=Date.now();
-        if(now-last.time>=CANDLE_MS){
-          hist.push({time:now,open:p,high:p,low:p,close:p,volume:0});
-          if(hist.length>300) hist.shift();
-        } else {
-          last.close=p; last.high=Math.max(last.high,p); last.low=Math.min(last.low,p);
-          last.volume+=parseFloat(trade.q||0);
+      const data = JSON.parse(evt.data);
+      // data is { bitcoin: "104820.12", ethereum: "2580.45", ... }
+      assetKeys.forEach(k => {
+        const id = COINCAP_IDS[k];
+        if (data[id]) {
+          const p = parseFloat(data[id]);
+          if (!p || isNaN(p)) return;
+          prices[k] = p;
+          const hist = priceHistory[k];
+          if (hist.length > 0) {
+            const last = hist[hist.length - 1];
+            const now = Date.now();
+            if (now - last.time >= CANDLE_MS) {
+              hist.push({ time: now, open: p, high: p, low: p, close: p, volume: 0 });
+              if (hist.length > 300) hist.shift();
+            } else {
+              last.close = p;
+              last.high = Math.max(last.high, p);
+              last.low = Math.min(last.low, p);
+            }
+          }
         }
-      }
-    } catch(e){}
+      });
+    } catch(e) { console.warn("WS parse error", e); }
   };
 
-  ws.onerror=()=>setStatus("error");
-  ws.onclose=()=>{
+  ws.onerror = () => {
+    setStatus("error");
+    console.warn("CoinCap WS error");
+  };
+
+  ws.onclose = () => {
     setStatus("connecting");
-    if (wsHeartbeat) clearInterval(wsHeartbeat);
-    setTimeout(connectWebSocket, 3000);
+    console.log("CoinCap WS closed — reconnecting in 3s");
+    wsReconnectTimer = setTimeout(connectWebSocket, 3000);
   };
 }
 
