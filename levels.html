@@ -153,11 +153,9 @@
 // ASSET CONFIG
 // ═══════════════════════════════════════
 const ASSETS = {
-  BTC:  { symbol:"BTCUSDT",  cqAsset:"btc", label:"BTC",  decimals:0, prefix:"$", hasCQ:true  },
-  ETH:  { symbol:"ETHUSDT",  cqAsset:"eth", label:"ETH",  decimals:1, prefix:"$", hasCQ:true  },
-  XRP:  { symbol:"XRPUSDT",  cqAsset:"xrp", label:"XRP",  decimals:4, prefix:"$", hasCQ:true  },
-  SOL:  { symbol:"SOLUSDT",  cqAsset:null,  label:"SOL",  decimals:2, prefix:"$", hasCQ:false },
-  HYPE: { symbol:"HYPEUSDT", cqAsset:null,  label:"HYPE", decimals:3, prefix:"$", hasCQ:false }
+  BTC: { symbol:"BTCUSDT", cqAsset:"btc", label:"BTC", decimals:0, prefix:"$", hasCQ:true },
+  ETH: { symbol:"ETHUSDT", cqAsset:"eth", label:"ETH", decimals:1, prefix:"$", hasCQ:true },
+  XRP: { symbol:"XRPUSDT", cqAsset:"xrp", label:"XRP", decimals:4, prefix:"$", hasCQ:true }
 };
 const assetKeys = Object.keys(ASSETS);
 const CANDLE_MS = 30000;
@@ -291,14 +289,38 @@ async function fetchFunding(asset) {
 }
 
 // ═══════════════════════════════════════
-// WEBSOCKET
+// WEBSOCKET — with heartbeat and auto-reconnect
 // ═══════════════════════════════════════
+let wsInstance = null;
+let wsHeartbeat = null;
+let lastWsMessage = Date.now();
+
 function connectWebSocket() {
+  if (wsInstance) {
+    try { wsInstance.close(); } catch(e) {}
+  }
+
   const streams=assetKeys.map(k=>`${ASSETS[k].symbol.toLowerCase()}@aggTrade`).join("/");
   const ws=new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
+  wsInstance = ws;
   setStatus("connecting");
-  ws.onopen=()=>setStatus("connected");
+
+  ws.onopen=()=>{
+    setStatus("connected");
+    lastWsMessage = Date.now();
+    // Heartbeat — check every 10s if we got a message in last 20s
+    if (wsHeartbeat) clearInterval(wsHeartbeat);
+    wsHeartbeat = setInterval(() => {
+      if (Date.now() - lastWsMessage > 20000) {
+        console.log("WS timeout — reconnecting");
+        setStatus("connecting");
+        connectWebSocket();
+      }
+    }, 10000);
+  };
+
   ws.onmessage=(evt)=>{
+    lastWsMessage = Date.now();
     try {
       const trade=JSON.parse(evt.data).data;
       if(!trade?.s) return;
@@ -312,7 +334,6 @@ function connectWebSocket() {
         if(now-last.time>=CANDLE_MS){
           hist.push({time:now,open:p,high:p,low:p,close:p,volume:0});
           if(hist.length>300) hist.shift();
-          if(!ASSETS[asset].hasCQ) liquidationLevels[asset]=generateEstimatedLevels(asset);
         } else {
           last.close=p; last.high=Math.max(last.high,p); last.low=Math.min(last.low,p);
           last.volume+=parseFloat(trade.q||0);
@@ -320,8 +341,13 @@ function connectWebSocket() {
       }
     } catch(e){}
   };
+
   ws.onerror=()=>setStatus("error");
-  ws.onclose=()=>{setStatus("connecting");setTimeout(connectWebSocket,3000);};
+  ws.onclose=()=>{
+    setStatus("connecting");
+    if (wsHeartbeat) clearInterval(wsHeartbeat);
+    setTimeout(connectWebSocket, 3000);
+  };
 }
 
 // ═══════════════════════════════════════
