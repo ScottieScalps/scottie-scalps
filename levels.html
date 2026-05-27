@@ -468,7 +468,7 @@ function drawChart(){
     ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
     const pv=maxP-(i/6)*range;
     const fmt=pv<10?pv.toFixed(ASSETS[activeAsset].decimals):pv<1000?pv.toFixed(2):Math.round(pv).toLocaleString();
-    ctx.fillStyle="rgba(74,107,82,0.7)";ctx.font="8px JetBrains Mono,monospace";ctx.textAlign="right";
+    ctx.fillStyle="rgba(180,220,190,0.85)";ctx.font="8px JetBrains Mono,monospace";ctx.textAlign="right";
     ctx.fillText(ASSETS[activeAsset].prefix+fmt,padL-5,y+3);
   }
 
@@ -530,10 +530,10 @@ function drawChart(){
     ctx.strokeStyle=priceCol+"0.3)";ctx.lineWidth=1;ctx.setLineDash([5,4]);
     ctx.beginPath();ctx.moveTo(padL,curY);ctx.lineTo(w-padR,curY);ctx.stroke();ctx.setLineDash([]);
     const fmt2=price<10?price.toFixed(ASSETS[activeAsset].decimals):price<1000?price.toFixed(2):Math.round(price).toLocaleString();
-    ctx.fillStyle="rgba(8,12,9,0.85)";ctx.fillRect(padL-76,curY-9,70,16);
-    ctx.strokeStyle=priceCol+"0.8)";ctx.lineWidth=1;ctx.strokeRect(padL-76,curY-9,70,16);
-    ctx.fillStyle=priceCol+"0.95)";ctx.font="bold 9px JetBrains Mono,monospace";ctx.textAlign="center";
-    ctx.fillText(ASSETS[activeAsset].prefix+fmt2,padL-41,curY+3);
+    ctx.fillStyle="rgba(8,12,9,0.95)";ctx.fillRect(padL-78,curY-10,74,18);
+    ctx.strokeStyle=priceCol+"1)";ctx.lineWidth=1.5;ctx.strokeRect(padL-78,curY-10,74,18);
+    ctx.fillStyle=priceCol+"1)";ctx.font="bold 10px JetBrains Mono,monospace";ctx.textAlign="center";
+    ctx.fillText(ASSETS[activeAsset].prefix+fmt2,padL-41,curY+4);
   }
 
   // Volume
