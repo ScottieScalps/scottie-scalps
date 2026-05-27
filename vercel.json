@@ -1,5 +1,6 @@
 {
   "routes": [
-    { "src": "/levels", "dest": "/levels.html" }
+    { "src": "/levels", "dest": "/levels.html" },
+    { "src": "/api/(.*)", "dest": "/api/$1" }
   ]
 }
