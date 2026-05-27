@@ -520,14 +520,19 @@ function drawChart(){
     ctx.stroke();
   }
 
-  // Price line
+  // Price line — colour matches tab (green if up, red if down)
   const curY=toY(price);
   if(curY>=padT&&curY<=padT+cH){
-    ctx.strokeStyle="rgba(74,222,128,0.3)";ctx.lineWidth=1;ctx.setLineDash([5,4]);
+    const hist2=priceHistory[activeAsset];
+    const prevClose=hist2.length>2?hist2[hist2.length-2]?.close:price;
+    const priceUp=price>=(prevClose||price);
+    const priceCol=priceUp?"rgba(74,222,128,":"rgba(255,59,59,";
+    ctx.strokeStyle=priceCol+"0.3)";ctx.lineWidth=1;ctx.setLineDash([5,4]);
     ctx.beginPath();ctx.moveTo(padL,curY);ctx.lineTo(w-padR,curY);ctx.stroke();ctx.setLineDash([]);
     const fmt2=price<10?price.toFixed(ASSETS[activeAsset].decimals):price<1000?price.toFixed(2):Math.round(price).toLocaleString();
-    ctx.fillStyle="rgba(74,222,128,0.95)";ctx.fillRect(padL-76,curY-9,70,16);
-    ctx.fillStyle="#080c09";ctx.font="bold 9px JetBrains Mono,monospace";ctx.textAlign="center";
+    ctx.fillStyle="rgba(8,12,9,0.85)";ctx.fillRect(padL-76,curY-9,70,16);
+    ctx.strokeStyle=priceCol+"0.8)";ctx.lineWidth=1;ctx.strokeRect(padL-76,curY-9,70,16);
+    ctx.fillStyle=priceCol+"0.95)";ctx.font="bold 9px JetBrains Mono,monospace";ctx.textAlign="center";
     ctx.fillText(ASSETS[activeAsset].prefix+fmt2,padL-41,curY+3);
   }
 
