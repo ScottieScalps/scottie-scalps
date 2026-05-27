@@ -289,58 +289,51 @@ async function fetchFunding(asset) {
 }
 
 // ═══════════════════════════════════════
-// REST POLLING — stable price updates every 3s
+// BINANCE REST POLLING — 3s updates, UAE compatible
 // ═══════════════════════════════════════
-const COINCAP_IDS = {
-  BTC: "bitcoin",
-  ETH: "ethereum",
-  XRP: "xrp"
+const BINANCE_SYMBOLS = {
+  BTC: "BTCUSDT",
+  ETH: "ETHUSDT",
+  XRP: "XRPUSDT"
 };
 
 let pollInterval = null;
 
-async function pollPrices() {
+async function pollSinglePrice(asset) {
   try {
-    const ids = assetKeys.map(k => COINCAP_IDS[k]).join(",");
-    const res = await fetch(`https://api.coincap.io/v2/assets?ids=${ids}`);
-    if (!res.ok) { setStatus("error"); return; }
+    const symbol = BINANCE_SYMBOLS[asset];
+    const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
+    if (!res.ok) return;
     const data = await res.json();
-    if (!data?.data) return;
-
-    setStatus("connected");
-
-    data.data.forEach(asset => {
-      const key = assetKeys.find(k => COINCAP_IDS[k] === asset.id);
-      if (!key) return;
-      const p = parseFloat(asset.priceUsd);
-      if (!p || isNaN(p)) return;
-      prices[key] = p;
-      const hist = priceHistory[key];
-      if (hist.length > 0) {
-        const last = hist[hist.length - 1];
-        const now = Date.now();
-        if (now - last.time >= CANDLE_MS) {
-          hist.push({ time: now, open: p, high: p, low: p, close: p, volume: 0 });
-          if (hist.length > 300) hist.shift();
-        } else {
-          last.close = p;
-          last.high = Math.max(last.high, p);
-          last.low = Math.min(last.low, p);
-        }
+    const p = parseFloat(data.price);
+    if (!p || isNaN(p)) return;
+    prices[asset] = p;
+    const hist = priceHistory[asset];
+    if (hist.length > 0) {
+      const last = hist[hist.length - 1];
+      const now = Date.now();
+      if (now - last.time >= CANDLE_MS) {
+        hist.push({ time: now, open: p, high: p, low: p, close: p, volume: 0 });
+        if (hist.length > 300) hist.shift();
+      } else {
+        last.close = p;
+        last.high = Math.max(last.high, p);
+        last.low = Math.min(last.low, p);
       }
-    });
-  } catch(e) {
-    setStatus("error");
-    console.warn("Price poll error", e);
-  }
+    }
+  } catch(e) { console.warn("Poll error", asset, e); }
+}
+
+async function pollAllPrices() {
+  await Promise.all(assetKeys.map(k => pollSinglePrice(k)));
+  setStatus("connected");
 }
 
 function connectWebSocket() {
-  // Use REST polling instead of WebSocket for stability
   setStatus("connecting");
-  pollPrices(); // immediate first call
+  pollAllPrices();
   if (pollInterval) clearInterval(pollInterval);
-  pollInterval = setInterval(pollPrices, 3000); // then every 3 seconds
+  pollInterval = setInterval(pollAllPrices, 3000);
 }
 
 // ═══════════════════════════════════════
