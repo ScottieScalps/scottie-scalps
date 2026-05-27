@@ -289,7 +289,7 @@ async function fetchFunding(asset) {
 }
 
 // ═══════════════════════════════════════
-// COINCAP WEBSOCKET — stable price feed
+// REST POLLING — stable price updates every 3s
 // ═══════════════════════════════════════
 const COINCAP_IDS = {
   BTC: "bitcoin",
@@ -297,64 +297,50 @@ const COINCAP_IDS = {
   XRP: "xrp"
 };
 
-let wsInstance = null;
-let wsReconnectTimer = null;
+let pollInterval = null;
+
+async function pollPrices() {
+  try {
+    const ids = assetKeys.map(k => COINCAP_IDS[k]).join(",");
+    const res = await fetch(`https://api.coincap.io/v2/assets?ids=${ids}`);
+    if (!res.ok) { setStatus("error"); return; }
+    const data = await res.json();
+    if (!data?.data) return;
+
+    setStatus("connected");
+
+    data.data.forEach(asset => {
+      const key = assetKeys.find(k => COINCAP_IDS[k] === asset.id);
+      if (!key) return;
+      const p = parseFloat(asset.priceUsd);
+      if (!p || isNaN(p)) return;
+      prices[key] = p;
+      const hist = priceHistory[key];
+      if (hist.length > 0) {
+        const last = hist[hist.length - 1];
+        const now = Date.now();
+        if (now - last.time >= CANDLE_MS) {
+          hist.push({ time: now, open: p, high: p, low: p, close: p, volume: 0 });
+          if (hist.length > 300) hist.shift();
+        } else {
+          last.close = p;
+          last.high = Math.max(last.high, p);
+          last.low = Math.min(last.low, p);
+        }
+      }
+    });
+  } catch(e) {
+    setStatus("error");
+    console.warn("Price poll error", e);
+  }
+}
 
 function connectWebSocket() {
-  if (wsInstance) {
-    try { wsInstance.close(); } catch(e) {}
-  }
-  if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
-
-  // CoinCap WebSocket — free, stable, no auth needed
-  const assets = assetKeys.map(k => COINCAP_IDS[k]).join(",");
-  const ws = new WebSocket(`wss://ws.coincap.io/prices?assets=${assets}`);
-  wsInstance = ws;
+  // Use REST polling instead of WebSocket for stability
   setStatus("connecting");
-
-  ws.onopen = () => {
-    setStatus("connected");
-    console.log("CoinCap WS connected");
-  };
-
-  ws.onmessage = (evt) => {
-    try {
-      const data = JSON.parse(evt.data);
-      // data is { bitcoin: "104820.12", ethereum: "2580.45", ... }
-      assetKeys.forEach(k => {
-        const id = COINCAP_IDS[k];
-        if (data[id]) {
-          const p = parseFloat(data[id]);
-          if (!p || isNaN(p)) return;
-          prices[k] = p;
-          const hist = priceHistory[k];
-          if (hist.length > 0) {
-            const last = hist[hist.length - 1];
-            const now = Date.now();
-            if (now - last.time >= CANDLE_MS) {
-              hist.push({ time: now, open: p, high: p, low: p, close: p, volume: 0 });
-              if (hist.length > 300) hist.shift();
-            } else {
-              last.close = p;
-              last.high = Math.max(last.high, p);
-              last.low = Math.min(last.low, p);
-            }
-          }
-        }
-      });
-    } catch(e) { console.warn("WS parse error", e); }
-  };
-
-  ws.onerror = () => {
-    setStatus("error");
-    console.warn("CoinCap WS error");
-  };
-
-  ws.onclose = () => {
-    setStatus("connecting");
-    console.log("CoinCap WS closed — reconnecting in 3s");
-    wsReconnectTimer = setTimeout(connectWebSocket, 3000);
-  };
+  pollPrices(); // immediate first call
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(pollPrices, 3000); // then every 3 seconds
 }
 
 // ═══════════════════════════════════════
