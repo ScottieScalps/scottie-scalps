@@ -15,7 +15,6 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow-x:hidden;}
   body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:1000;}
-
   header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;box-shadow:0 1px 20px rgba(74,222,128,0.05);}
   .logo-wrap{display:flex;align-items:center;gap:12px;}
   .logo-img{height:44px;width:44px;object-fit:contain;border-radius:6px;}
@@ -31,7 +30,6 @@
   .live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.5s infinite;}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
   .timestamp{font-size:10px;color:var(--muted);letter-spacing:1px;}
-
   .legend{display:flex;align-items:center;gap:16px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
   .legend-item{display:flex;align-items:center;gap:7px;color:var(--muted);}
   .legend-line{width:22px;height:2px;border-radius:1px;}
@@ -39,7 +37,6 @@
   .chart-toggle{display:flex;gap:0;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
   .toggle-btn{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;transition:all 0.2s;}
   .toggle-btn.active{background:var(--green-glow);color:var(--accent);}
-
   .tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
   .tab{padding:12px 20px;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:2px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
   .tab:hover{color:var(--text);}
@@ -50,12 +47,10 @@
   .tab .tab-badge{font-size:7px;letter-spacing:1px;padding:1px 4px;border-radius:2px;margin-left:4px;vertical-align:middle;}
   .tab .cq-badge{background:rgba(74,222,128,0.1);color:var(--accent);border:1px solid rgba(74,222,128,0.2);}
   .tab .est-badge{background:rgba(74,107,82,0.1);color:var(--muted);border:1px solid rgba(74,107,82,0.2);}
-
   .main{display:grid;grid-template-columns:1fr 270px;gap:0;height:calc(100vh - 152px);}
   .chart-area{position:relative;padding:16px 20px;border-right:1px solid var(--border);overflow:hidden;}
   .chart-container{position:relative;width:100%;height:100%;background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
   canvas{display:block;width:100%!important;height:100%!important;}
-
   .sidebar{display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
   .sidebar-section{padding:16px;border-bottom:1px solid var(--border);}
   .sidebar-title{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
@@ -69,7 +64,6 @@
   .level-direction{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 5px;border-radius:2px;}
   .short-dir{background:rgba(255,59,59,0.12);color:var(--red);}
   .long-dir{background:rgba(74,222,128,0.1);color:var(--accent);}
-
   .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px;}
   .stat-label{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
@@ -78,23 +72,18 @@
   .stat-value.down{color:var(--red);}
   .stat-value.neutral{color:var(--accent);}
   .stat-value.purple{color:var(--purple);}
-
   .commentary{padding:16px;flex:1;}
   .commentary-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:3px;padding:12px;font-size:10px;line-height:1.8;color:rgba(232,240,234,0.65);}
   .commentary-box strong{color:var(--accent);font-weight:600;}
   .commentary-box .mp{color:var(--purple);}
   .commentary-time{font-size:8px;letter-spacing:1px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;}
-
   .flush-alert{margin:0 16px 12px;border-radius:3px;padding:9px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
   .flush-alert.long-flush{background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.3);color:var(--green);}
   .flush-alert.short-flush{background:rgba(255,59,59,0.07);border:1px solid rgba(255,59,59,0.3);color:var(--red);}
   @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
   .flush-alert.hidden{display:none;}
-
-  /* CQ Attribution */
   .cq-attr{display:flex;align-items:center;gap:6px;padding:8px 16px;border-top:1px solid var(--border);background:var(--surface2);}
   .cq-attr-text{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
-
   .watermark{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:12px;letter-spacing:5px;color:rgba(74,222,128,0.04);pointer-events:none;white-space:nowrap;}
   ::-webkit-scrollbar{width:3px;}
   ::-webkit-scrollbar-track{background:var(--bg);}
@@ -117,21 +106,18 @@
     <div class="timestamp" id="clock">--:--:-- UTC</div>
   </div>
 </header>
-
 <div class="legend">
   <div class="legend-item"><div class="legend-line" style="background:var(--red)"></div><span>Large Liq</span></div>
   <div class="legend-item"><div class="legend-line" style="background:var(--yellow)"></div><span>Mid Liq</span></div>
   <div class="legend-item"><div class="legend-line" style="background:var(--blue)"></div><span>Small Liq</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--purple);height:2px;border-top:none;"></div><span>Max Pain</span></div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--purple)"></div><span>Max Pain</span></div>
   <div class="legend-item"><div class="legend-line" style="background:rgba(74,222,128,0.5)"></div><span>Price</span></div>
   <div class="chart-toggle">
     <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
     <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
   </div>
 </div>
-
 <div class="tabs" id="tabs"></div>
-
 <div class="main">
   <div class="chart-area">
     <div class="chart-container">
@@ -153,7 +139,7 @@
       <div class="sidebar-title">Scalp Commentary</div>
       <div class="commentary-box">
         <div class="commentary-time" id="commentaryTime">--:-- UTC</div>
-        <div id="commentaryText">Loading CryptoQuant data...</div>
+        <div id="commentaryText">Loading data...</div>
       </div>
     </div>
     <div class="cq-attr">
@@ -163,14 +149,9 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// CONFIGURATION — ADD YOUR API KEY HERE
-// ═══════════════════════════════════════════════════════
-const CQ_API_KEY = "Vvnf06q4wmrbORYvx23Eno5GeJQxhvggR0goFVvBjH";
-
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // ASSET CONFIG
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 const ASSETS = {
   BTC:  { symbol:"BTCUSDT",  cqAsset:"btc", label:"BTC",  decimals:0, prefix:"$", hasCQ:true  },
   ETH:  { symbol:"ETHUSDT",  cqAsset:"eth", label:"ETH",  decimals:1, prefix:"$", hasCQ:true  },
@@ -182,41 +163,37 @@ const assetKeys = Object.keys(ASSETS);
 const CANDLE_MS = 30000;
 const VISIBLE_CANDLES = 80;
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 let activeAsset = "BTC";
 let chartType = "candle";
 let prices = {}, priceHistory = {}, fundingRates = {}, openInterest = {};
-let liquidationLevels = {}; // { asset: [{price, direction, risk, value, source}] }
-let maxPainLevels = {};     // { asset: price | null }
+let liquidationLevels = {}, maxPainLevels = {};
 let canvasCtx, chartCanvas;
-let cqFetchInterval = null;
 
 assetKeys.forEach(k => {
-  prices[k] = 0;
-  priceHistory[k] = [];
-  fundingRates[k] = 0;
-  openInterest[k] = 0;
-  liquidationLevels[k] = [];
-  maxPainLevels[k] = null;
+  prices[k]=0; priceHistory[k]=[]; fundingRates[k]=0;
+  openInterest[k]=0; liquidationLevels[k]=[]; maxPainLevels[k]=null;
 });
 
-// ═══════════════════════════════════════════════════════
-// CRYPTOQUANT API
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// PROXY API CALLS — go through Vercel function
+// ═══════════════════════════════════════
 async function fetchCQLiquidations(asset) {
   const cqAsset = ASSETS[asset].cqAsset;
-  if (!cqAsset || !CQ_API_KEY || CQ_API_KEY === "YOUR_API_KEY_HERE") return;
-
+  if (!cqAsset) return;
   try {
-    const headers = { "Authorization": `Bearer ${CQ_API_KEY}` };
-
-    // Fetch long and short liquidations USD at minute frequency
+    // Call our own Vercel proxy — no CORS issues, API key stays server-side
     const [longRes, shortRes] = await Promise.all([
-      fetch(`https://api.cryptoquant.com/v1/${cqAsset}/market-data/liquidations?window=min&exchange=all_exchange&symbol=all_symbol&limit=120`, { headers }),
-      fetch(`https://api.cryptoquant.com/v1/${cqAsset}/market-data/liquidations?window=min&exchange=all_exchange&symbol=all_symbol&limit=120`, { headers })
+      fetch(`/api/liquidations?asset=${cqAsset}&type=long_liquidations_usd`),
+      fetch(`/api/liquidations?asset=${cqAsset}&type=short_liquidations_usd`)
     ]);
+
+    if (!longRes.ok || !shortRes.ok) {
+      console.warn("CQ proxy error", asset, longRes.status, shortRes.status);
+      return;
+    }
 
     const longData  = await longRes.json();
     const shortData = await shortRes.json();
@@ -224,25 +201,18 @@ async function fetchCQLiquidations(asset) {
     const longItems  = longData?.result?.data  || [];
     const shortItems = shortData?.result?.data || [];
 
-    // Build liquidation clusters from historical data
-    // Each data point has a timestamp and USD value — we use price from Binance + USD value to weight levels
     const currentPrice = prices[asset];
     if (!currentPrice) return;
 
     const clusters = [];
 
-    // Process long liquidations (longs getting liquidated = price dropped to their level)
     longItems.forEach((item, i) => {
-      const usdValue = item.long_liquidations_usd || item.long_liquidations || 0;
-      if (usdValue < 50000) return; // filter noise
-
-      // Estimate the price level — recent = near current price, older = further away
-      const recency = (longItems.length - i) / longItems.length; // 0=oldest, 1=newest
+      const usdValue = item.long_liquidations_usd || 0;
+      if (usdValue < 50000) return;
+      const recency = (longItems.length - i) / longItems.length;
       const priceOffset = currentPrice * (0.001 + (1 - recency) * 0.04);
-      const levelPrice = currentPrice - priceOffset; // longs liquidated below price
-
       clusters.push({
-        price: levelPrice,
+        price: currentPrice - priceOffset,
         direction: "LONG",
         value: usdValue,
         risk: usdValue > 5000000 ? "red" : usdValue > 1000000 ? "yellow" : "blue",
@@ -250,17 +220,13 @@ async function fetchCQLiquidations(asset) {
       });
     });
 
-    // Process short liquidations (shorts getting liquidated = price rose to their level)
     shortItems.forEach((item, i) => {
-      const usdValue = item.short_liquidations_usd || item.short_liquidations || 0;
+      const usdValue = item.short_liquidations_usd || 0;
       if (usdValue < 50000) return;
-
       const recency = (shortItems.length - i) / shortItems.length;
       const priceOffset = currentPrice * (0.001 + (1 - recency) * 0.04);
-      const levelPrice = currentPrice + priceOffset; // shorts liquidated above price
-
       clusters.push({
-        price: levelPrice,
+        price: currentPrice + priceOffset,
         direction: "SHORT",
         value: usdValue,
         risk: usdValue > 5000000 ? "red" : usdValue > 1000000 ? "yellow" : "blue",
@@ -268,317 +234,250 @@ async function fetchCQLiquidations(asset) {
       });
     });
 
-    // Sort by value descending, keep top 20
-    liquidationLevels[asset] = clusters
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 20);
+    liquidationLevels[asset] = clusters.sort((a,b) => b.value - a.value).slice(0, 20);
 
-    // Estimate max pain — weighted average of all level prices by USD value
     if (clusters.length > 0) {
-      const totalValue = clusters.reduce((s, c) => s + c.value, 0);
-      const weightedPrice = clusters.reduce((s, c) => s + (c.price * c.value), 0) / totalValue;
-      maxPainLevels[asset] = weightedPrice;
+      const totalValue = clusters.reduce((s,c) => s+c.value, 0);
+      maxPainLevels[asset] = clusters.reduce((s,c) => s+(c.price*c.value), 0) / totalValue;
     }
 
-  } catch(e) {
-    console.warn("CQ fetch failed", asset, e);
-  }
+  } catch(e) { console.warn("CQ fetch error", asset, e); }
 }
 
-// Estimated levels for SOL/HYPE (no CQ data)
 function generateEstimatedLevels(asset) {
   const price = prices[asset];
   if (!price) return [];
   const levels = [];
   const bands = [
-    { pct:0.005, risk:"red",    sizeMulti:0.35 },
-    { pct:0.010, risk:"red",    sizeMulti:0.28 },
-    { pct:0.018, risk:"yellow", sizeMulti:0.22 },
-    { pct:0.025, risk:"yellow", sizeMulti:0.18 },
-    { pct:0.035, risk:"blue",   sizeMulti:0.14 },
-    { pct:0.048, risk:"blue",   sizeMulti:0.10 },
+    {pct:0.005,risk:"red"},{pct:0.010,risk:"red"},
+    {pct:0.018,risk:"yellow"},{pct:0.025,risk:"yellow"},
+    {pct:0.035,risk:"blue"},{pct:0.048,risk:"blue"}
   ];
   bands.forEach(b => {
-    const oi = openInterest[asset] || 0;
-    const val = oi > 0 ? oi * b.sizeMulti : 0;
-    levels.push({ price: price*(1+b.pct), direction:"SHORT", risk:b.risk, value:val, source:"Estimated" });
-    levels.push({ price: price*(1-b.pct), direction:"LONG",  risk:b.risk, value:val, source:"Estimated" });
+    levels.push({price:price*(1+b.pct),direction:"SHORT",risk:b.risk,value:0,source:"Estimated"});
+    levels.push({price:price*(1-b.pct),direction:"LONG", risk:b.risk,value:0,source:"Estimated"});
   });
-  return levels.sort((a,b) => b.price - a.price);
+  return levels.sort((a,b)=>b.price-a.price);
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // BINANCE REST
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 async function fetchKlines(asset) {
   try {
-    const url = `https://fapi.binance.com/fapi/v1/klines?symbol=${ASSETS[asset].symbol}&interval=1m&limit=120`;
-    const data = await (await fetch(url)).json();
-    priceHistory[asset] = [];
-    data.forEach(k => {
-      const o=parseFloat(k[1]),h=parseFloat(k[2]),l=parseFloat(k[3]),c=parseFloat(k[4]),v=parseFloat(k[5]);
-      const mid=(o+c)/2;
-      priceHistory[asset].push({time:k[0],       open:o,   high:Math.max(o,mid),  low:Math.min(o,mid),  close:mid, volume:v*0.5});
-      priceHistory[asset].push({time:k[0]+30000, open:mid, high:Math.max(mid,c),  low:Math.min(mid,c),  close:c,   volume:v*0.5});
+    const data = await (await fetch(`https://fapi.binance.com/fapi/v1/klines?symbol=${ASSETS[asset].symbol}&interval=1m&limit=120`)).json();
+    priceHistory[asset]=[];
+    data.forEach(k=>{
+      const o=parseFloat(k[1]),h=parseFloat(k[2]),l=parseFloat(k[3]),c=parseFloat(k[4]),v=parseFloat(k[5]),mid=(o+c)/2;
+      priceHistory[asset].push({time:k[0],open:o,high:Math.max(o,mid),low:Math.min(o,mid),close:mid,volume:v*0.5});
+      priceHistory[asset].push({time:k[0]+30000,open:mid,high:Math.max(mid,c),low:Math.min(mid,c),close:c,volume:v*0.5});
     });
-    if (priceHistory[asset].length > 0)
-      prices[asset] = priceHistory[asset][priceHistory[asset].length-1].close;
-  } catch(e) { console.warn("klines fail", asset); }
+    if(priceHistory[asset].length>0) prices[asset]=priceHistory[asset][priceHistory[asset].length-1].close;
+  } catch(e){console.warn("klines fail",asset);}
 }
 
 async function fetchOI(asset) {
   try {
-    const data = await (await fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${ASSETS[asset].symbol}`)).json();
-    openInterest[asset] = parseFloat(data.openInterest) * prices[asset];
-  } catch(e) {}
+    const data=await(await fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${ASSETS[asset].symbol}`)).json();
+    openInterest[asset]=parseFloat(data.openInterest)*prices[asset];
+  } catch(e){}
 }
 
 async function fetchFunding(asset) {
   try {
-    const data = await (await fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${ASSETS[asset].symbol}`)).json();
-    fundingRates[asset] = parseFloat(data.lastFundingRate) * 100;
-  } catch(e) {}
+    const data=await(await fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${ASSETS[asset].symbol}`)).json();
+    fundingRates[asset]=parseFloat(data.lastFundingRate)*100;
+  } catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════
-// WEBSOCKET — live prices
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// WEBSOCKET
+// ═══════════════════════════════════════
 function connectWebSocket() {
-  const streams = assetKeys.map(k => `${ASSETS[k].symbol.toLowerCase()}@aggTrade`).join("/");
-  const ws = new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
+  const streams=assetKeys.map(k=>`${ASSETS[k].symbol.toLowerCase()}@aggTrade`).join("/");
+  const ws=new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
   setStatus("connecting");
-  ws.onopen = () => setStatus("connected");
-  ws.onmessage = (evt) => {
+  ws.onopen=()=>setStatus("connected");
+  ws.onmessage=(evt)=>{
     try {
-      const trade = JSON.parse(evt.data).data;
-      if (!trade?.s) return;
-      const asset = assetKeys.find(k => ASSETS[k].symbol === trade.s);
-      if (!asset) return;
-      const p = parseFloat(trade.p);
-      prices[asset] = p;
-      const hist = priceHistory[asset];
-      if (hist.length > 0) {
-        const last = hist[hist.length-1];
-        const now = Date.now();
-        if (now - last.time >= CANDLE_MS) {
-          hist.push({time:now, open:p, high:p, low:p, close:p, volume:0});
-          if (hist.length > 300) hist.shift();
-          // Refresh estimated levels for non-CQ assets
-          if (!ASSETS[asset].hasCQ) {
-            liquidationLevels[asset] = generateEstimatedLevels(asset);
-          }
+      const trade=JSON.parse(evt.data).data;
+      if(!trade?.s) return;
+      const asset=assetKeys.find(k=>ASSETS[k].symbol===trade.s);
+      if(!asset) return;
+      const p=parseFloat(trade.p);
+      prices[asset]=p;
+      const hist=priceHistory[asset];
+      if(hist.length>0){
+        const last=hist[hist.length-1],now=Date.now();
+        if(now-last.time>=CANDLE_MS){
+          hist.push({time:now,open:p,high:p,low:p,close:p,volume:0});
+          if(hist.length>300) hist.shift();
+          if(!ASSETS[asset].hasCQ) liquidationLevels[asset]=generateEstimatedLevels(asset);
         } else {
-          last.close = p;
-          last.high = Math.max(last.high, p);
-          last.low = Math.min(last.low, p);
-          last.volume += parseFloat(trade.q||0);
+          last.close=p; last.high=Math.max(last.high,p); last.low=Math.min(last.low,p);
+          last.volume+=parseFloat(trade.q||0);
         }
       }
-    } catch(e) {}
+    } catch(e){}
   };
-  ws.onerror = () => setStatus("error");
-  ws.onclose = () => { setStatus("connecting"); setTimeout(connectWebSocket, 3000); };
+  ws.onerror=()=>setStatus("error");
+  ws.onclose=()=>{setStatus("connecting");setTimeout(connectWebSocket,3000);};
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════════════
-function setStatus(s) {
-  const el = document.getElementById("connStatus");
-  el.className = "conn-status " + s;
-  el.textContent = s==="connected"?"Live":s==="connecting"?"Connecting":"Reconnecting";
+// ═══════════════════════════════════════
+function setStatus(s){
+  const el=document.getElementById("connStatus");
+  el.className="conn-status "+s;
+  el.textContent=s==="connected"?"Live":s==="connecting"?"Connecting":"Reconnecting";
 }
-function setChartType(t) {
-  chartType = t;
-  document.getElementById("btnCandle").classList.toggle("active", t==="candle");
-  document.getElementById("btnLine").classList.toggle("active", t==="line");
+function setChartType(t){
+  chartType=t;
+  document.getElementById("btnCandle").classList.toggle("active",t==="candle");
+  document.getElementById("btnLine").classList.toggle("active",t==="line");
 }
-function updateClock() {
-  document.getElementById("clock").textContent = new Date().toUTCString().split(" ")[4]+" UTC";
-}
-function fmtP(p, asset) {
+function updateClock(){document.getElementById("clock").textContent=new Date().toUTCString().split(" ")[4]+" UTC";}
+function fmtP(p,asset){
   if(!p) return "--";
-  if(p<10)   return p.toFixed(ASSETS[asset].decimals);
+  if(p<10) return p.toFixed(ASSETS[asset].decimals);
   if(p<1000) return p.toFixed(2);
   return Math.round(p).toLocaleString();
 }
-function fmtVal(v) {
-  if(!v) return "--";
+function fmtVal(v){
+  if(!v||v<=0) return "--";
   if(v>=1000000) return "$"+(v/1000000).toFixed(1)+"M";
-  if(v>=1000)    return "$"+(v/1000).toFixed(0)+"K";
+  if(v>=1000) return "$"+(v/1000).toFixed(0)+"K";
   return "$"+Math.round(v);
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // TABS
-// ═══════════════════════════════════════════════════════
-function renderTabs() {
-  const c = document.getElementById("tabs"); c.innerHTML="";
-  assetKeys.forEach(k => {
-    const price=prices[k], hist=priceHistory[k];
-    const prev=hist.length>2?hist[hist.length-2]?.close:price;
-    const up=price>=(prev||price);
+// ═══════════════════════════════════════
+function renderTabs(){
+  const c=document.getElementById("tabs"); c.innerHTML="";
+  assetKeys.forEach(k=>{
+    const price=prices[k],hist=priceHistory[k],prev=hist.length>2?hist[hist.length-2]?.close:price,up=price>=(prev||price);
     const btn=document.createElement("button");
     btn.className=`tab ${up?"up":"down"} ${k===activeAsset?"active":""}`;
-    const badge = ASSETS[k].hasCQ
-      ? `<span class="tab-badge cq-badge">CQ</span>`
-      : `<span class="tab-badge est-badge">EST</span>`;
+    const badge=ASSETS[k].hasCQ?`<span class="tab-badge cq-badge">CQ</span>`:`<span class="tab-badge est-badge">EST</span>`;
     btn.innerHTML=`${k}${badge}<span class="tab-price">${price?ASSETS[k].prefix+fmtP(price,k):"..."}</span>`;
-    btn.onclick=()=>{ activeAsset=k; renderTabs(); renderSidebar(); };
+    btn.onclick=()=>{activeAsset=k;renderTabs();renderSidebar();};
     c.appendChild(btn);
   });
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // SIDEBAR
-// ═══════════════════════════════════════════════════════
-function renderSidebar() {
-  const levels=liquidationLevels[activeAsset], price=prices[activeAsset];
-  const maxPain=maxPainLevels[activeAsset];
-  const hasCQ=ASSETS[activeAsset].hasCQ;
-
+// ═══════════════════════════════════════
+function renderSidebar(){
+  const levels=liquidationLevels[activeAsset],price=prices[activeAsset],maxPain=maxPainLevels[activeAsset];
   const list=document.getElementById("levelsList"); list.innerHTML="";
-  if (!price || !levels.length) {
-    list.innerHTML=`<div style="color:var(--muted);font-size:10px;line-height:1.8">
-      ${hasCQ ? "Loading CryptoQuant data..." : "Estimated levels — live Binance data"}
-    </div>`;
+  if(!price||!levels.length){
+    list.innerHTML=`<div style="color:var(--muted);font-size:10px;line-height:1.8">${ASSETS[activeAsset].hasCQ?"Loading CryptoQuant data...":"Estimated levels active"}</div>`;
   } else {
-    levels.slice(0,8).forEach(l => {
+    levels.slice(0,8).forEach(l=>{
       const color=l.risk==="red"?"var(--red)":l.risk==="yellow"?"var(--yellow)":"var(--blue)";
       const dist=Math.abs(((l.price-price)/price)*100).toFixed(2);
       list.innerHTML+=`<div class="level-row">
-        <div class="level-left">
-          <div class="level-dot" style="background:${color}"></div>
-          <div>
-            <div class="level-type">${dist}% · ${l.source}</div>
-            <div class="level-price">${ASSETS[activeAsset].prefix}${fmtP(l.price,activeAsset)}</div>
-          </div>
-        </div>
+        <div class="level-left"><div class="level-dot" style="background:${color}"></div>
+        <div><div class="level-type">${dist}% · ${l.source}</div>
+        <div class="level-price">${ASSETS[activeAsset].prefix}${fmtP(l.price,activeAsset)}</div></div></div>
         <div style="text-align:right">
-          <div class="level-direction ${l.direction==="SHORT"?"short-dir":"long-dir"}">${l.direction}</div>
-          <div class="level-size">${fmtVal(l.value)}</div>
-        </div></div>`;
+        <div class="level-direction ${l.direction==="SHORT"?"short-dir":"long-dir"}">${l.direction}</div>
+        <div class="level-size">${fmtVal(l.value)}</div></div></div>`;
     });
   }
-
-  // Stats
   const hist=priceHistory[activeAsset];
   const open24=hist.length>96?hist[hist.length-96]?.open:hist[0]?.open;
   const change=open24&&price?((price-open24)/open24*100):0;
   const high24=hist.length>0?Math.max(...hist.slice(-96).map(c=>c.high)):0;
   const fr=fundingRates[activeAsset]||0;
   const mpDist=maxPain&&price?((maxPain-price)/price*100).toFixed(2):null;
-
   document.getElementById("statGrid").innerHTML=`
-    <div class="stat-box"><div class="stat-label">24h Change</div>
-      <div class="stat-value ${change>=0?"up":"down"}">${change>=0?"+":""}${change.toFixed(2)}%</div></div>
-    <div class="stat-box"><div class="stat-label">Funding</div>
-      <div class="stat-value ${fr>=0?"up":"down"}">${fr>=0?"+":""}${fr.toFixed(4)}%</div></div>
-    <div class="stat-box"><div class="stat-label">Max Pain</div>
-      <div class="stat-value purple">${maxPain?ASSETS[activeAsset].prefix+fmtP(maxPain,activeAsset):"--"}</div></div>
-    <div class="stat-box"><div class="stat-label">Pain Dist</div>
-      <div class="stat-value neutral">${mpDist?(mpDist>0?"+":"")+mpDist+"%":"--"}</div></div>`;
-
-  // Commentary
+    <div class="stat-box"><div class="stat-label">24h Change</div><div class="stat-value ${change>=0?"up":"down"}">${change>=0?"+":""}${change.toFixed(2)}%</div></div>
+    <div class="stat-box"><div class="stat-label">Funding</div><div class="stat-value ${fr>=0?"up":"down"}">${fr>=0?"+":""}${fr.toFixed(4)}%</div></div>
+    <div class="stat-box"><div class="stat-label">Max Pain</div><div class="stat-value purple">${maxPain?ASSETS[activeAsset].prefix+fmtP(maxPain,activeAsset):"--"}</div></div>
+    <div class="stat-box"><div class="stat-label">Pain Dist</div><div class="stat-value neutral">${mpDist?(mpDist>0?"+":"")+mpDist+"%":"--"}</div></div>`;
   const ns=levels.filter(l=>l.direction==="SHORT").sort((a,b)=>a.price-b.price)[0];
   const nl=levels.filter(l=>l.direction==="LONG").sort((a,b)=>b.price-a.price)[0];
   document.getElementById("commentaryTime").textContent=new Date().toUTCString().split(" ")[4]+" UTC";
-
-  if (price&&ns&&nl) {
-    const ds=(((ns.price-price)/price)*100).toFixed(2);
-    const dl=(((price-nl.price)/price)*100).toFixed(2);
-    const mpNote=maxPain?` <span class="mp">Max pain at ${ASSETS[activeAsset].prefix}${fmtP(maxPain,activeAsset)} (${mpDist}% ${parseFloat(mpDist)>=0?"above":"below"}).</span>`:"";
-    const frNote=Math.abs(fr)>0.05?` Funding ${fr>0?"positive — longs paying":"negative — shorts paying"}.`:"";
-    const dataNote=hasCQ?` <strong>CryptoQuant data.</strong>`:" Estimated levels.";
+  if(price&&ns&&nl){
+    const ds=(((ns.price-price)/price)*100).toFixed(2),dl=(((price-nl.price)/price)*100).toFixed(2);
+    const mpNote=maxPain?` <span class="mp">Max pain ${ASSETS[activeAsset].prefix}${fmtP(maxPain,activeAsset)} (${mpDist}%).</span>`:"";
     document.getElementById("commentaryText").innerHTML=
       `Nearest short wall <strong>${ASSETS[activeAsset].prefix}${fmtP(ns.price,activeAsset)}</strong> (${ds}% above). `+
-      `Nearest long wall <strong>${ASSETS[activeAsset].prefix}${fmtP(nl.price,activeAsset)}</strong> (${dl}% below).`+
-      mpNote+frNote+dataNote;
+      `Nearest long wall <strong>${ASSETS[activeAsset].prefix}${fmtP(nl.price,activeAsset)}</strong> (${dl}% below).`+mpNote;
   } else {
-    document.getElementById("commentaryText").innerHTML="Loading live data...";
+    document.getElementById("commentaryText").innerHTML="Fetching live data...";
   }
-
-  // Flush alert
   const nearLevel=price&&levels.some(l=>Math.abs(l.price-price)/price<0.003&&l.risk==="red");
   const flushEl=document.getElementById("flushAlert");
-  if (nearLevel&&price) {
+  if(nearLevel&&price){
     const nearest=levels.filter(l=>l.risk==="red").sort((a,b)=>Math.abs(a.price-price)-Math.abs(b.price-price))[0];
-    const isShort=nearest?.direction==="SHORT";
-    flushEl.className=`flush-alert ${isShort?"short-flush":"long-flush"}`;
-    flushEl.textContent=`⚡ ${isShort?"SHORT":"LONG"} FLUSH ZONE — WATCH FOR REVERSAL`;
-  } else {
-    flushEl.className="flush-alert hidden";
-  }
+    flushEl.className=`flush-alert ${nearest?.direction==="SHORT"?"short-flush":"long-flush"}`;
+    flushEl.textContent=`⚡ ${nearest?.direction==="SHORT"?"SHORT":"LONG"} FLUSH ZONE — WATCH FOR REVERSAL`;
+  } else { flushEl.className="flush-alert hidden"; }
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // CHART
-// ═══════════════════════════════════════════════════════
-function initChart() {
-  chartCanvas=document.getElementById("mainChart");
-  canvasCtx=chartCanvas.getContext("2d");
-  const resize=()=>{ chartCanvas.width=chartCanvas.parentElement.clientWidth; chartCanvas.height=chartCanvas.parentElement.clientHeight; };
+// ═══════════════════════════════════════
+function initChart(){
+  chartCanvas=document.getElementById("mainChart"); canvasCtx=chartCanvas.getContext("2d");
+  const resize=()=>{chartCanvas.width=chartCanvas.parentElement.clientWidth;chartCanvas.height=chartCanvas.parentElement.clientHeight;};
   resize(); window.addEventListener("resize",resize);
 }
 
-function drawChart() {
-  const canvas=chartCanvas, ctx=canvasCtx, w=canvas.width, h=canvas.height;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle="#0b0f0c"; ctx.fillRect(0,0,w,h);
-  const hist=priceHistory[activeAsset], price=prices[activeAsset];
-  const levels=liquidationLevels[activeAsset];
-  const maxPain=maxPainLevels[activeAsset];
-
-  if (hist.length<2||!price) {
-    ctx.fillStyle="rgba(74,107,82,0.4)"; ctx.font="12px JetBrains Mono,monospace"; ctx.textAlign="center";
-    ctx.fillText("Connecting to live data...", w/2, h/2); return;
+function drawChart(){
+  const canvas=chartCanvas,ctx=canvasCtx,w=canvas.width,h=canvas.height;
+  ctx.clearRect(0,0,w,h); ctx.fillStyle="#0b0f0c"; ctx.fillRect(0,0,w,h);
+  const hist=priceHistory[activeAsset],price=prices[activeAsset],levels=liquidationLevels[activeAsset],maxPain=maxPainLevels[activeAsset];
+  if(hist.length<2||!price){
+    ctx.fillStyle="rgba(74,107,82,0.4)";ctx.font="12px JetBrains Mono,monospace";ctx.textAlign="center";
+    ctx.fillText("Connecting to live data...",w/2,h/2);return;
   }
-
   const visible=hist.slice(-VISIBLE_CANDLES);
   const candlePrices=visible.flatMap(c=>[c.high,c.low]);
   const nearLevels=levels.filter(l=>Math.abs(l.price-price)/price<=0.05);
   const allPrices=[...candlePrices,...nearLevels.map(l=>l.price)];
-  if (maxPain && Math.abs(maxPain-price)/price<=0.05) allPrices.push(maxPain);
-  const candleMin=Math.min(...candlePrices), candleMax=Math.max(...candlePrices);
+  if(maxPain&&Math.abs(maxPain-price)/price<=0.05) allPrices.push(maxPain);
+  const candleMin=Math.min(...candlePrices),candleMax=Math.max(...candlePrices);
   const candleRange=candleMax-candleMin||price*0.001;
-  const minP=Math.min(...allPrices)-candleRange*0.08;
-  const maxP=Math.max(...allPrices)+candleRange*0.08;
-  const range=maxP-minP||price*0.002;
-
-  const padL=78,padR=70,padT=18,padB=46;
-  const cW=w-padL-padR, cH=h-padT-padB;
+  const minP=Math.min(...allPrices)-candleRange*0.08,maxP=Math.max(...allPrices)+candleRange*0.08,range=maxP-minP||price*0.002;
+  const padL=78,padR=70,padT=18,padB=46,cW=w-padL-padR,cH=h-padT-padB;
   const toY=p=>padT+cH-((p-minP)/range)*cH;
   const toX=i=>padL+(i/(visible.length-1))*cW;
 
   // Grid
-  ctx.strokeStyle="rgba(26,42,28,0.9)"; ctx.lineWidth=1;
+  ctx.strokeStyle="rgba(26,42,28,0.9)";ctx.lineWidth=1;
   for(let i=0;i<=6;i++){
     const y=padT+(i/6)*cH;
-    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
     const pv=maxP-(i/6)*range;
     const fmt=pv<10?pv.toFixed(ASSETS[activeAsset].decimals):pv<1000?pv.toFixed(2):Math.round(pv).toLocaleString();
-    ctx.fillStyle="rgba(74,107,82,0.7)"; ctx.font="8px JetBrains Mono,monospace"; ctx.textAlign="right";
-    ctx.fillText(ASSETS[activeAsset].prefix+fmt, padL-5, y+3);
+    ctx.fillStyle="rgba(74,107,82,0.7)";ctx.font="8px JetBrains Mono,monospace";ctx.textAlign="right";
+    ctx.fillText(ASSETS[activeAsset].prefix+fmt,padL-5,y+3);
   }
 
   // Time labels
-  ctx.fillStyle="rgba(74,107,82,0.7)"; ctx.font="8px JetBrains Mono,monospace"; ctx.textAlign="center";
+  ctx.fillStyle="rgba(74,107,82,0.7)";ctx.font="8px JetBrains Mono,monospace";ctx.textAlign="center";
   [0,Math.floor(visible.length/4),Math.floor(visible.length/2),Math.floor(3*visible.length/4),visible.length-1].forEach(i=>{
     if(!visible[i]) return;
-    ctx.fillText(new Date(visible[i].time).toUTCString().split(" ")[4].slice(0,5), toX(i), h-padB+14);
+    ctx.fillText(new Date(visible[i].time).toUTCString().split(" ")[4].slice(0,5),toX(i),h-padB+14);
   });
 
-  // MAX PAIN line — purple, prominent
-  if (maxPain && maxPain>=minP && maxPain<=maxP) {
+  // Max Pain line
+  if(maxPain&&maxPain>=minP&&maxPain<=maxP){
     const y=toY(maxPain);
-    ctx.strokeStyle="rgba(168,85,247,0.8)"; ctx.lineWidth=2; ctx.setLineDash([8,4]);
-    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle="rgba(168,85,247,0.8)";ctx.lineWidth=2;ctx.setLineDash([8,4]);
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();ctx.setLineDash([]);
     const fmt=maxPain<10?maxPain.toFixed(ASSETS[activeAsset].decimals):maxPain<1000?maxPain.toFixed(2):Math.round(maxPain).toLocaleString();
-    ctx.fillStyle="rgba(168,85,247,0.9)"; ctx.font="8px JetBrains Mono,monospace"; ctx.textAlign="left";
-    ctx.fillText("⚡ MAX PAIN "+ASSETS[activeAsset].prefix+fmt, w-padR+3, y+3);
+    ctx.fillStyle="rgba(168,85,247,0.9)";ctx.font="8px JetBrains Mono,monospace";ctx.textAlign="left";
+    ctx.fillText("⚡ MAX PAIN "+ASSETS[activeAsset].prefix+fmt,w-padR+3,y+3);
   }
 
-  // Liquidation level lines
+  // Liq levels
   levels.forEach(l=>{
     if(l.price<minP||l.price>maxP) return;
     const y=toY(l.price);
@@ -586,10 +485,10 @@ function drawChart() {
     ctx.strokeStyle=col+(l.risk==="blue"?"0.45)":"0.75)");
     ctx.lineWidth=l.risk==="red"?2:l.risk==="yellow"?1.5:1;
     ctx.setLineDash(l.risk==="blue"?[4,4]:[]);
-    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();ctx.setLineDash([]);
     const fmt=l.price<10?l.price.toFixed(ASSETS[activeAsset].decimals):l.price<1000?l.price.toFixed(2):Math.round(l.price).toLocaleString();
-    ctx.fillStyle=col+"0.8)"; ctx.font="7px JetBrains Mono,monospace"; ctx.textAlign="left";
-    ctx.fillText(ASSETS[activeAsset].prefix+fmt+" "+fmtVal(l.value), w-padR+3, y+3);
+    ctx.fillStyle=col+"0.8)";ctx.font="7px JetBrains Mono,monospace";ctx.textAlign="left";
+    ctx.fillText(ASSETS[activeAsset].prefix+fmt+(l.value>0?" "+fmtVal(l.value):""),w-padR+3,y+3);
   });
 
   // Candles or line
@@ -597,27 +496,27 @@ function drawChart() {
     const cw=Math.max(2,(cW/visible.length)*0.65);
     visible.forEach((c,i)=>{
       const x=toX(i),oY=toY(c.open),clY=toY(c.close),hY=toY(c.high),lY=toY(c.low),up=c.close>=c.open;
-      ctx.strokeStyle=up?"rgba(74,222,128,0.9)":"rgba(255,59,59,0.9)"; ctx.lineWidth=1;
-      ctx.beginPath(); ctx.moveTo(x,hY); ctx.lineTo(x,lY); ctx.stroke();
+      ctx.strokeStyle=up?"rgba(74,222,128,0.9)":"rgba(255,59,59,0.9)";ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x,hY);ctx.lineTo(x,lY);ctx.stroke();
       ctx.fillStyle=up?"rgba(74,222,128,0.85)":"rgba(255,59,59,0.85)";
       ctx.fillRect(x-cw/2,Math.min(oY,clY),cw,Math.max(1,Math.abs(clY-oY)));
     });
   } else {
-    ctx.strokeStyle="rgba(74,222,128,0.9)"; ctx.lineWidth=1.5; ctx.setLineDash([]);
+    ctx.strokeStyle="rgba(74,222,128,0.9)";ctx.lineWidth=1.5;ctx.setLineDash([]);
     ctx.beginPath();
-    visible.forEach((c,i)=>{ const x=toX(i),y=toY(c.close); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    visible.forEach((c,i)=>{const x=toX(i),y=toY(c.close);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
     ctx.stroke();
   }
 
-  // Current price
+  // Price line
   const curY=toY(price);
   if(curY>=padT&&curY<=padT+cH){
-    ctx.strokeStyle="rgba(74,222,128,0.3)"; ctx.lineWidth=1; ctx.setLineDash([5,4]);
-    ctx.beginPath(); ctx.moveTo(padL,curY); ctx.lineTo(w-padR,curY); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle="rgba(74,222,128,0.3)";ctx.lineWidth=1;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(padL,curY);ctx.lineTo(w-padR,curY);ctx.stroke();ctx.setLineDash([]);
     const fmt2=price<10?price.toFixed(ASSETS[activeAsset].decimals):price<1000?price.toFixed(2):Math.round(price).toLocaleString();
-    ctx.fillStyle="rgba(74,222,128,0.95)"; ctx.fillRect(padL-76,curY-9,70,16);
-    ctx.fillStyle="#080c09"; ctx.font="bold 9px JetBrains Mono,monospace"; ctx.textAlign="center";
-    ctx.fillText(ASSETS[activeAsset].prefix+fmt2, padL-41, curY+3);
+    ctx.fillStyle="rgba(74,222,128,0.95)";ctx.fillRect(padL-76,curY-9,70,16);
+    ctx.fillStyle="#080c09";ctx.font="bold 9px JetBrains Mono,monospace";ctx.textAlign="center";
+    ctx.fillText(ASSETS[activeAsset].prefix+fmt2,padL-41,curY+3);
   }
 
   // Volume
@@ -629,21 +528,18 @@ function drawChart() {
     ctx.fillRect(x-cw2/2,padT+cH-vH,cw2,vH);
   });
 
-  // Timeframe label
-  ctx.fillStyle="rgba(74,107,82,0.4)"; ctx.font="8px JetBrains Mono,monospace"; ctx.textAlign="left";
-  ctx.fillText("30s", padL+6, padT+12);
-
-  // Data source label
-  const srcLabel = ASSETS[activeAsset].hasCQ ? "CryptoQuant" : "Estimated";
-  ctx.fillStyle=ASSETS[activeAsset].hasCQ?"rgba(74,222,128,0.3)":"rgba(74,107,82,0.3)";
+  // Labels
+  ctx.fillStyle="rgba(74,107,82,0.4)";ctx.font="8px JetBrains Mono,monospace";ctx.textAlign="left";
+  ctx.fillText("30s",padL+6,padT+12);
   ctx.textAlign="right";
-  ctx.fillText(srcLabel, w-padR-4, padT+12);
+  ctx.fillStyle=ASSETS[activeAsset].hasCQ?"rgba(74,222,128,0.3)":"rgba(74,107,82,0.3)";
+  ctx.fillText(ASSETS[activeAsset].hasCQ?"CryptoQuant":"Estimated",w-padR-4,padT+12);
 }
 
-// ═══════════════════════════════════════════════════════
-// MAIN LOOP
-// ═══════════════════════════════════════════════════════
-let lastTab=0, lastSide=0;
+// ═══════════════════════════════════════
+// LOOP
+// ═══════════════════════════════════════
+let lastTab=0,lastSide=0;
 function loop(){
   const now=Date.now();
   if(now-lastTab>1000){renderTabs();lastTab=now;}
@@ -652,48 +548,31 @@ function loop(){
   requestAnimationFrame(loop);
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 async function init(){
   initChart();
-  setInterval(updateClock,1000); updateClock();
-  renderTabs(); renderSidebar();
-
-  // Load all assets in parallel
+  setInterval(updateClock,1000);updateClock();
+  renderTabs();renderSidebar();
   await Promise.all(assetKeys.map(async k=>{
     await fetchKlines(k);
     await fetchOI(k);
     await fetchFunding(k);
-    // Initial levels
-    if (ASSETS[k].hasCQ) {
-      await fetchCQLiquidations(k);
-    } else {
-      liquidationLevels[k] = generateEstimatedLevels(k);
-    }
+    if(ASSETS[k].hasCQ) await fetchCQLiquidations(k);
+    else liquidationLevels[k]=generateEstimatedLevels(k);
   }));
-
-  // Refresh CQ data every 60 seconds
-  setInterval(async () => {
-    const cqAssets = assetKeys.filter(k => ASSETS[k].hasCQ);
-    for (const k of cqAssets) {
-      await fetchCQLiquidations(k);
-    }
-  }, 60000);
-
-  // Refresh OI/funding every 30s
   setInterval(async()=>{
-    await fetchOI(activeAsset);
-    await fetchFunding(activeAsset);
-    if (!ASSETS[activeAsset].hasCQ) {
-      liquidationLevels[activeAsset] = generateEstimatedLevels(activeAsset);
-    }
-  }, 30000);
-
+    const cqAssets=assetKeys.filter(k=>ASSETS[k].hasCQ);
+    for(const k of cqAssets) await fetchCQLiquidations(k);
+  },60000);
+  setInterval(async()=>{
+    await fetchOI(activeAsset);await fetchFunding(activeAsset);
+    if(!ASSETS[activeAsset].hasCQ) liquidationLevels[activeAsset]=generateEstimatedLevels(activeAsset);
+  },30000);
   connectWebSocket();
   loop();
 }
-
 init();
 </script>
 </body>
