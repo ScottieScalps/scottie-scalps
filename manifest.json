@@ -1,0 +1,18 @@
+{
+  "name": "Scottie Scalps",
+  "short_name": "Scalps",
+  "description": "Live Liquidation Dashboard — Powered by CryptoQuant",
+  "start_url": "/levels",
+  "display": "standalone",
+  "background_color": "#080c09",
+  "theme_color": "#080c09",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
