@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scottie Scalps — Live Liquidation Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Scottie Scalps">
+<meta name="theme-color" content="#080c09">
 <style>
   :root {
     --bg:#080c09;--surface:#0b0f0c;--surface2:#111711;--border:#1a2a1c;
@@ -12,6 +17,11 @@
     --green:#4ade80;--green-glow:rgba(74,222,128,0.12);
     --text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;
   }
+  body.light-mode {
+    --bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;
+    --text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;--green-glow:rgba(26,138,58,0.1);
+  }
+  body.light-mode .live-dot { background:var(--accent); box-shadow:0 0 8px var(--accent); }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow-x:hidden;}
   body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:1000;}
@@ -112,10 +122,11 @@
   <div class="legend-item"><div class="legend-line" style="background:var(--blue)"></div><span>Small Liq</span></div>
   <div class="legend-item"><div class="legend-line" style="background:var(--purple)"></div><span>Max Pain</span></div>
   <div class="legend-item"><div class="legend-line" style="background:rgba(74,222,128,0.5)"></div><span>Price</span></div>
-  <div class="chart-toggle">
+  <div class="chart-toggle" style="margin-left:8px">
     <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
     <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
   </div>
+  <button class="toggle-btn" id="btnTheme" onclick="toggleTheme()" style="margin-left:8px;border:1px solid var(--border);border-radius:3px;padding:4px 10px;">🌙</button>
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="main">
@@ -349,6 +360,89 @@ function setChartType(t){
   document.getElementById("btnCandle").classList.toggle("active",t==="candle");
   document.getElementById("btnLine").classList.toggle("active",t==="line");
 }
+
+// ═══ LIGHT/DARK TOGGLE ═══
+function toggleTheme(){
+  const isLight = document.body.classList.toggle("light-mode");
+  document.getElementById("btnTheme").textContent = isLight ? "☀️" : "🌙";
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+}
+
+// Load saved theme
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light-mode");
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("btnTheme");
+    if (btn) btn.textContent = "☀️";
+  });
+}
+
+// ═══ PING SOUND ═══
+let audioCtx = null;
+let lastPingTime = 0;
+let lastBreachTime = 0;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playPing(type) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    if (type === "approach") {
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } else if (type === "breach") {
+      osc.frequency.value = 440;
+      osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.4);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    }
+  } catch(e) {}
+}
+
+// ═══ LEVEL PROXIMITY CHECK ═══
+let prevPrice = 0;
+let pulsingLevels = new Set();
+
+function checkLevelProximity(price, levels) {
+  const now = Date.now();
+  levels.forEach(l => {
+    if (l.risk !== "red") return;
+    const dist = Math.abs(l.price - price) / price;
+
+    // Approaching — within 0.3%
+    if (dist < 0.003) {
+      pulsingLevels.add(l.price);
+      if (now - lastPingTime > 8000) {
+        playPing("approach");
+        lastPingTime = now;
+      }
+    } else {
+      pulsingLevels.delete(l.price);
+    }
+
+    // Breach — price crossed the level
+    if (prevPrice && now - lastBreachTime > 15000) {
+      const crossed = (prevPrice < l.price && price >= l.price) || (prevPrice > l.price && price <= l.price);
+      if (crossed) {
+        playPing("breach");
+        lastBreachTime = now;
+      }
+    }
+  });
+  prevPrice = price;
+}
 function updateClock(){document.getElementById("clock").textContent=new Date().toUTCString().split(" ")[4]+" UTC";}
 function fmtP(p,asset){
   if(!p) return "--";
@@ -489,19 +583,39 @@ function drawChart(){
     ctx.fillText("⚡ MAX PAIN "+ASSETS[activeAsset].prefix+fmt,w-padR+3,y+3);
   }
 
-  // Liq levels
+  // Liq levels — with pulse effect for nearby red levels
+  const nowMs = Date.now();
   levels.forEach(l=>{
     if(l.price<minP||l.price>maxP) return;
     const y=toY(l.price);
     const col=l.risk==="red"?"rgba(255,59,59,":l.risk==="yellow"?"rgba(245,197,24,":"rgba(59,158,255,";
-    ctx.strokeStyle=col+(l.risk==="blue"?"0.45)":"0.75)");
-    ctx.lineWidth=l.risk==="red"?2:l.risk==="yellow"?1.5:1;
+    const isPulsing = pulsingLevels.has(l.price);
+
+    // Pulse glow effect
+    if (isPulsing) {
+      const pulse = 0.4 + 0.4 * Math.sin(nowMs / 200);
+      ctx.strokeStyle = `rgba(255,59,59,${pulse})`;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "rgba(255,59,59,0.8)";
+      ctx.shadowBlur = 12;
+    } else {
+      ctx.strokeStyle=col+(l.risk==="blue"?"0.45)":"0.75)");
+      ctx.lineWidth=l.risk==="red"?2:l.risk==="yellow"?1.5:1;
+      ctx.shadowBlur = 0;
+    }
+
     ctx.setLineDash(l.risk==="blue"?[4,4]:[]);
-    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
+
     const fmt=l.price<10?l.price.toFixed(ASSETS[activeAsset].decimals):l.price<1000?l.price.toFixed(2):Math.round(l.price).toLocaleString();
     ctx.fillStyle=col+"0.8)";ctx.font="7px JetBrains Mono,monospace";ctx.textAlign="left";
     ctx.fillText(ASSETS[activeAsset].prefix+fmt+(l.value>0?" "+fmtVal(l.value):""),w-padR+3,y+3);
   });
+
+  // Check proximity for pings
+  if (price && levels.length) checkLevelProximity(price, levels);
 
   // Candles or line
   if(chartType==="candle"){
@@ -591,6 +705,13 @@ async function init(){
   loop();
 }
 init();
+
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
