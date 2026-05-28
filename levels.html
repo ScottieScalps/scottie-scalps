@@ -113,6 +113,11 @@
   <div class="header-right">
     <div class="conn-status connecting" id="connStatus">Connecting</div>
     <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <div class="chart-toggle">
+      <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
+      <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
+    </div>
+    <button class="toggle-btn" id="btnTheme" onclick="toggleTheme()" style="border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-size:14px;">🌙</button>
     <div class="timestamp" id="clock">--:--:-- UTC</div>
   </div>
 </header>
@@ -122,11 +127,7 @@
   <div class="legend-item"><div class="legend-line" style="background:var(--blue)"></div><span>Small Liq</span></div>
   <div class="legend-item"><div class="legend-line" style="background:var(--purple)"></div><span>Max Pain</span></div>
   <div class="legend-item"><div class="legend-line" style="background:rgba(74,222,128,0.5)"></div><span>Price</span></div>
-  <div class="chart-toggle" style="margin-left:8px">
-    <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
-    <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
-  </div>
-  <button class="toggle-btn" id="btnTheme" onclick="toggleTheme()" style="margin-left:8px;border:1px solid var(--border);border-radius:3px;padding:4px 10px;">🌙</button>
+
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="main">
