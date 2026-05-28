@@ -98,6 +98,12 @@
   ::-webkit-scrollbar{width:3px;}
   ::-webkit-scrollbar-track{background:var(--bg);}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  .toggle-row{
+    display:flex;align-items:center;gap:8px;
+    padding:6px 24px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
   @media(max-width:900px){.main{grid-template-columns:1fr;height:auto;}.chart-area{height:60vw;min-height:280px;}}
 </style>
 </head>
@@ -113,14 +119,16 @@
   <div class="header-right">
     <div class="conn-status connecting" id="connStatus">Connecting</div>
     <div class="live-badge"><div class="live-dot"></div>Live</div>
-    <div class="chart-toggle">
-      <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
-      <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
-    </div>
-    <button class="toggle-btn" id="btnTheme" onclick="toggleTheme()" style="border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-size:14px;">🌙</button>
     <div class="timestamp" id="clock">--:--:-- UTC</div>
   </div>
 </header>
+<div class="toggle-row">
+  <div class="chart-toggle">
+    <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candles</button>
+    <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
+  </div>
+  <button class="toggle-btn" id="btnTheme" onclick="toggleTheme()" style="border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-size:14px;background:none;cursor:pointer;">🌙</button>
+</div>
 <div class="legend">
   <div class="legend-item"><div class="legend-line" style="background:var(--red)"></div><span>Large Liq</span></div>
   <div class="legend-item"><div class="legend-line" style="background:var(--yellow)"></div><span>Mid Liq</span></div>
