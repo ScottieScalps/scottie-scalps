@@ -599,10 +599,18 @@ function toggleMode() {
 setConn('connecting');
 connectPrice();
 connectCandles();
-fetchOI();
 fetchFunding();
 setInterval(updTS,1000);
 setInterval(updRead,5000);
+// Retry fetchOI until price is available
+function initOI() {
+  if (prices[asset]) {
+    fetchOI();
+  } else {
+    setTimeout(initOI, 500);
+  }
+}
+setTimeout(initOI, 1000);
 </script>
 </body>
 </html>
