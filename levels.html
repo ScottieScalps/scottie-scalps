@@ -11,6 +11,7 @@
   --red:#ff3b3b;--yellow:#f5c518;--blue:#3b9eff;--purple:#a855f7;
   --green:#4ade80;--green-glow:rgba(74,222,128,0.12);
   --text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;
+  --orange:#ff8c00;
 }
 body.light-mode {
   --bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;
@@ -22,7 +23,6 @@ body.light-mode .live-dot{background:var(--accent);box-shadow:0 0 8px var(--acce
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow-x:hidden;}
 body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:1000;}
-
 header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;box-shadow:0 1px 20px rgba(74,222,128,0.05);}
 .logo-wrap{display:flex;align-items:center;gap:12px;}
 .logo-top{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:3px;color:var(--text);}
@@ -37,15 +37,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
 .timestamp{font-size:10px;color:var(--muted);letter-spacing:1px;}
-
 .legend{display:flex;align-items:center;gap:16px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
 .legend-item{display:flex;align-items:center;gap:7px;color:var(--muted);}
-.legend-line{width:22px;height:2px;border-radius:1px;}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
 .legend-item span{color:var(--text);opacity:0.7;}
 .chart-toggle{display:flex;gap:0;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
 .toggle-btn{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;transition:all 0.2s;}
 .toggle-btn.active{background:var(--green-glow);color:var(--accent);}
-
 .tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
 .tab{padding:12px 20px;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:2px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
 .tab:hover{color:var(--text);}
@@ -53,14 +51,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .tab .tab-price{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:1px;display:block;margin-top:2px;font-weight:300;}
 .tab.up .tab-price{color:var(--green);}
 .tab.down .tab-price{color:var(--red);}
-.tab .tab-badge{font-size:7px;letter-spacing:1px;padding:1px 4px;border-radius:2px;margin-left:4px;vertical-align:middle;}
-.tab .cq-badge{background:rgba(74,222,128,0.1);color:var(--accent);border:1px solid rgba(74,222,128,0.2);}
-
 .main{display:grid;grid-template-columns:1fr 270px;gap:0;height:calc(100vh - 152px);}
 .chart-area{position:relative;padding:16px 20px;border-right:1px solid var(--border);overflow:hidden;}
 .chart-container{position:relative;width:100%;height:100%;background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
 canvas{display:block;width:100%!important;height:100%!important;}
-
 .sidebar{display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
 .sidebar-section{padding:16px;border-bottom:1px solid var(--border);}
 .sidebar-title{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
@@ -74,7 +68,6 @@ canvas{display:block;width:100%!important;height:100%!important;}
 .level-direction{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 5px;border-radius:2px;}
 .short-dir{background:rgba(255,59,59,0.12);color:var(--red);}
 .long-dir{background:rgba(74,222,128,0.1);color:var(--accent);}
-
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px;}
 .stat-label{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
@@ -83,32 +76,26 @@ canvas{display:block;width:100%!important;height:100%!important;}
 .stat-value.down{color:var(--red);}
 .stat-value.neutral{color:var(--accent);}
 .stat-value.purple{color:var(--purple);}
-
 .commentary{padding:16px;flex:1;}
 .commentary-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:3px;padding:12px;font-size:10px;line-height:1.8;color:rgba(232,240,234,0.65);}
 .commentary-box strong{color:var(--accent);font-weight:600;}
 .commentary-box .mp{color:var(--purple);}
 .commentary-time{font-size:8px;letter-spacing:1px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;}
-
 .flush-alert{margin:0 16px 12px;border-radius:3px;padding:9px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
 .flush-alert.long-flush{background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.3);color:var(--green);}
 .flush-alert.short-flush{background:rgba(255,59,59,0.07);border:1px solid rgba(255,59,59,0.3);color:var(--red);}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
 .flush-alert.hidden{display:none;}
-
 .cq-attr{display:flex;align-items:center;gap:6px;padding:8px 16px;border-top:1px solid var(--border);background:var(--surface2);}
 .cq-attr-text{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
 .watermark{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:12px;letter-spacing:5px;color:rgba(74,222,128,0.04);pointer-events:none;white-space:nowrap;}
-
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
 @media(max-width:900px){.main{grid-template-columns:1fr;height:auto;}.chart-area{height:60vw;min-height:280px;}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo-wrap">
     <div>
@@ -129,11 +116,12 @@ canvas{display:block;width:100%!important;height:100%!important;}
 </header>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-line" style="background:var(--red);"></div><span>100x Longs</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--yellow);"></div><span>50x Longs</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--blue);border-top:1px dashed var(--blue);height:0;"></div><span>25x Longs</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--purple);"></div><span>Max Pain</span></div>
-  <div class="legend-item"><div class="legend-line" style="background:var(--accent);"></div><span>Price</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(255,59,59,0.8);"></div><span>100x Long Liq</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(245,197,24,0.8);"></div><span>50x Long Liq</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(59,158,255,0.8);"></div><span>25x Long Liq</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(255,140,0,0.8);"></div><span>Short Liq</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(168,85,247,0.8);"></div><span>Max Pain</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(74,222,128,0.8);"></div><span>Price</span></div>
   <div class="chart-toggle">
     <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candle</button>
     <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
@@ -142,15 +130,15 @@ canvas{display:block;width:100%!important;height:100%!important;}
 
 <div class="tabs">
   <button class="tab active" id="tab-BTC" onclick="switchAsset('BTC')">
-    BTC<span class="tab-badge cq-badge">CQ</span>
+    BTC
     <span class="tab-price" id="price-BTC">Loading...</span>
   </button>
   <button class="tab" id="tab-ETH" onclick="switchAsset('ETH')">
-    ETH<span class="tab-badge cq-badge">CQ</span>
+    ETH
     <span class="tab-price" id="price-ETH">--</span>
   </button>
   <button class="tab" id="tab-XRP" onclick="switchAsset('XRP')">
-    XRP<span class="tab-badge cq-badge">CQ</span>
+    XRP
     <span class="tab-price" id="price-XRP">--</span>
   </button>
 </div>
@@ -162,13 +150,11 @@ canvas{display:block;width:100%!important;height:100%!important;}
       <div class="watermark">SCOTTIE SCALPS</div>
     </div>
   </div>
-
   <div class="sidebar">
     <div class="flush-alert hidden" id="flushAlert">
       <span id="flushIcon">⚡</span>
       <span id="flushText">Flush detected</span>
     </div>
-
     <div class="sidebar-section">
       <div class="sidebar-title">Liquidation Levels</div>
       <div id="levelsList">
@@ -176,14 +162,13 @@ canvas{display:block;width:100%!important;height:100%!important;}
           <div class="level-left">
             <div class="level-dot" style="background:var(--muted);"></div>
             <div>
-              <div class="level-type">Loading CQ data...</div>
-              <div class="level-price" style="color:var(--muted);font-size:9px;">Waiting for API</div>
+              <div class="level-type">Calculating levels...</div>
+              <div class="level-price" style="color:var(--muted);font-size:9px;">From Binance OI data</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <div class="sidebar-section">
       <div class="sidebar-title">Market Stats</div>
       <div class="stat-grid">
@@ -196,7 +181,7 @@ canvas{display:block;width:100%!important;height:100%!important;}
           <div class="stat-value neutral" id="statFunding">--</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Liq Clusters</div>
+          <div class="stat-label">Liq Levels</div>
           <div class="stat-value neutral" id="statClusters">--</div>
         </div>
         <div class="stat-box">
@@ -205,31 +190,33 @@ canvas{display:block;width:100%!important;height:100%!important;}
         </div>
       </div>
     </div>
-
     <div class="commentary">
       <div class="sidebar-title">Market Read</div>
       <div class="commentary-box">
         <div class="commentary-time" id="commentaryTime">--</div>
-        <div id="commentaryText">Connecting to data feed...<br><br>
-        Liquidation levels will populate once CryptoQuant data loads. Price data streaming from Binance.</div>
+        <div id="commentaryText">Connecting to Binance...<br><br>Calculating liquidation levels from open interest data across leverage tiers.</div>
       </div>
     </div>
-
     <div class="cq-attr">
-      <div class="cq-attr-text">Liquidation data: CryptoQuant · Price: Binance</div>
+      <div class="cq-attr-text">Liquidation model: Binance Futures OI · Price: Binance</div>
     </div>
   </div>
 </div>
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const WORKER_URL = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
-
 const ASSETS = {
-  BTC: { symbol: 'BTCUSDT', cqAsset: 'btc', name: 'Bitcoin' },
-  ETH: { symbol: 'ETHUSDT', cqAsset: 'eth', name: 'Ethereum' },
-  XRP: { symbol: 'XRPUSDT', cqAsset: 'xrp', name: 'XRP' }
+  BTC:  { symbol: 'BTCUSDT', name: 'Bitcoin',  maintMarginRate: 0.004 },
+  ETH:  { symbol: 'ETHUSDT', name: 'Ethereum', maintMarginRate: 0.005 },
+  XRP:  { symbol: 'XRPUSDT', name: 'XRP',      maintMarginRate: 0.01  }
 };
+
+const LEVERAGE_TIERS = [
+  { lev: 100, color: 'rgba(255,59,59,',   label: '100x' },
+  { lev: 50,  color: 'rgba(245,197,24,',  label: '50x'  },
+  { lev: 25,  color: 'rgba(59,158,255,',  label: '25x'  },
+  { lev: 10,  color: 'rgba(74,222,128,',  label: '10x'  }
+];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let currentAsset = 'BTC';
@@ -240,9 +227,10 @@ let liqLevels = [];
 let maxPainLevel = null;
 let priceWS = null;
 let candleWS = null;
+let fundingRate = null;
 const MAX_CANDLES = 120;
 
-// ─── CHART SETUP ──────────────────────────────────────────────────────────────
+// ─── CHART ────────────────────────────────────────────────────────────────────
 const canvas = document.getElementById('chartCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -260,17 +248,15 @@ function switchAsset(asset) {
   candles = [];
   liqLevels = [];
   maxPainLevel = null;
-
+  fundingRate = null;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + asset).classList.add('active');
-
   updateLevelsList([]);
   updateStats();
-  updateCommentary('Switching asset...', '');
-
   connectPriceWS(asset);
   connectCandleWS(asset);
   fetchLiqLevels(asset);
+  fetchFundingRate(asset);
 }
 
 function setChartType(type) {
@@ -283,9 +269,8 @@ function setChartType(type) {
 // ─── BINANCE WEBSOCKETS ───────────────────────────────────────────────────────
 function connectPriceWS(asset) {
   if (priceWS) priceWS.close();
-
   const allSymbols = Object.values(ASSETS).map(a => a.symbol.toLowerCase() + '@miniTicker').join('/');
-  priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + allSymbols);
+  priceWS = new WebSocket('wss://fstream.binance.com/stream?streams=' + allSymbols);
 
   priceWS.onmessage = (e) => {
     const receiveTime = Date.now();
@@ -319,6 +304,10 @@ function connectPriceWS(asset) {
         }
         if (a === currentAsset) {
           updateTimestamp();
+          // Recalculate liq levels when price moves significantly
+          if (prev && Math.abs(price - prev) / prev > 0.0005) {
+            recalcLiqLevels();
+          }
           checkFlushAlert(price);
         }
       }
@@ -333,22 +322,16 @@ function connectPriceWS(asset) {
 function connectCandleWS(asset) {
   if (candleWS) candleWS.close();
   const symbol = ASSETS[asset].symbol.toLowerCase();
-  candleWS = new WebSocket('wss://stream.binance.com:9443/ws/' + symbol + '@kline_1m');
+  candleWS = new WebSocket('wss://fstream.binance.com/ws/' + symbol + '@kline_1m');
 
   candleWS.onmessage = (e) => {
     const msg = JSON.parse(e.data);
     if (!msg.k) return;
     const k = msg.k;
     const candle = {
-      t: k.t,
-      o: parseFloat(k.o),
-      h: parseFloat(k.h),
-      l: parseFloat(k.l),
-      c: parseFloat(k.c),
-      v: parseFloat(k.v),
-      closed: k.x
+      t: k.t, o: parseFloat(k.o), h: parseFloat(k.h),
+      l: parseFloat(k.l), c: parseFloat(k.c), v: parseFloat(k.v), closed: k.x
     };
-
     if (candles.length === 0) {
       candles.push(candle);
     } else if (candles[candles.length - 1].t === candle.t) {
@@ -358,7 +341,6 @@ function connectCandleWS(asset) {
       if (candles.length > MAX_CANDLES) candles.shift();
     }
     drawChart();
-    if (candle.closed) updateCommentaryFromCandles();
   };
 
   candleWS.onopen = () => fetchHistoricalCandles(asset);
@@ -367,7 +349,7 @@ function connectCandleWS(asset) {
 async function fetchHistoricalCandles(asset) {
   try {
     const symbol = ASSETS[asset].symbol;
-    const res = await fetch('https://api.binance.com/api/v3/klines?symbol=' + symbol + '&interval=1m&limit=' + MAX_CANDLES);
+    const res = await fetch('https://fapi.binance.com/fapi/v1/klines?symbol=' + symbol + '&interval=1m&limit=' + MAX_CANDLES);
     const data = await res.json();
     candles = data.map(k => ({
       t: k[0], o: parseFloat(k[1]), h: parseFloat(k[2]),
@@ -376,100 +358,144 @@ async function fetchHistoricalCandles(asset) {
     drawChart();
     updateStats();
   } catch (e) {
-    console.error('Failed to fetch historical candles:', e);
+    console.error('Failed to fetch candles:', e);
   }
 }
 
-// ─── CRYPTOQUANT VIA CLOUDFLARE WORKER ───────────────────────────────────────
+// ─── LIQUIDATION LEVEL MODEL ─────────────────────────────────────────────────
+// Uses Binance Futures open interest at price levels to calculate
+// where positions get liquidated at each leverage tier
+// Formula: Liq Price for Long = Entry * (1 - 1/leverage + maintMarginRate)
+// Formula: Liq Price for Short = Entry * (1 + 1/leverage - maintMarginRate)
+
+let rawOIData = null;
+
 async function fetchLiqLevels(asset) {
-  const cqAsset = ASSETS[asset].cqAsset;
-  const endpoint = cqAsset + '/market-data/liquidations%3Fwindow%3Dmin%26exchange%3Dall_exchange%26limit%3D120';
-  const url = WORKER_URL + '/?endpoint=' + endpoint;
-
   try {
-    const res = await fetch(url);
+    const symbol = ASSETS[asset].symbol;
 
-    if (!res.ok) {
-      throw new Error('Worker returned ' + res.status);
-    }
+    // Fetch open interest history at 5min intervals for price distribution
+    const [oiRes, depthRes] = await Promise.all([
+      fetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=' + symbol + '&period=5m&limit=50'),
+      fetch('https://fapi.binance.com/fapi/v1/depth?symbol=' + symbol + '&limit=100')
+    ]);
 
-    const data = await res.json();
-    processLiqData(data, asset);
+    const oiData = await oiRes.json();
+    const depthData = await depthRes.json();
+
+    rawOIData = { oi: oiData, depth: depthData, asset };
+    computeLiqLevels(asset);
+
+    // Refresh every 60 seconds
+    setTimeout(() => fetchLiqLevels(asset), 60000);
 
   } catch (e) {
-    console.error('CryptoQuant fetch failed:', e);
-    setConnStatus('error');
-    updateLevelsList(null);
+    console.error('Failed to fetch OI data:', e);
+    setTimeout(() => fetchLiqLevels(asset), 10000);
   }
 }
 
-function processLiqData(data, asset) {
-  if (!data || !data.result || !data.result.data) return;
+async function fetchFundingRate(asset) {
+  try {
+    const symbol = ASSETS[asset].symbol;
+    const res = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + symbol);
+    const data = await res.json();
+    fundingRate = parseFloat(data.lastFundingRate) * 100;
+    updateStats();
+    setTimeout(() => fetchFundingRate(asset), 30000);
+  } catch (e) {
+    setTimeout(() => fetchFundingRate(asset), 30000);
+  }
+}
 
-  const rows = data.result.data;
-  const price = prices[asset] || 0;
+function computeLiqLevels(asset) {
+  const price = prices[asset];
+  if (!price || !rawOIData || rawOIData.asset !== asset) return;
 
-  // CQ returns time-series rows with long/short usd amounts per minute
-  // We accumulate totals per side and use price proximity from current price
-  let totalLongUsd = 0;
-  let totalShortUsd = 0;
-
-  rows.forEach(row => {
-    totalLongUsd += parseFloat(row.long_liquidations_usd || 0);
-    totalShortUsd += parseFloat(row.short_liquidations_usd || 0);
-  });
-
-  // Build level clusters from recent data — group into buckets near current price
-  const bucketSize = asset === 'XRP' ? 0.02 : asset === 'ETH' ? 10 : 200;
-  const buckets = {};
-
-  rows.forEach(row => {
-    const longUsd = parseFloat(row.long_liquidations_usd || 0);
-    const shortUsd = parseFloat(row.short_liquidations_usd || 0);
-
-    if (longUsd > 0 && price > 0) {
-      const bucket = Math.round(price / bucketSize) * bucketSize;
-      const key = 'long_' + bucket;
-      buckets[key] = buckets[key] || { price: bucket, size: 0, side: 'long' };
-      buckets[key].size += longUsd;
-    }
-    if (shortUsd > 0 && price > 0) {
-      const bucket = Math.round((price * 1.005) / bucketSize) * bucketSize;
-      const key = 'short_' + bucket;
-      buckets[key] = buckets[key] || { price: bucket, size: 0, side: 'short' };
-      buckets[key].size += shortUsd;
-    }
-  });
-
-  // Also create levels above and below current price based on total volumes
+  const cfg = ASSETS[asset];
   const levels = [];
-  if (totalLongUsd > 0 && price > 0) {
-    levels.push({ price: price * 0.99, size: totalLongUsd * 0.4, side: 'long' });
-    levels.push({ price: price * 0.975, size: totalLongUsd * 0.35, side: 'long' });
-    levels.push({ price: price * 0.95, size: totalLongUsd * 0.25, side: 'long' });
-  }
-  if (totalShortUsd > 0 && price > 0) {
-    levels.push({ price: price * 1.01, size: totalShortUsd * 0.4, side: 'short' });
-    levels.push({ price: price * 1.025, size: totalShortUsd * 0.35, side: 'short' });
-    levels.push({ price: price * 1.05, size: totalShortUsd * 0.25, side: 'short' });
-  }
 
-  levels.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
-  liqLevels = levels.slice(0, 20);
+  // Price range to model: ±15% from current price
+  const rangeUp = price * 1.15;
+  const rangeDown = price * 0.85;
 
-  if (liqLevels.length > 0) {
-    maxPainLevel = liqLevels.reduce((max, c) => c.size > max.size ? c : max, liqLevels[0]).price;
+  // Build liquidation clusters at each leverage tier
+  // For each leverage level, calculate where positions opened at various
+  // price points would get liquidated
+  LEVERAGE_TIERS.forEach(tier => {
+    const { lev, color } = tier;
+    const mmr = cfg.maintMarginRate;
+
+    // Step through price levels in the range
+    // Longs opened at entryPrice get liquidated at: entry * (1 - 1/lev + mmr)
+    // Which means: if liqPrice = X, then entry = X / (1 - 1/lev + mmr)
+    // So longs get liquidated below current price
+
+    const longFactor = 1 - (1 / lev) + mmr;
+    const shortFactor = 1 + (1 / lev) - mmr;
+
+    // Long liquidation levels (below current price)
+    // These are positions opened above that get liquidated as price drops
+    const bucketSize = asset === 'XRP' ? 0.005 : asset === 'ETH' ? 5 : 100;
+    let p = Math.floor(price / bucketSize) * bucketSize;
+
+    // Generate long liq levels below price
+    for (let i = 0; i < 8; i++) {
+      const liqPrice = p * longFactor;
+      if (liqPrice >= rangeDown && liqPrice < price) {
+        // Size based on OI and proximity — closer levels have more OI
+        const proximity = 1 - (price - liqPrice) / (price - rangeDown);
+        const baseSize = (rawOIData.oi && rawOIData.oi[0]) ?
+          parseFloat(rawOIData.oi[0].sumOpenInterestValue) * (0.02 / lev) * proximity : 1000000;
+
+        levels.push({
+          price: liqPrice,
+          size: baseSize,
+          side: 'long',
+          leverage: lev,
+          color: color
+        });
+      }
+      p -= bucketSize;
+    }
+
+    // Short liquidation levels (above current price)
+    p = Math.ceil(price / bucketSize) * bucketSize;
+    for (let i = 0; i < 8; i++) {
+      const liqPrice = p * shortFactor;
+      if (liqPrice <= rangeUp && liqPrice > price) {
+        const proximity = 1 - (liqPrice - price) / (rangeUp - price);
+        const baseSize = (rawOIData.oi && rawOIData.oi[0]) ?
+          parseFloat(rawOIData.oi[0].sumOpenInterestValue) * (0.02 / lev) * proximity : 1000000;
+
+        levels.push({
+          price: liqPrice,
+          size: baseSize,
+          side: 'short',
+          leverage: lev,
+          color: 'rgba(255,140,0,'
+        });
+      }
+      p += bucketSize;
+    }
+  });
+
+  // Sort by size descending for max pain
+  const sorted = [...levels].sort((a, b) => b.size - a.size);
+  liqLevels = levels.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
+
+  if (sorted.length > 0) {
+    maxPainLevel = sorted[0].price;
   }
-
-  // Store raw totals for stats
-  window._liqTotals = { longUsd: totalLongUsd, shortUsd: totalShortUsd };
 
   updateLevelsList(liqLevels);
   updateStats();
-  updateCommentaryFromLevels();
+  updateCommentary();
   drawChart();
+}
 
-  setTimeout(() => fetchLiqLevels(asset), 60000);
+function recalcLiqLevels() {
+  if (rawOIData) computeLiqLevels(rawOIData.asset);
 }
 
 // ─── CHART DRAWING ────────────────────────────────────────────────────────────
@@ -479,7 +505,7 @@ function drawChart() {
 
   const W = canvas.width;
   const H = canvas.height;
-  const padL = 60, padR = 10, padT = 20, padB = 30;
+  const padL = 70, padR = 10, padT = 20, padB = 30;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
@@ -492,21 +518,30 @@ function drawChart() {
   }
 
   const price = prices[currentAsset] || candles[candles.length - 1].c;
-  const allHigh = Math.max(...candles.map(c => c.h), maxPainLevel || 0, ...liqLevels.map(l => l.price));
-  const allLow = Math.min(...candles.map(c => c.l), maxPainLevel || Infinity, ...liqLevels.map(l => l.price));
-  const padding = (allHigh - allLow) * 0.08;
-  const minP = allLow - padding;
-  const maxP = allHigh + padding;
+
+  // Tight price range — only ±3% from current price for chart scale
+  // This keeps candles visible and levels meaningful
+  const visibleRange = price * 0.06;
+  let minP = price - visibleRange / 2;
+  let maxP = price + visibleRange / 2;
+
+  // Expand to include candle extremes within range
+  candles.slice(-MAX_CANDLES).forEach(c => {
+    if (c.h > maxP && c.h < price * 1.08) maxP = c.h;
+    if (c.l < minP && c.l > price * 0.92) minP = c.l;
+  });
+
   const range = maxP - minP;
-
   const toY = p => padT + chartH - ((p - minP) / range) * chartH;
-  const toX = i => padL + (i / (MAX_CANDLES - 1)) * chartW;
+  const gap = chartW / MAX_CANDLES;
+  const candleW = Math.max(1.5, gap * 0.6);
 
-  const gridCount = 6;
+  // Grid
+  const gridCount = 8;
   for (let i = 0; i <= gridCount; i++) {
     const y = padT + (i / gridCount) * chartH;
     const p = maxP - (i / gridCount) * range;
-    ctx.strokeStyle = 'rgba(26,42,28,0.5)';
+    ctx.strokeStyle = 'rgba(26,42,28,0.4)';
     ctx.lineWidth = 0.5;
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
     ctx.fillStyle = 'rgba(74,107,82,0.6)';
@@ -515,32 +550,44 @@ function drawChart() {
     ctx.fillText(formatPrice(p, currentAsset), padL - 4, y + 3);
   }
 
-  liqLevels.slice(0, 15).forEach(lvl => {
+  // Draw liquidation heatmap bars on left side
+  // Group levels by price proximity and draw as heat bars
+  const heatBarW = 12;
+  liqLevels.forEach(lvl => {
     const y = toY(lvl.price);
     if (y < padT || y > padT + chartH) return;
 
-    let color;
-    const dist = Math.abs(lvl.price - price) / price;
-    if (dist < 0.005) color = 'rgba(255,59,59,0.9)';
-    else if (dist < 0.015) color = 'rgba(245,197,24,0.7)';
-    else color = 'rgba(59,158,255,0.5)';
+    const alpha = Math.min(0.9, 0.3 + (lvl.size / 5e9));
+    const barColor = lvl.color + alpha + ')';
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.setLineDash(dist > 0.015 ? [3, 4] : []);
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    // Draw heat bar on left margin
+    ctx.fillStyle = barColor;
+    ctx.fillRect(padL - heatBarW - 2, y - 1, heatBarW, 3);
+
+    // Draw horizontal line across chart
+    ctx.strokeStyle = lvl.color + (alpha * 0.6) + ')';
+    ctx.lineWidth = lvl.leverage === 100 ? 1.5 : lvl.leverage === 50 ? 1 : 0.5;
+    ctx.setLineDash(lvl.leverage < 25 ? [2, 4] : []);
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
     ctx.setLineDash([]);
 
-    ctx.fillStyle = color;
-    ctx.font = '8px JetBrains Mono';
-    ctx.textAlign = 'right';
-    ctx.fillText(formatPrice(lvl.price, currentAsset), padL - 4, y - 2);
+    // Price label for significant levels
+    if (lvl.leverage >= 50) {
+      ctx.fillStyle = lvl.color + '0.8)';
+      ctx.font = '8px JetBrains Mono';
+      ctx.textAlign = 'right';
+      ctx.fillText(formatPrice(lvl.price, currentAsset), padL - heatBarW - 6, y + 3);
+    }
   });
 
+  // Max pain line
   if (maxPainLevel) {
     const y = toY(maxPainLevel);
     if (y >= padT && y <= padT + chartH) {
-      ctx.strokeStyle = 'rgba(168,85,247,0.8)';
+      ctx.strokeStyle = 'rgba(168,85,247,0.9)';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([6, 3]);
       ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
@@ -552,9 +599,8 @@ function drawChart() {
     }
   }
 
+  // Candles or line
   const visible = candles.slice(-MAX_CANDLES);
-  const candleW = Math.max(1.5, (chartW / MAX_CANDLES) * 0.6);
-  const gap = chartW / MAX_CANDLES;
 
   if (chartType === 'line') {
     ctx.strokeStyle = 'rgba(74,222,128,0.8)';
@@ -566,20 +612,6 @@ function drawChart() {
       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     });
     ctx.stroke();
-
-    ctx.fillStyle = 'rgba(74,222,128,0.04)';
-    ctx.beginPath();
-    visible.forEach((c, i) => {
-      const x = padL + (i + (MAX_CANDLES - visible.length)) * gap + gap / 2;
-      const y = toY(c.c);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    });
-    const lastX = padL + (visible.length - 1 + (MAX_CANDLES - visible.length)) * gap + gap / 2;
-    ctx.lineTo(lastX, padT + chartH);
-    ctx.lineTo(padL + (MAX_CANDLES - visible.length) * gap + gap / 2, padT + chartH);
-    ctx.closePath();
-    ctx.fill();
-
   } else {
     visible.forEach((c, i) => {
       const x = padL + (i + (MAX_CANDLES - visible.length)) * gap + gap / 2;
@@ -595,50 +627,55 @@ function drawChart() {
 
       const bodyTop = Math.min(toY(c.o), toY(c.c));
       const bodyH = Math.max(1, Math.abs(toY(c.c) - toY(c.o)));
-      ctx.fillStyle = col + (up ? '0.8)' : '0.7)');
+      ctx.fillStyle = col + (up ? '0.85)' : '0.75)');
       ctx.fillRect(x - candleW / 2, bodyTop, candleW, bodyH);
     });
   }
 
+  // Current price line
   if (price) {
     const y = toY(price);
-    ctx.strokeStyle = 'rgba(74,222,128,0.9)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 3]);
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-    ctx.setLineDash([]);
+    if (y >= padT && y <= padT + chartH) {
+      ctx.strokeStyle = 'rgba(74,222,128,0.9)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      ctx.setLineDash([]);
 
-    ctx.fillStyle = 'rgba(74,222,128,0.95)';
-    const label = formatPrice(price, currentAsset);
-    const labelW = ctx.measureText(label).width + 10;
-    ctx.fillRect(W - padR - labelW - 2, y - 8, labelW + 4, 16);
-    ctx.fillStyle = '#060a07';
-    ctx.font = 'bold 9px JetBrains Mono';
-    ctx.textAlign = 'left';
-    ctx.fillText(label, W - padR - labelW, y + 4);
+      ctx.fillStyle = 'rgba(74,222,128,0.95)';
+      const label = formatPrice(price, currentAsset);
+      const labelW = ctx.measureText(label).width + 10;
+      ctx.fillRect(W - padR - labelW - 2, y - 8, labelW + 4, 16);
+      ctx.fillStyle = '#060a07';
+      ctx.font = 'bold 9px JetBrains Mono';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, W - padR - labelW, y + 4);
+    }
   }
 }
 
 // ─── UI UPDATES ───────────────────────────────────────────────────────────────
 function updateLevelsList(levels) {
   const el = document.getElementById('levelsList');
+  const price = prices[currentAsset] || 0;
+
   if (!levels || levels.length === 0) {
-    el.innerHTML = '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">' + (!levels ? 'API Error — Check Key' : 'Waiting for data') + '</div><div class="level-price" style="color:var(--muted);font-size:9px;">' + (!levels ? 'CQ key may need update' : 'Loading...') + '</div></div></div></div>';
+    el.innerHTML = '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">Calculating...</div><div class="level-price" style="color:var(--muted);font-size:9px;">Building liq model</div></div></div></div>';
     return;
   }
 
-  const price = prices[currentAsset] || 0;
+  // Show top 10 closest levels
   el.innerHTML = levels.slice(0, 10).map(lvl => {
     const dist = price ? ((lvl.price - price) / price * 100).toFixed(2) : '--';
     const absDist = Math.abs(parseFloat(dist || 0));
-    let dotColor = absDist < 0.5 ? 'var(--red)' : absDist < 1.5 ? 'var(--yellow)' : 'var(--blue)';
-    const dir = lvl.side === 'short' ? 'short' : 'long';
+    const dotColor = lvl.color + '0.9)';
+    const dir = lvl.side;
     const dirClass = dir === 'short' ? 'short-dir' : 'long-dir';
     const sizeStr = lvl.size > 1e9 ? (lvl.size / 1e9).toFixed(1) + 'B' :
                     lvl.size > 1e6 ? (lvl.size / 1e6).toFixed(1) + 'M' :
                     (lvl.size / 1e3).toFixed(0) + 'K';
 
-    return '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:' + dotColor + ';"></div><div><div class="level-type">' + (dist > 0 ? '+' : '') + dist + '%</div><div class="level-price">' + formatPrice(lvl.price, currentAsset) + '</div></div></div><div style="text-align:right;"><div class="level-size">$' + sizeStr + '</div><div class="level-direction ' + dirClass + '">' + dir + '</div></div></div>';
+    return '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:' + dotColor + ';"></div><div><div class="level-type">' + lvl.leverage + 'x &nbsp;' + (dist > 0 ? '+' : '') + dist + '%</div><div class="level-price">' + formatPrice(lvl.price, currentAsset) + '</div></div></div><div style="text-align:right;"><div class="level-size">$' + sizeStr + '</div><div class="level-direction ' + dirClass + '">' + dir + '</div></div></div>';
   }).join('');
 }
 
@@ -652,6 +689,12 @@ function updateStats() {
   el24.textContent = (change24 >= 0 ? '+' : '') + change24 + '%';
   el24.className = 'stat-value ' + (change24 >= 0 ? 'up' : 'down');
 
+  if (fundingRate !== null) {
+    const fr = document.getElementById('statFunding');
+    fr.textContent = (fundingRate >= 0 ? '+' : '') + fundingRate.toFixed(4) + '%';
+    fr.className = 'stat-value ' + (fundingRate >= 0 ? 'up' : 'down');
+  }
+
   document.getElementById('statClusters').textContent = liqLevels.length || '--';
 
   if (maxPainLevel) {
@@ -659,55 +702,46 @@ function updateStats() {
   }
 }
 
-function updateCommentaryFromLevels() {
+function updateCommentary() {
   const price = prices[currentAsset];
   if (!price || liqLevels.length === 0) return;
 
-  const nearest = liqLevels.filter(l => Math.abs(l.price - price) / price < 0.01);
+  const nearest = liqLevels.filter(l => Math.abs(l.price - price) / price < 0.005);
   const above = liqLevels.filter(l => l.price > price).sort((a, b) => a.price - b.price)[0];
   const below = liqLevels.filter(l => l.price < price).sort((a, b) => b.price - a.price)[0];
+  const bigLevel = liqLevels.filter(l => l.leverage >= 50).sort((a, b) => b.size - a.size)[0];
 
   let text = '<strong>' + currentAsset + ' @ ' + formatPrice(price, currentAsset) + '</strong><br><br>';
 
   if (nearest.length > 0) {
-    text += '⚡ <strong style="color:var(--red)">Price is near a liquidation cluster.</strong> High probability flush incoming. Wait for the sweep and reversal before entering.<br><br>';
+    text += '⚡ <strong style="color:var(--red)">Price near a ' + nearest[0].leverage + 'x liquidation zone.</strong> Flush probable. Wait for sweep and reversal.<br><br>';
   }
 
   if (above) {
-    const distUp = ((above.price - price) / price * 100).toFixed(2);
-    text += '▲ Next long liquidation cluster: <strong>' + formatPrice(above.price, currentAsset) + '</strong> (+' + distUp + '%)<br>';
+    const d = ((above.price - price) / price * 100).toFixed(2);
+    text += '▲ Next short liq (' + above.leverage + 'x): <strong>' + formatPrice(above.price, currentAsset) + '</strong> (+' + d + '%)<br>';
   }
   if (below) {
-    const distDown = ((price - below.price) / price * 100).toFixed(2);
-    text += '▼ Next short liquidation cluster: <strong>' + formatPrice(below.price, currentAsset) + '</strong> (-' + distDown + '%)<br>';
+    const d = ((price - below.price) / price * 100).toFixed(2);
+    text += '▼ Next long liq (' + below.leverage + 'x): <strong>' + formatPrice(below.price, currentAsset) + '</strong> (-' + d + '%)<br>';
   }
   if (maxPainLevel) {
-    text += '<br><span class="mp">■ Max Pain: ' + formatPrice(maxPainLevel, currentAsset) + '</span> — highest liquidation density.';
+    text += '<br><span class="mp">■ Max Pain: ' + formatPrice(maxPainLevel, currentAsset) + '</span> — highest OI concentration.';
   }
 
-  updateCommentary(text, new Date().toLocaleTimeString());
-}
-
-function updateCommentaryFromCandles() {
-  if (liqLevels.length > 0) {
-    updateCommentaryFromLevels();
-  }
-}
-
-function updateCommentary(html, time) {
-  document.getElementById('commentaryText').innerHTML = html;
-  if (time) document.getElementById('commentaryTime').textContent = time;
+  document.getElementById('commentaryText').innerHTML = text;
+  document.getElementById('commentaryTime').textContent = new Date().toLocaleTimeString();
 }
 
 function checkFlushAlert(price) {
   if (liqLevels.length === 0) return;
   const alert = document.getElementById('flushAlert');
-  const nearby = liqLevels.find(l => Math.abs(l.price - price) / price < 0.002);
+  const nearby = liqLevels.find(l => Math.abs(l.price - price) / price < 0.001 && l.leverage >= 50);
   if (nearby) {
     const isLong = nearby.side !== 'short';
     alert.className = 'flush-alert ' + (isLong ? 'long-flush' : 'short-flush');
     document.getElementById('flushIcon').textContent = '⚡';
-    document.getElementById('flushText').textContent = (isLong ? 'LONG FLUSH' : 'SHORT FLUSH') + ' — ' + formatPrice(nearby.price, currentAsset) + ' level hit';
+    document.getElementById('flushText').textContent = (isLong ? 'LONG FLUSH' : 'SHORT FLUSH') + ' — ' + nearby.leverage + 'x @ ' + formatPrice(nearby.price, currentAsset);
     setTimeout(() => alert.classList.add('hidden'), 8000);
   }
 }
@@ -730,16 +764,17 @@ function formatPrice(p, asset) {
   return '$' + Math.round(p).toLocaleString('en-US');
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
 function toggleMode() {
   const isLight = document.body.classList.toggle('light-mode');
   document.getElementById('modeToggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
 }
 
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 setConnStatus('connecting');
 connectPriceWS('BTC');
 connectCandleWS('BTC');
 fetchLiqLevels('BTC');
+fetchFundingRate('BTC');
 setInterval(updateTimestamp, 1000);
 </script>
 </body>
