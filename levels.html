@@ -307,56 +307,67 @@ async function fetchFunding() {
 function buildFixedLevels(oi, depth) {
   const cfg = ASSETS[asset];
   const mmr = cfg.mmr;
-  const levels = [];
+  const p = prices[asset];
+  if (!p) return;
 
-  // Total OI gives us scale
-  const totalOI = parseFloat(oi.openInterest) * (prices[asset] || 70000);
-
-  // Build position map from order book
-  // Bids = buyers = long positions at those prices
-  // Asks = sellers = short positions at those prices
+  // Aggregate order book into large buckets (0.5% of price each)
+  // This prevents hundreds of tiny levels — we want meaningful zones
+  const bucketPct = 0.005; // 0.5% buckets
+  const bucketSize = p * bucketPct;
   const posMap = {};
 
   if (depth.bids) {
-    depth.bids.forEach(([p,q]) => {
-      const price = parseFloat(p);
-      const val = parseFloat(q) * price;
-      const bucket = Math.round(price / cfg.tick) * cfg.tick;
+    depth.bids.forEach(([px,q]) => {
+      const ep = parseFloat(px);
+      const val = parseFloat(q) * ep;
+      const bucket = Math.round(ep / bucketSize) * bucketSize;
       posMap[bucket] = (posMap[bucket]||0) + val;
     });
   }
   if (depth.asks) {
-    depth.asks.forEach(([p,q]) => {
-      const price = parseFloat(p);
-      const val = parseFloat(q) * price;
-      const bucket = Math.round(price / cfg.tick) * cfg.tick;
+    depth.asks.forEach(([px,q]) => {
+      const ep = parseFloat(px);
+      const val = parseFloat(q) * ep;
+      const bucket = Math.round(ep / bucketSize) * bucketSize;
       posMap[bucket] = (posMap[bucket]||0) + val;
     });
   }
 
-  // For each price level in the order book, calculate where
-  // leveraged positions opened AT THAT PRICE get liquidated
-  Object.entries(posMap).forEach(([entryStr, size]) => {
+  // Only keep the top buckets by size — max 20 entry zones
+  const topBuckets = Object.entries(posMap)
+    .sort((a,b) => b[1]-a[1])
+    .slice(0, 20);
+
+  const levels = [];
+
+  topBuckets.forEach(([entryStr, size]) => {
     const entry = parseFloat(entryStr);
-    if (size < 50000) return; // Skip tiny positions
 
     TIERS.forEach(tier => {
       const {lev, r, g, b} = tier;
-      // Long liq: if you opened a long at `entry` with `lev` leverage,
-      // you get liquidated at entry * (1 - 1/lev + mmr)
       const longLiq = entry * (1 - 1/lev + mmr);
-      // Short liq: entry * (1 + 1/lev - mmr)
       const shortLiq = entry * (1 + 1/lev - mmr);
 
-      levels.push({ price: longLiq, size, side:'long', lev, r, g, b });
-      levels.push({ price: shortLiq, size, side:'short', lev, r: SHORT[0], g: SHORT[1], b: SHORT[2] });
+      // Only include levels within ±8% of current price
+      if (longLiq > p * 0.92 && longLiq < p * 0.9998) {
+        levels.push({ price: longLiq, size, side:'long', lev, r, g, b });
+      }
+      if (shortLiq < p * 1.08 && shortLiq > p * 1.0002) {
+        levels.push({ price: shortLiq, size, side:'short', lev, r:SHORT[0], g:SHORT[1], b:SHORT[2] });
+      }
     });
   });
 
-  // These levels are NOW FIXED — they won't move as price changes
-  // Sort by size
-  const bySize = [...levels].sort((a,b)=>b.size-a.size);
-  maxPain = bySize.length > 0 ? bySize[0].price : null;
+  // Find max pain above AND below current price separately
+  const above = levels.filter(l=>l.price>p).sort((a,b)=>b.size-a.size);
+  const below = levels.filter(l=>l.price<p).sort((a,b)=>b.size-a.size);
+  // maxPain is the single largest level overall
+  const allBySize = [...levels].sort((a,b)=>b.size-a.size);
+  maxPain = allBySize.length > 0 ? allBySize[0].price : null;
+  // Store top pain above and below for display
+  window._painAbove = above.length > 0 ? above[0].price : null;
+  window._painBelow = below.length > 0 ? below[0].price : null;
+
   fixedLevels = levels;
 
   updLevels();
@@ -388,13 +399,14 @@ function draw() {
   let lo = Math.min(...vis.map(c=>c.l));
   let hi = Math.max(...vis.map(c=>c.h));
 
-  // Include ALL fixed levels in the price range
-  // So they show as fixed lines while candles move through them
+  // Include fixed levels but cap range to ±8% so chart stays readable
+  const priceMid = prices[asset] || candles[candles.length-1].c;
   fixedLevels.forEach(l => {
-    if (l.price < lo) lo = l.price;
-    if (l.price > hi) hi = l.price;
+    if (l.price < lo && l.price > priceMid*0.92) lo = l.price;
+    if (l.price > hi && l.price < priceMid*1.08) hi = l.price;
   });
-  if (maxPain) { if(maxPain<lo) lo=maxPain; if(maxPain>hi) hi=maxPain; }
+  if (window._painAbove && window._painAbove < priceMid*1.08) { if(window._painAbove>hi) hi=window._painAbove; }
+  if (window._painBelow && window._painBelow > priceMid*0.92) { if(window._painBelow<lo) lo=window._painBelow; }
 
   const pad = (hi-lo)*0.05;
   const minP = lo-pad, maxP = hi+pad;
@@ -443,10 +455,11 @@ function draw() {
     }
   });
 
-  // Max pain — fixed purple line
-  if (maxPain) {
-    const y = toY(maxPain);
-    if (y>=PT&&y<=PT+CH) {
+  // Max pain lines — one above price, one below
+  [[window._painAbove,'▲ MAX PAIN '],[window._painBelow,'▼ MAX PAIN ']].forEach(([mp,label]) => {
+    if (!mp) return;
+    const y = toY(mp);
+    if (y>=PT-2&&y<=PT+CH+2) {
       ctx.strokeStyle='rgba(168,85,247,0.85)';
       ctx.lineWidth=1.5;
       ctx.setLineDash([8,3]);
@@ -455,9 +468,9 @@ function draw() {
       ctx.fillStyle='rgba(168,85,247,0.9)';
       ctx.font='8px JetBrains Mono';
       ctx.textAlign='left';
-      ctx.fillText('MAX PAIN '+fmt(maxPain,asset), PL+4, y-3);
+      ctx.fillText(label+fmt(mp,asset), PL+4, y-3);
     }
-  }
+  });
 
   // ── CANDLES — these move left as time progresses ───────────────────────────
   if (chartType==='line') {
