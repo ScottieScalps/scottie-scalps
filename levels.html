@@ -233,7 +233,7 @@ function setChartType(t) {
 function connectPriceWS(asset) {
   if (priceWS) priceWS.close();
   const streams = Object.values(ASSETS).map(a => a.symbol.toLowerCase() + '@miniTicker').join('/');
-  priceWS = new WebSocket('wss://fstream.binance.com/stream?streams=' + streams);
+  priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + streams);
 
   priceWS.onmessage = (e) => {
     const receiveTime = Date.now();
