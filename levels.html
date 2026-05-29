@@ -318,21 +318,16 @@ async function fetchCandles(asset) {
 async function fetchOIandBuild(asset) {
   try {
     const sym = ASSETS[asset].symbol;
-
-    // Get OI history (5min intervals, last 100 periods = ~8 hours)
-    // This tells us how OI has changed at different price points
-    const [oiHist, markPrice] = await Promise.all([
-      proxyFetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=' + sym + '&period=5m&limit=100'),
-      proxyFetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + sym)
+    const [oiSnap, depth, premium] = await Promise.all([
+      proxyFetch("https://fapi.binance.com/fapi/v1/openInterest?symbol=" + sym),
+      proxyFetch("https://fapi.binance.com/fapi/v1/depth?symbol=" + sym + "&limit=100"),
+      proxyFetch("https://fapi.binance.com/fapi/v1/premiumIndex?symbol=" + sym)
     ]);
-
-    oiData = { oiHist, markPrice, asset };
+    oiData = { oiSnap, depth, premium, asset };
     buildLiqLevels(asset);
-
-    // Refresh every 2 minutes
     setTimeout(() => fetchOIandBuild(asset), 120000);
   } catch(e) {
-    console.error('OI fetch failed:', e);
+    console.error("OI fetch failed:", e);
     setTimeout(() => fetchOIandBuild(asset), 15000);
   }
 }
@@ -356,63 +351,62 @@ function buildLiqLevels(asset) {
   const mmr = cfg.maintMarginRate;
   const levels = [];
 
-  // Total OI from most recent data point
-  const totalOI = oiData.oiHist && oiData.oiHist.length > 0
-    ? parseFloat(oiData.oiHist[oiData.oiHist.length - 1].sumOpenInterestValue)
+  // Total OI from snapshot
+  const totalOI = oiData.oiSnap
+    ? parseFloat(oiData.oiSnap.openInterest) * price
     : price * 10000;
 
-  // Build a position distribution model
-  // Assumption: positions are distributed across price levels weighted by
-  // recency and OI change. We use OI history to estimate where positions were opened.
+  // Build position distribution from order book + candle history
+  // Order book bids = long positions, asks = short positions
   const positionMap = {};
 
-  // Map OI changes to approximate entry prices using candle close prices
-  if (candles.length > 0 && oiData.oiHist.length > 0) {
-    const histLen = Math.min(oiData.oiHist.length, candles.length);
-    for (let i = 0; i < histLen; i++) {
-      const oiEntry = oiData.oiHist[oiData.oiHist.length - 1 - i];
-      const candleIdx = candles.length - 1 - i;
-      if (candleIdx < 0) break;
-      const entryPrice = candles[candleIdx].c;
-      const oiVal = parseFloat(oiEntry.sumOpenInterestValue);
-      const prevOI = i < oiData.oiHist.length - 1
-        ? parseFloat(oiData.oiHist[oiData.oiHist.length - 2 - i].sumOpenInterestValue)
-        : oiVal;
-      const oiChange = Math.abs(oiVal - prevOI);
-      if (oiChange > 0) {
-        const bucket = Math.round(entryPrice / tick) * tick;
-        positionMap[bucket] = (positionMap[bucket] || 0) + oiChange;
-      }
-    }
+  // Use order book depth to estimate where positions are clustered
+  if (oiData.depth && oiData.depth.bids && oiData.depth.asks) {
+    oiData.depth.bids.forEach(([p, q]) => {
+      const bp = parseFloat(p);
+      const bq = parseFloat(q) * bp;
+      const bucket = Math.round(bp / tick) * tick;
+      positionMap[bucket] = (positionMap[bucket] || 0) + bq;
+    });
+    oiData.depth.asks.forEach(([p, q]) => {
+      const ap = parseFloat(p);
+      const aq = parseFloat(q) * ap;
+      const bucket = Math.round(ap / tick) * tick;
+      positionMap[bucket] = (positionMap[bucket] || 0) + aq;
+    });
   }
 
-  // If no position map built, create synthetic distribution around current price
+  // Also distribute OI across recent candle prices
+  if (candles.length > 0) {
+    const recent = candles.slice(-60);
+    recent.forEach((c, i) => {
+      const weight = (i + 1) / recent.length;
+      const bucket = Math.round(c.c / tick) * tick;
+      positionMap[bucket] = (positionMap[bucket] || 0) + (totalOI * 0.015 * weight);
+    });
+  }
+
+  // Fallback synthetic distribution
   if (Object.keys(positionMap).length === 0) {
     const steps = 40;
     for (let i = -steps; i <= steps; i++) {
       const p = Math.round((price + i * tick * 10) / tick) * tick;
-      // Normal-ish distribution weighted toward current price
       const weight = Math.exp(-Math.pow(i / 15, 2));
       positionMap[p] = totalOI * weight * 0.025;
     }
   }
 
-  // For each entry price bucket and each leverage tier,
-  // calculate where those positions get liquidated
+  // Calculate liquidation prices for each entry bucket and leverage tier
   Object.entries(positionMap).forEach(([entryStr, size]) => {
     const entry = parseFloat(entryStr);
-    if (size < totalOI * 0.001) return; // Skip tiny positions
+    if (size < 1000) return;
 
     TIERS.forEach(tier => {
       const { lev, longColor } = tier;
-
-      // Long liquidation price: entry * (1 - 1/lev + mmr)
       const longLiqPrice = entry * (1 - 1/lev + mmr);
-      // Short liquidation price: entry * (1 + 1/lev - mmr)
       const shortLiqPrice = entry * (1 + 1/lev - mmr);
 
-      // Only include levels within ±10% of current price
-      if (longLiqPrice > price * 0.90 && longLiqPrice < price * 0.9995) {
+      if (longLiqPrice > price * 0.88 && longLiqPrice < price * 0.9995) {
         levels.push({
           price: longLiqPrice,
           size: size * (1 / lev),
@@ -422,7 +416,7 @@ function buildLiqLevels(asset) {
         });
       }
 
-      if (shortLiqPrice < price * 1.10 && shortLiqPrice > price * 1.0005) {
+      if (shortLiqPrice < price * 1.12 && shortLiqPrice > price * 1.0005) {
         levels.push({
           price: shortLiqPrice,
           size: size * (1 / lev),
