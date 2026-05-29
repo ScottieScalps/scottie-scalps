@@ -386,6 +386,7 @@ async function fetchHistoricalCandles(asset) {
 }
 
 // ─── CRYPTOQUANT LIQUIDATION DATA ────────────────────────────────────────────
+// ─── CRYPTOQUANT LIQUIDATION DATA ────────────────────────────────────────────
 // Clean API URL — no Outlook SafeLinks wrapper
 async function fetchLiqLevels(asset) {
   const cqAsset = ASSETS[asset].cqAsset;
@@ -418,38 +419,6 @@ function processLiqData(data, asset) {
   const rows = data.result.data;
   const price = prices[asset] || 0;
   const clusters = [];
-
-  // Group into liquidation clusters
-  const bucketSize = asset === 'XRP' ? 0.01 : asset === 'ETH' ? 5 : 100;
-
-  rows.forEach(row => {
-    const liqPrice = parseFloat(row.liquidation_price || row.price || 0);
-    const size = parseFloat(row.liquidation_usd || row.size || 0);
-    const side = row.side || (liqPrice > price ? 'short' : 'long');
-
-    if (liqPrice > 0 && size > 0) {
-      clusters.push({ price: liqPrice, size, side });
-    }
-  });
-
-  // Sort by proximity to current price
-  clusters.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
-
-  liqLevels = clusters.slice(0, 20);
-
-  // Determine max pain (largest cluster)
-  if (clusters.length > 0) {
-    maxPainLevel = clusters.reduce((max, c) => c.size > max.size ? c : max, clusters[0]).price;
-  }
-
-  updateLevelsList(liqLevels);
-  updateStats();
-  updateCommentaryFromLevels();
-  drawChart();
-
-  // Refresh every 60 seconds
-  setTimeout(() => fetchLiqLevels(asset), 60000);
-}
 
 // ─── CHART DRAWING ───────────────────────────────────────────────────────────
 function drawChart() {
