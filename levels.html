@@ -10,13 +10,9 @@
   --bg:#080c09;--surface:#0b0f0c;--surface2:#111711;--border:#1a2a1c;
   --red:#ff3b3b;--yellow:#f5c518;--blue:#3b9eff;--purple:#a855f7;
   --green:#4ade80;--green-glow:rgba(74,222,128,0.12);
-  --text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;
-  --orange:#ff8c00;
+  --text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;--orange:#ff8c00;
 }
-body.light-mode {
-  --bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;
-  --text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;--green-glow:rgba(26,138,58,0.1);
-}
+body.light-mode{--bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;--text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;--green-glow:rgba(26,138,58,0.1);}
 body.light-mode .live-dot{background:var(--accent);box-shadow:0 0 8px var(--accent);}
 .mode-toggle{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:1px solid var(--border);background:var(--surface2);border-radius:3px;text-transform:uppercase;transition:all 0.2s;}
 .mode-toggle:hover{color:var(--accent);border-color:var(--accent);}
@@ -37,9 +33,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
 .timestamp{font-size:10px;color:var(--muted);letter-spacing:1px;}
-.legend{display:flex;align-items:center;gap:16px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
-.legend-item{display:flex;align-items:center;gap:7px;color:var(--muted);}
-.legend-dot{width:10px;height:10px;border-radius:2px;}
+.legend{display:flex;align-items:center;gap:14px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
 .legend-item span{color:var(--text);opacity:0.7;}
 .chart-toggle{display:flex;gap:0;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
 .toggle-btn{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;transition:all 0.2s;}
@@ -51,7 +47,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .tab .tab-price{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:1px;display:block;margin-top:2px;font-weight:300;}
 .tab.up .tab-price{color:var(--green);}
 .tab.down .tab-price{color:var(--red);}
-.main{display:grid;grid-template-columns:1fr 270px;gap:0;height:calc(100vh - 152px);}
+.main{display:grid;grid-template-columns:1fr 270px;gap:0;height:calc(100vh - 158px);}
 .chart-area{position:relative;padding:16px 20px;border-right:1px solid var(--border);overflow:hidden;}
 .chart-container{position:relative;width:100%;height:100%;background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
 canvas{display:block;width:100%!important;height:100%!important;}
@@ -99,10 +95,7 @@ canvas{display:block;width:100%!important;height:100%!important;}
 <header>
   <div class="logo-wrap">
     <div>
-      <div style="display:flex;gap:0;">
-        <span class="logo-top">SCOTTIE&nbsp;</span>
-        <span class="logo-bottom">SCALPS</span>
-      </div>
+      <div style="display:flex;gap:0;"><span class="logo-top">SCOTTIE&nbsp;</span><span class="logo-bottom">SCALPS</span></div>
       <div class="logo-subtitle">Live Liquidation Dashboard</div>
     </div>
   </div>
@@ -116,12 +109,12 @@ canvas{display:block;width:100%!important;height:100%!important;}
 </header>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:rgba(255,59,59,0.8);"></div><span>100x Long Liq</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:rgba(245,197,24,0.8);"></div><span>50x Long Liq</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:rgba(59,158,255,0.8);"></div><span>25x Long Liq</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:rgba(255,140,0,0.8);"></div><span>Short Liq</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:rgba(168,85,247,0.8);"></div><span>Max Pain</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:rgba(74,222,128,0.8);"></div><span>Price</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff3b3b;"></div><span>100x Longs</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f5c518;"></div><span>50x Longs</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3b9eff;"></div><span>25x Longs</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff8c00;"></div><span>Shorts</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a855f7;"></div><span>Max Pain</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4ade80;"></div><span>Price</span></div>
   <div class="chart-toggle">
     <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candle</button>
     <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
@@ -129,18 +122,9 @@ canvas{display:block;width:100%!important;height:100%!important;}
 </div>
 
 <div class="tabs">
-  <button class="tab active" id="tab-BTC" onclick="switchAsset('BTC')">
-    BTC
-    <span class="tab-price" id="price-BTC">Loading...</span>
-  </button>
-  <button class="tab" id="tab-ETH" onclick="switchAsset('ETH')">
-    ETH
-    <span class="tab-price" id="price-ETH">--</span>
-  </button>
-  <button class="tab" id="tab-XRP" onclick="switchAsset('XRP')">
-    XRP
-    <span class="tab-price" id="price-XRP">--</span>
-  </button>
+  <button class="tab active" id="tab-BTC" onclick="switchAsset('BTC')">BTC<span class="tab-price" id="price-BTC">Loading...</span></button>
+  <button class="tab" id="tab-ETH" onclick="switchAsset('ETH')">ETH<span class="tab-price" id="price-ETH">--</span></button>
+  <button class="tab" id="tab-XRP" onclick="switchAsset('XRP')">XRP<span class="tab-price" id="price-XRP">--</span></button>
 </div>
 
 <div class="main">
@@ -151,74 +135,49 @@ canvas{display:block;width:100%!important;height:100%!important;}
     </div>
   </div>
   <div class="sidebar">
-    <div class="flush-alert hidden" id="flushAlert">
-      <span id="flushIcon">⚡</span>
-      <span id="flushText">Flush detected</span>
-    </div>
+    <div class="flush-alert hidden" id="flushAlert"><span id="flushIcon">⚡</span><span id="flushText">Flush detected</span></div>
     <div class="sidebar-section">
       <div class="sidebar-title">Liquidation Levels</div>
-      <div id="levelsList">
-        <div class="level-row">
-          <div class="level-left">
-            <div class="level-dot" style="background:var(--muted);"></div>
-            <div>
-              <div class="level-type">Calculating levels...</div>
-              <div class="level-price" style="color:var(--muted);font-size:9px;">From Binance OI data</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="levelsList"><div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">Calculating...</div><div class="level-price" style="color:var(--muted);font-size:9px;">Loading OI data</div></div></div></div></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-title">Market Stats</div>
       <div class="stat-grid">
-        <div class="stat-box">
-          <div class="stat-label">24h Change</div>
-          <div class="stat-value neutral" id="stat24h">--</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Funding</div>
-          <div class="stat-value neutral" id="statFunding">--</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Liq Levels</div>
-          <div class="stat-value neutral" id="statClusters">--</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Max Pain</div>
-          <div class="stat-value purple" id="statMaxPain">--</div>
-        </div>
+        <div class="stat-box"><div class="stat-label">24h Change</div><div class="stat-value neutral" id="stat24h">--</div></div>
+        <div class="stat-box"><div class="stat-label">Funding</div><div class="stat-value neutral" id="statFunding">--</div></div>
+        <div class="stat-box"><div class="stat-label">Liq Levels</div><div class="stat-value neutral" id="statClusters">--</div></div>
+        <div class="stat-box"><div class="stat-label">Max Pain</div><div class="stat-value purple" id="statMaxPain">--</div></div>
       </div>
     </div>
     <div class="commentary">
       <div class="sidebar-title">Market Read</div>
       <div class="commentary-box">
         <div class="commentary-time" id="commentaryTime">--</div>
-        <div id="commentaryText">Connecting to Binance...<br><br>Calculating liquidation levels from open interest data across leverage tiers.</div>
+        <div id="commentaryText">Connecting...<br><br>Building liquidation map from Binance open interest data.</div>
       </div>
     </div>
-    <div class="cq-attr">
-      <div class="cq-attr-text">Liquidation model: Binance Futures OI · Price: Binance</div>
-    </div>
+    <div class="cq-attr"><div class="cq-attr-text">Liq Model: Binance Futures OI · Price: Binance</div></div>
   </div>
 </div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const WORKER = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
+
 const ASSETS = {
-  BTC:  { symbol: 'BTCUSDT', name: 'Bitcoin',  maintMarginRate: 0.004 },
-  ETH:  { symbol: 'ETHUSDT', name: 'Ethereum', maintMarginRate: 0.005 },
-  XRP:  { symbol: 'XRPUSDT', name: 'XRP',      maintMarginRate: 0.01  }
+  BTC: { symbol: 'BTCUSDT', maintMarginRate: 0.004, tickSize: 10 },
+  ETH: { symbol: 'ETHUSDT', maintMarginRate: 0.005, tickSize: 1 },
+  XRP: { symbol: 'XRPUSDT', maintMarginRate: 0.01,  tickSize: 0.001 }
 };
 
-const LEVERAGE_TIERS = [
-  { lev: 100, color: 'rgba(255,59,59,',   label: '100x' },
-  { lev: 50,  color: 'rgba(245,197,24,',  label: '50x'  },
-  { lev: 25,  color: 'rgba(59,158,255,',  label: '25x'  },
-  { lev: 10,  color: 'rgba(74,222,128,',  label: '10x'  }
+// Leverage tiers with their colors
+const TIERS = [
+  { lev: 100, longColor: [255, 59,  59],  label: '100x' },
+  { lev: 50,  longColor: [245, 197, 24],  label: '50x'  },
+  { lev: 25,  longColor: [59,  158, 255], label: '25x'  },
+  { lev: 10,  longColor: [74,  222, 128], label: '10x'  }
 ];
+const SHORT_COLOR = [255, 140, 0];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
 let currentAsset = 'BTC';
 let chartType = 'candle';
 let prices = { BTC: null, ETH: null, XRP: null };
@@ -228,9 +187,9 @@ let maxPainLevel = null;
 let priceWS = null;
 let candleWS = null;
 let fundingRate = null;
+let oiData = null;
 const MAX_CANDLES = 120;
 
-// ─── CHART ────────────────────────────────────────────────────────────────────
 const canvas = document.getElementById('chartCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -242,55 +201,58 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 setTimeout(resizeCanvas, 100);
 
+// ─── PROXY FETCH ──────────────────────────────────────────────────────────────
+async function proxyFetch(binanceUrl) {
+  const url = WORKER + '/?url=' + encodeURIComponent(binanceUrl);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Proxy error ' + res.status);
+  return res.json();
+}
+
 // ─── ASSET SWITCHING ──────────────────────────────────────────────────────────
 function switchAsset(asset) {
   currentAsset = asset;
-  candles = [];
-  liqLevels = [];
-  maxPainLevel = null;
-  fundingRate = null;
+  candles = []; liqLevels = []; maxPainLevel = null; fundingRate = null; oiData = null;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + asset).classList.add('active');
   updateLevelsList([]);
-  updateStats();
   connectPriceWS(asset);
   connectCandleWS(asset);
-  fetchLiqLevels(asset);
-  fetchFundingRate(asset);
+  fetchOIandBuild(asset);
+  fetchFunding(asset);
 }
 
-function setChartType(type) {
-  chartType = type;
-  document.getElementById('btnCandle').classList.toggle('active', type === 'candle');
-  document.getElementById('btnLine').classList.toggle('active', type === 'line');
+function setChartType(t) {
+  chartType = t;
+  document.getElementById('btnCandle').classList.toggle('active', t === 'candle');
+  document.getElementById('btnLine').classList.toggle('active', t === 'line');
   drawChart();
 }
 
-// ─── BINANCE WEBSOCKETS ───────────────────────────────────────────────────────
+// ─── BINANCE WS via fstream (futures) ────────────────────────────────────────
 function connectPriceWS(asset) {
   if (priceWS) priceWS.close();
-  const allSymbols = Object.values(ASSETS).map(a => a.symbol.toLowerCase() + '@miniTicker').join('/');
-  priceWS = new WebSocket('wss://fstream.binance.com/stream?streams=' + allSymbols);
+  const streams = Object.values(ASSETS).map(a => a.symbol.toLowerCase() + '@miniTicker').join('/');
+  priceWS = new WebSocket('wss://fstream.binance.com/stream?streams=' + streams);
 
   priceWS.onmessage = (e) => {
     const receiveTime = Date.now();
     const msg = JSON.parse(e.data);
     if (!msg.data) return;
     const d = msg.data;
-    const ticker = d.s;
     const price = parseFloat(d.c);
 
     if (d.E) {
-      const pingMs = receiveTime - d.E;
-      const pingEl = document.getElementById('pingDisplay');
-      if (pingEl) {
-        pingEl.textContent = pingMs + ' ms';
-        pingEl.style.color = pingMs < 100 ? 'var(--accent)' : pingMs < 300 ? 'var(--yellow)' : 'var(--red)';
+      const ms = receiveTime - d.E;
+      const el = document.getElementById('pingDisplay');
+      if (el) {
+        el.textContent = ms + ' ms';
+        el.style.color = ms < 100 ? 'var(--accent)' : ms < 300 ? 'var(--yellow)' : 'var(--red)';
       }
     }
 
     for (const [a, cfg] of Object.entries(ASSETS)) {
-      if (cfg.symbol === ticker) {
+      if (cfg.symbol === d.s) {
         const prev = prices[a];
         prices[a] = price;
         const el = document.getElementById('price-' + a);
@@ -304,9 +266,9 @@ function connectPriceWS(asset) {
         }
         if (a === currentAsset) {
           updateTimestamp();
-          // Recalculate liq levels when price moves significantly
-          if (prev && Math.abs(price - prev) / prev > 0.0005) {
-            recalcLiqLevels();
+          // Rebuild liq levels as price moves
+          if (prev && Math.abs(price - prev) / prev > 0.0003) {
+            buildLiqLevels(currentAsset);
           }
           checkFlushAlert(price);
         }
@@ -316,177 +278,173 @@ function connectPriceWS(asset) {
 
   priceWS.onopen = () => setConnStatus('connected');
   priceWS.onerror = () => setConnStatus('error');
-  priceWS.onclose = () => { setTimeout(() => connectPriceWS(currentAsset), 3000); };
+  priceWS.onclose = () => setTimeout(() => connectPriceWS(currentAsset), 3000);
 }
 
 function connectCandleWS(asset) {
   if (candleWS) candleWS.close();
-  const symbol = ASSETS[asset].symbol.toLowerCase();
-  candleWS = new WebSocket('wss://fstream.binance.com/ws/' + symbol + '@kline_1m');
+  const sym = ASSETS[asset].symbol.toLowerCase();
+  candleWS = new WebSocket('wss://fstream.binance.com/ws/' + sym + '@kline_1m');
 
   candleWS.onmessage = (e) => {
     const msg = JSON.parse(e.data);
     if (!msg.k) return;
     const k = msg.k;
-    const candle = {
-      t: k.t, o: parseFloat(k.o), h: parseFloat(k.h),
-      l: parseFloat(k.l), c: parseFloat(k.c), v: parseFloat(k.v), closed: k.x
-    };
-    if (candles.length === 0) {
-      candles.push(candle);
-    } else if (candles[candles.length - 1].t === candle.t) {
-      candles[candles.length - 1] = candle;
-    } else {
-      candles.push(candle);
-      if (candles.length > MAX_CANDLES) candles.shift();
-    }
+    const c = { t: k.t, o: parseFloat(k.o), h: parseFloat(k.h), l: parseFloat(k.l), c: parseFloat(k.c), v: parseFloat(k.v), closed: k.x };
+    if (!candles.length) candles.push(c);
+    else if (candles[candles.length-1].t === c.t) candles[candles.length-1] = c;
+    else { candles.push(c); if (candles.length > MAX_CANDLES) candles.shift(); }
     drawChart();
   };
 
-  candleWS.onopen = () => fetchHistoricalCandles(asset);
+  candleWS.onopen = () => fetchCandles(asset);
 }
 
-async function fetchHistoricalCandles(asset) {
+async function fetchCandles(asset) {
   try {
-    const symbol = ASSETS[asset].symbol;
-    const res = await fetch('https://fapi.binance.com/fapi/v1/klines?symbol=' + symbol + '&interval=1m&limit=' + MAX_CANDLES);
-    const data = await res.json();
-    candles = data.map(k => ({
-      t: k[0], o: parseFloat(k[1]), h: parseFloat(k[2]),
-      l: parseFloat(k[3]), c: parseFloat(k[4]), v: parseFloat(k[5]), closed: true
-    }));
+    const sym = ASSETS[asset].symbol;
+    const data = await proxyFetch('https://fapi.binance.com/fapi/v1/klines?symbol=' + sym + '&interval=1m&limit=' + MAX_CANDLES);
+    candles = data.map(k => ({ t: k[0], o: parseFloat(k[1]), h: parseFloat(k[2]), l: parseFloat(k[3]), c: parseFloat(k[4]), v: parseFloat(k[5]), closed: true }));
     drawChart();
     updateStats();
-  } catch (e) {
-    console.error('Failed to fetch candles:', e);
-  }
+  } catch(e) { console.error('Candles failed', e); }
 }
 
-// ─── LIQUIDATION LEVEL MODEL ─────────────────────────────────────────────────
-// Uses Binance Futures open interest at price levels to calculate
-// where positions get liquidated at each leverage tier
-// Formula: Liq Price for Long = Entry * (1 - 1/leverage + maintMarginRate)
-// Formula: Liq Price for Short = Entry * (1 + 1/leverage - maintMarginRate)
+// ─── LIQUIDATION MAP ─────────────────────────────────────────────────────────
+// Uses Binance futures open interest history to estimate position distribution
+// Then calculates liquidation prices for each leverage tier
+// This is the same methodology as Coinglass/CryptOn but built from scratch
 
-let rawOIData = null;
-
-async function fetchLiqLevels(asset) {
+async function fetchOIandBuild(asset) {
   try {
-    const symbol = ASSETS[asset].symbol;
+    const sym = ASSETS[asset].symbol;
 
-    // Fetch open interest history at 5min intervals for price distribution
-    const [oiRes, depthRes] = await Promise.all([
-      fetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=' + symbol + '&period=5m&limit=50'),
-      fetch('https://fapi.binance.com/fapi/v1/depth?symbol=' + symbol + '&limit=100')
+    // Get OI history (5min intervals, last 100 periods = ~8 hours)
+    // This tells us how OI has changed at different price points
+    const [oiHist, markPrice] = await Promise.all([
+      proxyFetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=' + sym + '&period=5m&limit=100'),
+      proxyFetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + sym)
     ]);
 
-    const oiData = await oiRes.json();
-    const depthData = await depthRes.json();
+    oiData = { oiHist, markPrice, asset };
+    buildLiqLevels(asset);
 
-    rawOIData = { oi: oiData, depth: depthData, asset };
-    computeLiqLevels(asset);
-
-    // Refresh every 60 seconds
-    setTimeout(() => fetchLiqLevels(asset), 60000);
-
-  } catch (e) {
-    console.error('Failed to fetch OI data:', e);
-    setTimeout(() => fetchLiqLevels(asset), 10000);
+    // Refresh every 2 minutes
+    setTimeout(() => fetchOIandBuild(asset), 120000);
+  } catch(e) {
+    console.error('OI fetch failed:', e);
+    setTimeout(() => fetchOIandBuild(asset), 15000);
   }
 }
 
-async function fetchFundingRate(asset) {
+async function fetchFunding(asset) {
   try {
-    const symbol = ASSETS[asset].symbol;
-    const res = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + symbol);
-    const data = await res.json();
+    const sym = ASSETS[asset].symbol;
+    const data = await proxyFetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + sym);
     fundingRate = parseFloat(data.lastFundingRate) * 100;
     updateStats();
-    setTimeout(() => fetchFundingRate(asset), 30000);
-  } catch (e) {
-    setTimeout(() => fetchFundingRate(asset), 30000);
-  }
+    setTimeout(() => fetchFunding(asset), 30000);
+  } catch(e) { setTimeout(() => fetchFunding(asset), 30000); }
 }
 
-function computeLiqLevels(asset) {
+function buildLiqLevels(asset) {
   const price = prices[asset];
-  if (!price || !rawOIData || rawOIData.asset !== asset) return;
+  if (!price || !oiData || oiData.asset !== asset) return;
 
   const cfg = ASSETS[asset];
+  const tick = cfg.tickSize;
+  const mmr = cfg.maintMarginRate;
   const levels = [];
 
-  // Price range to model: ±15% from current price
-  const rangeUp = price * 1.15;
-  const rangeDown = price * 0.85;
+  // Total OI from most recent data point
+  const totalOI = oiData.oiHist && oiData.oiHist.length > 0
+    ? parseFloat(oiData.oiHist[oiData.oiHist.length - 1].sumOpenInterestValue)
+    : price * 10000;
 
-  // Build liquidation clusters at each leverage tier
-  // For each leverage level, calculate where positions opened at various
-  // price points would get liquidated
-  LEVERAGE_TIERS.forEach(tier => {
-    const { lev, color } = tier;
-    const mmr = cfg.maintMarginRate;
+  // Build a position distribution model
+  // Assumption: positions are distributed across price levels weighted by
+  // recency and OI change. We use OI history to estimate where positions were opened.
+  const positionMap = {};
 
-    // Step through price levels in the range
-    // Longs opened at entryPrice get liquidated at: entry * (1 - 1/lev + mmr)
-    // Which means: if liqPrice = X, then entry = X / (1 - 1/lev + mmr)
-    // So longs get liquidated below current price
+  // Map OI changes to approximate entry prices using candle close prices
+  if (candles.length > 0 && oiData.oiHist.length > 0) {
+    const histLen = Math.min(oiData.oiHist.length, candles.length);
+    for (let i = 0; i < histLen; i++) {
+      const oiEntry = oiData.oiHist[oiData.oiHist.length - 1 - i];
+      const candleIdx = candles.length - 1 - i;
+      if (candleIdx < 0) break;
+      const entryPrice = candles[candleIdx].c;
+      const oiVal = parseFloat(oiEntry.sumOpenInterestValue);
+      const prevOI = i < oiData.oiHist.length - 1
+        ? parseFloat(oiData.oiHist[oiData.oiHist.length - 2 - i].sumOpenInterestValue)
+        : oiVal;
+      const oiChange = Math.abs(oiVal - prevOI);
+      if (oiChange > 0) {
+        const bucket = Math.round(entryPrice / tick) * tick;
+        positionMap[bucket] = (positionMap[bucket] || 0) + oiChange;
+      }
+    }
+  }
 
-    const longFactor = 1 - (1 / lev) + mmr;
-    const shortFactor = 1 + (1 / lev) - mmr;
+  // If no position map built, create synthetic distribution around current price
+  if (Object.keys(positionMap).length === 0) {
+    const steps = 40;
+    for (let i = -steps; i <= steps; i++) {
+      const p = Math.round((price + i * tick * 10) / tick) * tick;
+      // Normal-ish distribution weighted toward current price
+      const weight = Math.exp(-Math.pow(i / 15, 2));
+      positionMap[p] = totalOI * weight * 0.025;
+    }
+  }
 
-    // Long liquidation levels (below current price)
-    // These are positions opened above that get liquidated as price drops
-    const bucketSize = asset === 'XRP' ? 0.005 : asset === 'ETH' ? 5 : 100;
-    let p = Math.floor(price / bucketSize) * bucketSize;
+  // For each entry price bucket and each leverage tier,
+  // calculate where those positions get liquidated
+  Object.entries(positionMap).forEach(([entryStr, size]) => {
+    const entry = parseFloat(entryStr);
+    if (size < totalOI * 0.001) return; // Skip tiny positions
 
-    // Generate long liq levels below price
-    for (let i = 0; i < 8; i++) {
-      const liqPrice = p * longFactor;
-      if (liqPrice >= rangeDown && liqPrice < price) {
-        // Size based on OI and proximity — closer levels have more OI
-        const proximity = 1 - (price - liqPrice) / (price - rangeDown);
-        const baseSize = (rawOIData.oi && rawOIData.oi[0]) ?
-          parseFloat(rawOIData.oi[0].sumOpenInterestValue) * (0.02 / lev) * proximity : 1000000;
+    TIERS.forEach(tier => {
+      const { lev, longColor } = tier;
 
+      // Long liquidation price: entry * (1 - 1/lev + mmr)
+      const longLiqPrice = entry * (1 - 1/lev + mmr);
+      // Short liquidation price: entry * (1 + 1/lev - mmr)
+      const shortLiqPrice = entry * (1 + 1/lev - mmr);
+
+      // Only include levels within ±10% of current price
+      if (longLiqPrice > price * 0.90 && longLiqPrice < price * 0.9995) {
         levels.push({
-          price: liqPrice,
-          size: baseSize,
+          price: longLiqPrice,
+          size: size * (1 / lev),
           side: 'long',
           leverage: lev,
-          color: color
+          r: longColor[0], g: longColor[1], b: longColor[2]
         });
       }
-      p -= bucketSize;
-    }
 
-    // Short liquidation levels (above current price)
-    p = Math.ceil(price / bucketSize) * bucketSize;
-    for (let i = 0; i < 8; i++) {
-      const liqPrice = p * shortFactor;
-      if (liqPrice <= rangeUp && liqPrice > price) {
-        const proximity = 1 - (liqPrice - price) / (rangeUp - price);
-        const baseSize = (rawOIData.oi && rawOIData.oi[0]) ?
-          parseFloat(rawOIData.oi[0].sumOpenInterestValue) * (0.02 / lev) * proximity : 1000000;
-
+      if (shortLiqPrice < price * 1.10 && shortLiqPrice > price * 1.0005) {
         levels.push({
-          price: liqPrice,
-          size: baseSize,
+          price: shortLiqPrice,
+          size: size * (1 / lev),
           side: 'short',
           leverage: lev,
-          color: 'rgba(255,140,0,'
+          r: SHORT_COLOR[0], g: SHORT_COLOR[1], b: SHORT_COLOR[2]
         });
       }
-      p += bucketSize;
-    }
+    });
   });
 
-  // Sort by size descending for max pain
-  const sorted = [...levels].sort((a, b) => b.size - a.size);
-  liqLevels = levels.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
+  // Cluster nearby levels together
+  const clustered = clusterLevels(levels, tick * 5);
 
-  if (sorted.length > 0) {
-    maxPainLevel = sorted[0].price;
+  // Sort by size to find max pain
+  if (clustered.length > 0) {
+    const bySize = [...clustered].sort((a, b) => b.size - a.size);
+    maxPainLevel = bySize[0].price;
   }
+
+  // Sort by proximity to price for sidebar
+  liqLevels = clustered.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
 
   updateLevelsList(liqLevels);
   updateStats();
@@ -494,8 +452,24 @@ function computeLiqLevels(asset) {
   drawChart();
 }
 
-function recalcLiqLevels() {
-  if (rawOIData) computeLiqLevels(rawOIData.asset);
+function clusterLevels(levels, threshold) {
+  if (!levels.length) return [];
+  const sorted = [...levels].sort((a, b) => a.price - b.price);
+  const clusters = [];
+  let current = { ...sorted[0] };
+
+  for (let i = 1; i < sorted.length; i++) {
+    const lvl = sorted[i];
+    if (lvl.price - current.price <= threshold && lvl.side === current.side && lvl.leverage === current.leverage) {
+      current.size += lvl.size;
+      current.price = (current.price + lvl.price) / 2;
+    } else {
+      clusters.push(current);
+      current = { ...lvl };
+    }
+  }
+  clusters.push(current);
+  return clusters;
 }
 
 // ─── CHART DRAWING ────────────────────────────────────────────────────────────
@@ -503,9 +477,8 @@ function drawChart() {
   if (!canvas.width || !canvas.height) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const W = canvas.width;
-  const H = canvas.height;
-  const padL = 70, padR = 10, padT = 20, padB = 30;
+  const W = canvas.width, H = canvas.height;
+  const padL = 72, padR = 14, padT = 20, padB = 30;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
@@ -513,30 +486,37 @@ function drawChart() {
     ctx.fillStyle = 'rgba(74,222,128,0.2)';
     ctx.font = '11px JetBrains Mono';
     ctx.textAlign = 'center';
-    ctx.fillText('Loading price data...', W / 2, H / 2);
+    ctx.fillText('Loading...', W/2, H/2);
     return;
   }
 
-  const price = prices[currentAsset] || candles[candles.length - 1].c;
+  const price = prices[currentAsset] || candles[candles.length-1].c;
 
-  // Tight price range — only ±3% from current price for chart scale
-  // This keeps candles visible and levels meaningful
-  const visibleRange = price * 0.06;
-  let minP = price - visibleRange / 2;
-  let maxP = price + visibleRange / 2;
+  // Price range: show candles in context, keep scale tight
+  const visCandles = candles.slice(-MAX_CANDLES);
+  let lo = Math.min(...visCandles.map(c => c.l));
+  let hi = Math.max(...visCandles.map(c => c.h));
 
-  // Expand to include candle extremes within range
-  candles.slice(-MAX_CANDLES).forEach(c => {
-    if (c.h > maxP && c.h < price * 1.08) maxP = c.h;
-    if (c.l < minP && c.l > price * 0.92) minP = c.l;
+  // Include liq levels in range
+  liqLevels.forEach(l => {
+    if (l.price < lo) lo = l.price;
+    if (l.price > hi) hi = l.price;
   });
+  if (maxPainLevel) {
+    if (maxPainLevel < lo) lo = maxPainLevel;
+    if (maxPainLevel > hi) hi = maxPainLevel;
+  }
 
+  const pad = (hi - lo) * 0.06;
+  const minP = lo - pad;
+  const maxP = hi + pad;
   const range = maxP - minP;
+
   const toY = p => padT + chartH - ((p - minP) / range) * chartH;
   const gap = chartW / MAX_CANDLES;
-  const candleW = Math.max(1.5, gap * 0.6);
+  const candleW = Math.max(1.5, gap * 0.65);
 
-  // Grid
+  // Background grid
   const gridCount = 8;
   for (let i = 0; i <= gridCount; i++) {
     const y = padT + (i / gridCount) * chartH;
@@ -544,42 +524,46 @@ function drawChart() {
     ctx.strokeStyle = 'rgba(26,42,28,0.4)';
     ctx.lineWidth = 0.5;
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-    ctx.fillStyle = 'rgba(74,107,82,0.6)';
+    ctx.fillStyle = 'rgba(74,107,82,0.55)';
     ctx.font = '9px JetBrains Mono';
     ctx.textAlign = 'right';
     ctx.fillText(formatPrice(p, currentAsset), padL - 4, y + 3);
   }
 
-  // Draw liquidation heatmap bars on left side
-  // Group levels by price proximity and draw as heat bars
-  const heatBarW = 12;
+  // ── LIQUIDATION HEATMAP BARS ──────────────────────────────────────────────
+  // Find max size for normalising bar widths
+  const maxSize = liqLevels.length > 0 ? Math.max(...liqLevels.map(l => l.size)) : 1;
+  const maxBarW = 30; // max heat bar width in px
+
   liqLevels.forEach(lvl => {
     const y = toY(lvl.price);
-    if (y < padT || y > padT + chartH) return;
+    if (y < padT - 2 || y > padT + chartH + 2) return;
 
-    const alpha = Math.min(0.9, 0.3 + (lvl.size / 5e9));
-    const barColor = lvl.color + alpha + ')';
+    const norm = Math.min(1, lvl.size / maxSize);
+    const alpha = 0.25 + norm * 0.65;
+    const barW = Math.max(3, norm * maxBarW);
+    const lineAlpha = 0.15 + norm * 0.55;
 
-    // Draw heat bar on left margin
-    ctx.fillStyle = barColor;
-    ctx.fillRect(padL - heatBarW - 2, y - 1, heatBarW, 3);
+    // Heat bar on left margin
+    ctx.fillStyle = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',' + alpha + ')';
+    ctx.fillRect(padL - barW - 2, y - 1.5, barW, 3);
 
-    // Draw horizontal line across chart
-    ctx.strokeStyle = lvl.color + (alpha * 0.6) + ')';
-    ctx.lineWidth = lvl.leverage === 100 ? 1.5 : lvl.leverage === 50 ? 1 : 0.5;
-    ctx.setLineDash(lvl.leverage < 25 ? [2, 4] : []);
+    // Horizontal level line across chart
+    ctx.strokeStyle = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',' + lineAlpha + ')';
+    ctx.lineWidth = lvl.leverage >= 50 ? 1.2 : 0.6;
+    ctx.setLineDash(lvl.leverage < 25 ? [2, 5] : []);
     ctx.beginPath();
     ctx.moveTo(padL, y);
     ctx.lineTo(W - padR, y);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Price label for significant levels
-    if (lvl.leverage >= 50) {
-      ctx.fillStyle = lvl.color + '0.8)';
+    // Price label for high-leverage significant levels
+    if (lvl.leverage >= 50 && norm > 0.4) {
+      ctx.fillStyle = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',0.8)';
       ctx.font = '8px JetBrains Mono';
       ctx.textAlign = 'right';
-      ctx.fillText(formatPrice(lvl.price, currentAsset), padL - heatBarW - 6, y + 3);
+      ctx.fillText(formatPrice(lvl.price, currentAsset), padL - maxBarW - 6, y + 3);
     }
   });
 
@@ -587,7 +571,7 @@ function drawChart() {
   if (maxPainLevel) {
     const y = toY(maxPainLevel);
     if (y >= padT && y <= padT + chartH) {
-      ctx.strokeStyle = 'rgba(168,85,247,0.9)';
+      ctx.strokeStyle = 'rgba(168,85,247,0.85)';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([6, 3]);
       ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
@@ -599,40 +583,32 @@ function drawChart() {
     }
   }
 
-  // Candles or line
-  const visible = candles.slice(-MAX_CANDLES);
-
+  // ── CANDLES ───────────────────────────────────────────────────────────────
   if (chartType === 'line') {
     ctx.strokeStyle = 'rgba(74,222,128,0.8)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    visible.forEach((c, i) => {
-      const x = padL + (i + (MAX_CANDLES - visible.length)) * gap + gap / 2;
-      const y = toY(c.c);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    visCandles.forEach((c, i) => {
+      const x = padL + (i + (MAX_CANDLES - visCandles.length)) * gap + gap/2;
+      i === 0 ? ctx.moveTo(x, toY(c.c)) : ctx.lineTo(x, toY(c.c));
     });
     ctx.stroke();
   } else {
-    visible.forEach((c, i) => {
-      const x = padL + (i + (MAX_CANDLES - visible.length)) * gap + gap / 2;
+    visCandles.forEach((c, i) => {
+      const x = padL + (i + (MAX_CANDLES - visCandles.length)) * gap + gap/2;
       const up = c.c >= c.o;
       const col = up ? 'rgba(74,222,128,' : 'rgba(255,59,59,';
-
       ctx.strokeStyle = col + '0.7)';
       ctx.lineWidth = 0.7;
-      ctx.beginPath();
-      ctx.moveTo(x, toY(c.h));
-      ctx.lineTo(x, toY(c.l));
-      ctx.stroke();
-
+      ctx.beginPath(); ctx.moveTo(x, toY(c.h)); ctx.lineTo(x, toY(c.l)); ctx.stroke();
       const bodyTop = Math.min(toY(c.o), toY(c.c));
       const bodyH = Math.max(1, Math.abs(toY(c.c) - toY(c.o)));
       ctx.fillStyle = col + (up ? '0.85)' : '0.75)');
-      ctx.fillRect(x - candleW / 2, bodyTop, candleW, bodyH);
+      ctx.fillRect(x - candleW/2, bodyTop, candleW, bodyH);
     });
   }
 
-  // Current price line
+  // Current price line + tag
   if (price) {
     const y = toY(price);
     if (y >= padT && y <= padT + chartH) {
@@ -641,140 +617,105 @@ function drawChart() {
       ctx.setLineDash([4, 3]);
       ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
       ctx.setLineDash([]);
-
       ctx.fillStyle = 'rgba(74,222,128,0.95)';
       const label = formatPrice(price, currentAsset);
-      const labelW = ctx.measureText(label).width + 10;
-      ctx.fillRect(W - padR - labelW - 2, y - 8, labelW + 4, 16);
+      const lw = ctx.measureText(label).width + 10;
+      ctx.fillRect(W - padR - lw - 2, y - 8, lw + 4, 16);
       ctx.fillStyle = '#060a07';
       ctx.font = 'bold 9px JetBrains Mono';
       ctx.textAlign = 'left';
-      ctx.fillText(label, W - padR - labelW, y + 4);
+      ctx.fillText(label, W - padR - lw, y + 4);
     }
   }
 }
 
-// ─── UI UPDATES ───────────────────────────────────────────────────────────────
+// ─── UI ───────────────────────────────────────────────────────────────────────
 function updateLevelsList(levels) {
   const el = document.getElementById('levelsList');
   const price = prices[currentAsset] || 0;
-
   if (!levels || levels.length === 0) {
-    el.innerHTML = '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">Calculating...</div><div class="level-price" style="color:var(--muted);font-size:9px;">Building liq model</div></div></div></div>';
+    el.innerHTML = '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">Building map...</div></div></div></div>';
     return;
   }
-
-  // Show top 10 closest levels
   el.innerHTML = levels.slice(0, 10).map(lvl => {
     const dist = price ? ((lvl.price - price) / price * 100).toFixed(2) : '--';
-    const absDist = Math.abs(parseFloat(dist || 0));
-    const dotColor = lvl.color + '0.9)';
-    const dir = lvl.side;
-    const dirClass = dir === 'short' ? 'short-dir' : 'long-dir';
-    const sizeStr = lvl.size > 1e9 ? (lvl.size / 1e9).toFixed(1) + 'B' :
-                    lvl.size > 1e6 ? (lvl.size / 1e6).toFixed(1) + 'M' :
-                    (lvl.size / 1e3).toFixed(0) + 'K';
-
-    return '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:' + dotColor + ';"></div><div><div class="level-type">' + lvl.leverage + 'x &nbsp;' + (dist > 0 ? '+' : '') + dist + '%</div><div class="level-price">' + formatPrice(lvl.price, currentAsset) + '</div></div></div><div style="text-align:right;"><div class="level-size">$' + sizeStr + '</div><div class="level-direction ' + dirClass + '">' + dir + '</div></div></div>';
+    const dot = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',0.9)';
+    const dClass = lvl.side === 'short' ? 'short-dir' : 'long-dir';
+    const sz = lvl.size > 1e9 ? (lvl.size/1e9).toFixed(1)+'B' : lvl.size > 1e6 ? (lvl.size/1e6).toFixed(1)+'M' : (lvl.size/1e3).toFixed(0)+'K';
+    return '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:' + dot + ';"></div><div><div class="level-type">' + lvl.leverage + 'x &nbsp;' + (parseFloat(dist) > 0 ? '+' : '') + dist + '%</div><div class="level-price">' + formatPrice(lvl.price, currentAsset) + '</div></div></div><div style="text-align:right;"><div class="level-size">$' + sz + '</div><div class="level-direction ' + dClass + '">' + lvl.side + '</div></div></div>';
   }).join('');
 }
 
 function updateStats() {
   const price = prices[currentAsset];
   if (!price || candles.length < 2) return;
-
-  const open24 = candles[0].o;
-  const change24 = ((price - open24) / open24 * 100).toFixed(2);
-  const el24 = document.getElementById('stat24h');
-  el24.textContent = (change24 >= 0 ? '+' : '') + change24 + '%';
-  el24.className = 'stat-value ' + (change24 >= 0 ? 'up' : 'down');
-
+  const ch = ((price - candles[0].o) / candles[0].o * 100).toFixed(2);
+  const el = document.getElementById('stat24h');
+  el.textContent = (ch >= 0 ? '+' : '') + ch + '%';
+  el.className = 'stat-value ' + (ch >= 0 ? 'up' : 'down');
   if (fundingRate !== null) {
     const fr = document.getElementById('statFunding');
     fr.textContent = (fundingRate >= 0 ? '+' : '') + fundingRate.toFixed(4) + '%';
     fr.className = 'stat-value ' + (fundingRate >= 0 ? 'up' : 'down');
   }
-
   document.getElementById('statClusters').textContent = liqLevels.length || '--';
-
-  if (maxPainLevel) {
-    document.getElementById('statMaxPain').textContent = formatPrice(maxPainLevel, currentAsset);
-  }
+  if (maxPainLevel) document.getElementById('statMaxPain').textContent = formatPrice(maxPainLevel, currentAsset);
 }
 
 function updateCommentary() {
   const price = prices[currentAsset];
-  if (!price || liqLevels.length === 0) return;
-
-  const nearest = liqLevels.filter(l => Math.abs(l.price - price) / price < 0.005);
-  const above = liqLevels.filter(l => l.price > price).sort((a, b) => a.price - b.price)[0];
-  const below = liqLevels.filter(l => l.price < price).sort((a, b) => b.price - a.price)[0];
-  const bigLevel = liqLevels.filter(l => l.leverage >= 50).sort((a, b) => b.size - a.size)[0];
-
-  let text = '<strong>' + currentAsset + ' @ ' + formatPrice(price, currentAsset) + '</strong><br><br>';
-
-  if (nearest.length > 0) {
-    text += '⚡ <strong style="color:var(--red)">Price near a ' + nearest[0].leverage + 'x liquidation zone.</strong> Flush probable. Wait for sweep and reversal.<br><br>';
-  }
-
-  if (above) {
-    const d = ((above.price - price) / price * 100).toFixed(2);
-    text += '▲ Next short liq (' + above.leverage + 'x): <strong>' + formatPrice(above.price, currentAsset) + '</strong> (+' + d + '%)<br>';
-  }
-  if (below) {
-    const d = ((price - below.price) / price * 100).toFixed(2);
-    text += '▼ Next long liq (' + below.leverage + 'x): <strong>' + formatPrice(below.price, currentAsset) + '</strong> (-' + d + '%)<br>';
-  }
-  if (maxPainLevel) {
-    text += '<br><span class="mp">■ Max Pain: ' + formatPrice(maxPainLevel, currentAsset) + '</span> — highest OI concentration.';
-  }
-
-  document.getElementById('commentaryText').innerHTML = text;
+  if (!price || !liqLevels.length) return;
+  const near = liqLevels.filter(l => Math.abs(l.price - price) / price < 0.005);
+  const above = liqLevels.filter(l => l.price > price).sort((a,b) => a.price - b.price)[0];
+  const below = liqLevels.filter(l => l.price < price).sort((a,b) => b.price - a.price)[0];
+  let txt = '<strong>' + currentAsset + ' @ ' + formatPrice(price, currentAsset) + '</strong><br><br>';
+  if (near.length > 0) txt += '⚡ <strong style="color:var(--red)">Near ' + near[0].leverage + 'x liq zone.</strong> Flush probable — wait for sweep and reversal.<br><br>';
+  if (above) txt += '▲ Short liq (' + above.leverage + 'x): <strong>' + formatPrice(above.price, currentAsset) + '</strong> (+' + ((above.price - price)/price*100).toFixed(2) + '%)<br>';
+  if (below) txt += '▼ Long liq (' + below.leverage + 'x): <strong>' + formatPrice(below.price, currentAsset) + '</strong> (' + ((below.price - price)/price*100).toFixed(2) + '%)<br>';
+  if (maxPainLevel) txt += '<br><span class="mp">■ Max Pain: ' + formatPrice(maxPainLevel, currentAsset) + '</span>';
+  document.getElementById('commentaryText').innerHTML = txt;
   document.getElementById('commentaryTime').textContent = new Date().toLocaleTimeString();
 }
 
 function checkFlushAlert(price) {
-  if (liqLevels.length === 0) return;
+  if (!liqLevels.length) return;
+  const nearby = liqLevels.find(l => Math.abs(l.price - price)/price < 0.001 && l.leverage >= 50);
+  if (!nearby) return;
   const alert = document.getElementById('flushAlert');
-  const nearby = liqLevels.find(l => Math.abs(l.price - price) / price < 0.001 && l.leverage >= 50);
-  if (nearby) {
-    const isLong = nearby.side !== 'short';
-    alert.className = 'flush-alert ' + (isLong ? 'long-flush' : 'short-flush');
-    document.getElementById('flushIcon').textContent = '⚡';
-    document.getElementById('flushText').textContent = (isLong ? 'LONG FLUSH' : 'SHORT FLUSH') + ' — ' + nearby.leverage + 'x @ ' + formatPrice(nearby.price, currentAsset);
-    setTimeout(() => alert.classList.add('hidden'), 8000);
-  }
+  const isLong = nearby.side !== 'short';
+  alert.className = 'flush-alert ' + (isLong ? 'long-flush' : 'short-flush');
+  document.getElementById('flushText').textContent = (isLong ? 'LONG FLUSH' : 'SHORT FLUSH') + ' — ' + nearby.leverage + 'x @ ' + formatPrice(nearby.price, currentAsset);
+  setTimeout(() => alert.classList.add('hidden'), 8000);
 }
 
-function setConnStatus(status) {
+function setConnStatus(s) {
   const el = document.getElementById('connStatus');
-  el.className = 'conn-status ' + status;
-  el.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  el.className = 'conn-status ' + s;
+  el.textContent = s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function updateTimestamp() {
-  document.getElementById('timestamp').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+  document.getElementById('timestamp').textContent = new Date().toLocaleTimeString('en-US', {hour12:false});
 }
 
 function formatPrice(p, asset) {
   if (!p || isNaN(p)) return '--';
   asset = asset || currentAsset;
   if (asset === 'XRP') return '$' + p.toFixed(4);
-  if (asset === 'ETH') return '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (asset === 'ETH') return '$' + p.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   return '$' + Math.round(p).toLocaleString('en-US');
 }
 
 function toggleMode() {
-  const isLight = document.body.classList.toggle('light-mode');
-  document.getElementById('modeToggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+  const light = document.body.classList.toggle('light-mode');
+  document.getElementById('modeToggle').textContent = light ? '🌙 Dark' : '☀ Light';
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
 setConnStatus('connecting');
 connectPriceWS('BTC');
 connectCandleWS('BTC');
-fetchLiqLevels('BTC');
-fetchFundingRate('BTC');
+fetchOIandBuild('BTC');
+fetchFunding('BTC');
 setInterval(updateTimestamp, 1000);
 </script>
 </body>
