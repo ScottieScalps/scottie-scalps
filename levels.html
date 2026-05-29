@@ -324,7 +324,17 @@ async function fetchOIandBuild(asset) {
       proxyFetch("https://fapi.binance.com/fapi/v1/premiumIndex?symbol=" + sym)
     ]);
     oiData = { oiSnap, depth, premium, asset };
-    buildLiqLevels(asset);
+    // Wait for price if not yet available
+    if (prices[asset]) {
+      buildLiqLevels(asset);
+    } else {
+      const waitForPrice = setInterval(() => {
+        if (prices[asset]) {
+          clearInterval(waitForPrice);
+          buildLiqLevels(asset);
+        }
+      }, 500);
+    }
     setTimeout(() => fetchOIandBuild(asset), 120000);
   } catch(e) {
     console.error("OI fetch failed:", e);
