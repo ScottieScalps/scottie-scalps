@@ -134,7 +134,6 @@ canvas{display:block;width:100%;height:100%;}
   <button class="tab" id="tab-ETH" onclick="sw('ETH')">ETH<span class="tp" id="price-ETH">--</span></button>
   <button class="tab" id="tab-XRP" onclick="sw('XRP')">XRP<span class="tp" id="price-XRP">--</span></button>
   <button class="tab" id="tab-SOL" onclick="sw('SOL')">SOL<span class="tp" id="price-SOL">--</span></button>
-  <button class="tab" id="tab-HYPE" onclick="sw('HYPE')">HYPE<span class="tp" id="price-HYPE">--</span></button>
 </div>
 
 <div class="main">
@@ -182,7 +181,6 @@ const ASSETS = {
   ETH:{sym:'ETHUSDT',mmr:0.005,tick:0.1},
   SOL:{sym:'SOLUSDT',mmr:0.005,tick:0.01},
   XRP:{sym:'XRPUSDT',mmr:0.01,tick:0.0001},
-  HYPE:{sym:'HYPEUSDT',mmr:0.015,tick:0.01}
 };
 
 // Only 3 leverage tiers — the ones that matter for scalping
@@ -225,7 +223,7 @@ function setChart(t){ct=t;document.getElementById('btnC').classList.toggle('acti
 function connectP(){
   if(pWS) pWS.close();
   const streams=Object.values(ASSETS).map(a=>a.sym.toLowerCase()+'@miniTicker').join('/');
-  pWS=new WebSocket('wss://fstream.binance.com/stream?streams='+streams);
+  pWS=new WebSocket('wss://stream.binance.com:9443/stream?streams='+streams);
   pWS.onmessage=e=>{
     const rt=Date.now(), msg=JSON.parse(e.data);
     if(!msg.data) return;
