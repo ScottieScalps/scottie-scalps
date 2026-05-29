@@ -222,8 +222,8 @@ canvas{display:block;width:100%!important;height:100%!important;}
 </div>
 
 <script>
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-const CQ_API_KEY = 'YOUR_CQ_API_KEY'; // Replace with your CryptoQuant API key
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const WORKER_URL = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
 
 const ASSETS = {
   BTC: { symbol: 'BTCUSDT', cqAsset: 'btc', name: 'Bitcoin' },
@@ -231,7 +231,7 @@ const ASSETS = {
   XRP: { symbol: 'XRPUSDT', cqAsset: 'xrp', name: 'XRP' }
 };
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ────────────────────────────────────────────────────────────────────
 let currentAsset = 'BTC';
 let chartType = 'candle';
 let prices = { BTC: null, ETH: null, XRP: null };
@@ -242,7 +242,7 @@ let priceWS = null;
 let candleWS = null;
 const MAX_CANDLES = 120;
 
-// ─── CHART SETUP ─────────────────────────────────────────────────────────────
+// ─── CHART SETUP ──────────────────────────────────────────────────────────────
 const canvas = document.getElementById('chartCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -254,7 +254,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 setTimeout(resizeCanvas, 100);
 
-// ─── ASSET SWITCHING ─────────────────────────────────────────────────────────
+// ─── ASSET SWITCHING ──────────────────────────────────────────────────────────
 function switchAsset(asset) {
   currentAsset = asset;
   candles = [];
@@ -280,12 +280,10 @@ function setChartType(type) {
   drawChart();
 }
 
-// ─── BINANCE WEBSOCKETS ──────────────────────────────────────────────────────
+// ─── BINANCE WEBSOCKETS ───────────────────────────────────────────────────────
 function connectPriceWS(asset) {
   if (priceWS) priceWS.close();
-  const symbol = ASSETS[asset].symbol.toLowerCase();
 
-  // Connect all price tickers at once for tab updates
   const allSymbols = Object.values(ASSETS).map(a => a.symbol.toLowerCase() + '@miniTicker').join('/');
   priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + allSymbols);
 
@@ -294,11 +292,9 @@ function connectPriceWS(asset) {
     const msg = JSON.parse(e.data);
     if (!msg.data) return;
     const d = msg.data;
-    const ticker = d.s; // e.g. BTCUSDT
+    const ticker = d.s;
     const price = parseFloat(d.c);
-    const change = ((parseFloat(d.c) - parseFloat(d.o)) / parseFloat(d.o) * 100).toFixed(2);
 
-    // Ping = exchange event time vs local receive time
     if (d.E) {
       const pingMs = receiveTime - d.E;
       const pingEl = document.getElementById('pingDisplay');
@@ -337,7 +333,7 @@ function connectPriceWS(asset) {
 function connectCandleWS(asset) {
   if (candleWS) candleWS.close();
   const symbol = ASSETS[asset].symbol.toLowerCase();
-  candleWS = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol}@kline_1m`);
+  candleWS = new WebSocket('wss://stream.binance.com:9443/ws/' + symbol + '@kline_1m');
 
   candleWS.onmessage = (e) => {
     const msg = JSON.parse(e.data);
@@ -365,14 +361,13 @@ function connectCandleWS(asset) {
     if (candle.closed) updateCommentaryFromCandles();
   };
 
-  // Fetch historical candles on connect
   candleWS.onopen = () => fetchHistoricalCandles(asset);
 }
 
 async function fetchHistoricalCandles(asset) {
   try {
     const symbol = ASSETS[asset].symbol;
-    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&limit=${MAX_CANDLES}`);
+    const res = await fetch('https://api.binance.com/api/v3/klines?symbol=' + symbol + '&interval=1m&limit=' + MAX_CANDLES);
     const data = await res.json();
     candles = data.map(k => ({
       t: k[0], o: parseFloat(k[1]), h: parseFloat(k[2]),
@@ -385,21 +380,18 @@ async function fetchHistoricalCandles(asset) {
   }
 }
 
-// ─── CRYPTOQUANT LIQUIDATION DATA ────────────────────────────────────────────
-// Clean API URL — no Outlook SafeLinks wrapper
+// ─── CRYPTOQUANT VIA CLOUDFLARE WORKER ───────────────────────────────────────
 async function fetchLiqLevels(asset) {
   const cqAsset = ASSETS[asset].cqAsset;
-  const url = `https://api.cryptoquant.com/v1/${cqAsset}/market-data/liquidations?window=min&exchange=all_exchange&limit=120`;
+  const endpoint = cqAsset + '/market-data/liquidations?window=min&exchange=all_exchange&limit=120';
+  const url = WORKER_URL + '/?endpoint=' + encodeURIComponent(endpoint);
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${CQ_API_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    const res = await fetch(url);
 
-    if (!res.ok) throw new Error(`CQ API error: ${res.status}`);
+    if (!res.ok) {
+      throw new Error('Worker returned ' + res.status);
+    }
 
     const data = await res.json();
     processLiqData(data, asset);
@@ -407,7 +399,6 @@ async function fetchLiqLevels(asset) {
   } catch (e) {
     console.error('CryptoQuant fetch failed:', e);
     setConnStatus('error');
-    // Show informative message in levels list
     updateLevelsList(null);
   }
 }
@@ -419,9 +410,6 @@ function processLiqData(data, asset) {
   const price = prices[asset] || 0;
   const clusters = [];
 
-  // Group into liquidation clusters
-  const bucketSize = asset === 'XRP' ? 0.01 : asset === 'ETH' ? 5 : 100;
-
   rows.forEach(row => {
     const liqPrice = parseFloat(row.liquidation_price || row.price || 0);
     const size = parseFloat(row.liquidation_usd || row.size || 0);
@@ -432,12 +420,10 @@ function processLiqData(data, asset) {
     }
   });
 
-  // Sort by proximity to current price
   clusters.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
 
   liqLevels = clusters.slice(0, 20);
 
-  // Determine max pain (largest cluster)
   if (clusters.length > 0) {
     maxPainLevel = clusters.reduce((max, c) => c.size > max.size ? c : max, clusters[0]).price;
   }
@@ -447,11 +433,10 @@ function processLiqData(data, asset) {
   updateCommentaryFromLevels();
   drawChart();
 
-  // Refresh every 60 seconds
   setTimeout(() => fetchLiqLevels(asset), 60000);
 }
 
-// ─── CHART DRAWING ───────────────────────────────────────────────────────────
+// ─── CHART DRAWING ────────────────────────────────────────────────────────────
 function drawChart() {
   if (!canvas.width || !canvas.height) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -470,7 +455,6 @@ function drawChart() {
     return;
   }
 
-  // Price range
   const price = prices[currentAsset] || candles[candles.length - 1].c;
   const allHigh = Math.max(...candles.map(c => c.h), maxPainLevel || 0, ...liqLevels.map(l => l.price));
   const allLow = Math.min(...candles.map(c => c.l), maxPainLevel || Infinity, ...liqLevels.map(l => l.price));
@@ -482,7 +466,6 @@ function drawChart() {
   const toY = p => padT + chartH - ((p - minP) / range) * chartH;
   const toX = i => padL + (i / (MAX_CANDLES - 1)) * chartW;
 
-  // Grid lines
   const gridCount = 6;
   for (let i = 0; i <= gridCount; i++) {
     const y = padT + (i / gridCount) * chartH;
@@ -496,7 +479,6 @@ function drawChart() {
     ctx.fillText(formatPrice(p, currentAsset), padL - 4, y + 3);
   }
 
-  // Liquidation level lines
   liqLevels.slice(0, 15).forEach(lvl => {
     const y = toY(lvl.price);
     if (y < padT || y > padT + chartH) return;
@@ -513,14 +495,12 @@ function drawChart() {
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Price label
     ctx.fillStyle = color;
     ctx.font = '8px JetBrains Mono';
     ctx.textAlign = 'right';
     ctx.fillText(formatPrice(lvl.price, currentAsset), padL - 4, y - 2);
   });
 
-  // Max pain line
   if (maxPainLevel) {
     const y = toY(maxPainLevel);
     if (y >= padT && y <= padT + chartH) {
@@ -536,7 +516,6 @@ function drawChart() {
     }
   }
 
-  // Draw candles or line
   const visible = candles.slice(-MAX_CANDLES);
   const candleW = Math.max(1.5, (chartW / MAX_CANDLES) * 0.6);
   const gap = chartW / MAX_CANDLES;
@@ -552,7 +531,6 @@ function drawChart() {
     });
     ctx.stroke();
 
-    // Area fill under line
     ctx.fillStyle = 'rgba(74,222,128,0.04)';
     ctx.beginPath();
     visible.forEach((c, i) => {
@@ -572,7 +550,6 @@ function drawChart() {
       const up = c.c >= c.o;
       const col = up ? 'rgba(74,222,128,' : 'rgba(255,59,59,';
 
-      // Wick
       ctx.strokeStyle = col + '0.7)';
       ctx.lineWidth = 0.7;
       ctx.beginPath();
@@ -580,7 +557,6 @@ function drawChart() {
       ctx.lineTo(x, toY(c.l));
       ctx.stroke();
 
-      // Body
       const bodyTop = Math.min(toY(c.o), toY(c.c));
       const bodyH = Math.max(1, Math.abs(toY(c.c) - toY(c.o)));
       ctx.fillStyle = col + (up ? '0.8)' : '0.7)');
@@ -588,7 +564,6 @@ function drawChart() {
     });
   }
 
-  // Current price line
   if (price) {
     const y = toY(price);
     ctx.strokeStyle = 'rgba(74,222,128,0.9)';
@@ -597,7 +572,6 @@ function drawChart() {
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Price tag
     ctx.fillStyle = 'rgba(74,222,128,0.95)';
     const label = formatPrice(price, currentAsset);
     const labelW = ctx.measureText(label).width + 10;
@@ -609,19 +583,11 @@ function drawChart() {
   }
 }
 
-// ─── UI UPDATES ──────────────────────────────────────────────────────────────
+// ─── UI UPDATES ───────────────────────────────────────────────────────────────
 function updateLevelsList(levels) {
   const el = document.getElementById('levelsList');
   if (!levels || levels.length === 0) {
-    el.innerHTML = `<div class="level-row">
-      <div class="level-left">
-        <div class="level-dot" style="background:var(--muted);"></div>
-        <div>
-          <div class="level-type">${!levels ? 'API Error — Check Key' : 'Waiting for data'}</div>
-          <div class="level-price" style="color:var(--muted);font-size:9px;">${!levels ? 'CQ key may need update' : 'Loading...'}</div>
-        </div>
-      </div>
-    </div>`;
+    el.innerHTML = '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">' + (!levels ? 'API Error — Check Key' : 'Waiting for data') + '</div><div class="level-price" style="color:var(--muted);font-size:9px;">' + (!levels ? 'CQ key may need update' : 'Loading...') + '</div></div></div></div>';
     return;
   }
 
@@ -636,19 +602,7 @@ function updateLevelsList(levels) {
                     lvl.size > 1e6 ? (lvl.size / 1e6).toFixed(1) + 'M' :
                     (lvl.size / 1e3).toFixed(0) + 'K';
 
-    return `<div class="level-row">
-      <div class="level-left">
-        <div class="level-dot" style="background:${dotColor};"></div>
-        <div>
-          <div class="level-type">${dist > 0 ? '+' : ''}${dist}%</div>
-          <div class="level-price">${formatPrice(lvl.price, currentAsset)}</div>
-        </div>
-      </div>
-      <div style="text-align:right;">
-        <div class="level-size">$${sizeStr}</div>
-        <div class="level-direction ${dirClass}">${dir}</div>
-      </div>
-    </div>`;
+    return '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:' + dotColor + ';"></div><div><div class="level-type">' + (dist > 0 ? '+' : '') + dist + '%</div><div class="level-price">' + formatPrice(lvl.price, currentAsset) + '</div></div></div><div style="text-align:right;"><div class="level-size">$' + sizeStr + '</div><div class="level-direction ' + dirClass + '">' + dir + '</div></div></div>';
   }).join('');
 }
 
@@ -677,22 +631,22 @@ function updateCommentaryFromLevels() {
   const above = liqLevels.filter(l => l.price > price).sort((a, b) => a.price - b.price)[0];
   const below = liqLevels.filter(l => l.price < price).sort((a, b) => b.price - a.price)[0];
 
-  let text = `<strong>${currentAsset} @ ${formatPrice(price, currentAsset)}</strong><br><br>`;
+  let text = '<strong>' + currentAsset + ' @ ' + formatPrice(price, currentAsset) + '</strong><br><br>';
 
   if (nearest.length > 0) {
-    text += `⚡ <strong style="color:var(--red)">Price is near a liquidation cluster.</strong> High probability flush incoming. Wait for the sweep and reversal before entering.<br><br>`;
+    text += '⚡ <strong style="color:var(--red)">Price is near a liquidation cluster.</strong> High probability flush incoming. Wait for the sweep and reversal before entering.<br><br>';
   }
 
   if (above) {
     const distUp = ((above.price - price) / price * 100).toFixed(2);
-    text += `▲ Next long liquidation cluster: <strong>${formatPrice(above.price, currentAsset)}</strong> (+${distUp}%)<br>`;
+    text += '▲ Next long liquidation cluster: <strong>' + formatPrice(above.price, currentAsset) + '</strong> (+' + distUp + '%)<br>';
   }
   if (below) {
     const distDown = ((price - below.price) / price * 100).toFixed(2);
-    text += `▼ Next short liquidation cluster: <strong>${formatPrice(below.price, currentAsset)}</strong> (-${distDown}%)<br>`;
+    text += '▼ Next short liquidation cluster: <strong>' + formatPrice(below.price, currentAsset) + '</strong> (-' + distDown + '%)<br>';
   }
   if (maxPainLevel) {
-    text += `<br><span class="mp">■ Max Pain: ${formatPrice(maxPainLevel, currentAsset)}</span> — highest liquidation density.`;
+    text += '<br><span class="mp">■ Max Pain: ' + formatPrice(maxPainLevel, currentAsset) + '</span> — highest liquidation density.';
   }
 
   updateCommentary(text, new Date().toLocaleTimeString());
@@ -716,7 +670,7 @@ function checkFlushAlert(price) {
   if (nearby) {
     const isLong = nearby.side !== 'short';
     alert.className = 'flush-alert ' + (isLong ? 'long-flush' : 'short-flush');
-    document.getElementById('flushIcon').textContent = isLong ? '⚡' : '⚡';
+    document.getElementById('flushIcon').textContent = '⚡';
     document.getElementById('flushText').textContent = (isLong ? 'LONG FLUSH' : 'SHORT FLUSH') + ' — ' + formatPrice(nearby.price, currentAsset) + ' level hit';
     setTimeout(() => alert.classList.add('hidden'), 8000);
   }
@@ -732,7 +686,6 @@ function updateTimestamp() {
   document.getElementById('timestamp').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
 }
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function formatPrice(p, asset) {
   if (!p || isNaN(p)) return '--';
   asset = asset || currentAsset;
@@ -746,6 +699,7 @@ function toggleMode() {
   const isLight = document.body.classList.toggle('light-mode');
   document.getElementById('modeToggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
 }
+
 setConnStatus('connecting');
 connectPriceWS('BTC');
 connectCandleWS('BTC');
