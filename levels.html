@@ -132,7 +132,9 @@ canvas{display:block;width:100%;height:100%;}
 <div class="tabs">
   <button class="tab active" id="tab-BTC" onclick="sw('BTC')">BTC<span class="tp" id="price-BTC">--</span></button>
   <button class="tab" id="tab-ETH" onclick="sw('ETH')">ETH<span class="tp" id="price-ETH">--</span></button>
+  <button class="tab" id="tab-SOL" onclick="sw('SOL')">SOL<span class="tp" id="price-SOL">--</span></button>
   <button class="tab" id="tab-XRP" onclick="sw('XRP')">XRP<span class="tp" id="price-XRP">--</span></button>
+  <button class="tab" id="tab-HYPE" onclick="sw('HYPE')">HYPE<span class="tp" id="price-HYPE">--</span></button>
 </div>
 
 <div class="main">
@@ -169,7 +171,7 @@ canvas{display:block;width:100%;height:100%;}
       <div class="sbt">Market Read</div>
       <div class="mbox"><div class="mtime" id="mt">--</div><div id="mx">Connecting...</div></div>
     </div>
-    <div class="attr">Liq model: Binance OI · Price: Binance WS</div>
+    <div class="attr">Liq model: Binance Futures OI · Price: Binance</div>
   </div>
 </div>
 
@@ -178,7 +180,9 @@ const WORKER = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
 const ASSETS = {
   BTC:{sym:'BTCUSDT',mmr:0.004,tick:1},
   ETH:{sym:'ETHUSDT',mmr:0.005,tick:0.1},
-  XRP:{sym:'XRPUSDT',mmr:0.01,tick:0.0001}
+  SOL:{sym:'SOLUSDT',mmr:0.005,tick:0.01},
+  XRP:{sym:'XRPUSDT',mmr:0.01,tick:0.0001},
+  HYPE:{sym:'HYPEUSDT',mmr:0.01,tick:0.001}
 };
 
 // Only 3 leverage tiers — the ones that matter for scalping
@@ -523,14 +527,39 @@ function updRead(){
   document.getElementById('mt').textContent=new Date().toLocaleTimeString();
 }
 
+function playPing(isLong){
+  try {
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    o.frequency.value=isLong?440:330;
+    o.type='sine';
+    g.gain.setValueAtTime(0.4,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.6);
+    o.start(ac.currentTime); o.stop(ac.currentTime+0.6);
+    // Second tone
+    const o2=ac.createOscillator(), g2=ac.createGain();
+    o2.connect(g2); g2.connect(ac.destination);
+    o2.frequency.value=isLong?550:260;
+    o2.type='sine';
+    g2.gain.setValueAtTime(0.3,ac.currentTime+0.15);
+    g2.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.75);
+    o2.start(ac.currentTime+0.15); o2.stop(ac.currentTime+0.75);
+  } catch(e){}
+}
+let lastFlush=0;
 function checkFlush(p){
   if(!levels.length) return;
   const nearby=levels.find(l=>Math.abs(l.price-p)/p<0.001&&l.lev>=50);
   if(!nearby) return;
+  const now=Date.now();
+  if(now-lastFlush<10000) return; // debounce
+  lastFlush=now;
   const al=document.getElementById('fa');
   const isL=nearby.side!=='short';
   al.className='flush '+(isL?'lf':'sf');
   document.getElementById('ft').textContent=(isL?'LONG FLUSH':'SHORT FLUSH')+' — '+nearby.lev+'x @ '+fmt(nearby.price,asset);
+  playPing(isL);
   setTimeout(()=>al.classList.add('hidden'),8000);
 }
 
