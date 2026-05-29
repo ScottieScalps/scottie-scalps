@@ -6,157 +6,147 @@
 <title>Scottie Scalps — Live Liquidation Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#080c09;--surface:#0b0f0c;--surface2:#111711;--border:#1a2a1c;
-  --red:#ff3b3b;--yellow:#f5c518;--blue:#3b9eff;--purple:#a855f7;
-  --green:#4ade80;--green-glow:rgba(74,222,128,0.12);
-  --text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;--orange:#ff8c00;
-}
-body.light-mode{--bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;--text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;--green-glow:rgba(26,138,58,0.1);}
-body.light-mode .live-dot{background:var(--accent);box-shadow:0 0 8px var(--accent);}
-.mode-toggle{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:1px solid var(--border);background:var(--surface2);border-radius:3px;text-transform:uppercase;transition:all 0.2s;}
-.mode-toggle:hover{color:var(--accent);border-color:var(--accent);}
+:root{--bg:#080c09;--surface:#0b0f0c;--surface2:#111711;--border:#1a2a1c;--red:#ff3b3b;--yellow:#f5c518;--blue:#3b9eff;--purple:#a855f7;--green:#4ade80;--green-glow:rgba(74,222,128,0.12);--text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;--orange:#ff8c00;}
+body.light-mode{--bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;--text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow-x:hidden;}
-body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:1000;}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;box-shadow:0 1px 20px rgba(74,222,128,0.05);}
-.logo-wrap{display:flex;align-items:center;gap:12px;}
-.logo-top{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:3px;color:var(--text);}
-.logo-bottom{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:3px;color:var(--accent);}
-.logo-subtitle{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:3px;}
-.header-right{display:flex;align-items:center;gap:16px;}
-.conn-status{font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;text-transform:uppercase;}
-.conn-status.connecting{color:var(--yellow);border:1px solid rgba(245,197,24,0.3);background:rgba(245,197,24,0.07);}
-.conn-status.connected{color:var(--green);border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07);}
-.conn-status.error{color:var(--red);border:1px solid rgba(255,59,59,0.3);background:rgba(255,59,59,0.07);}
-.live-badge{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
-.timestamp{font-size:10px;color:var(--muted);letter-spacing:1px;}
-.legend{display:flex;align-items:center;gap:14px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
-.legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
-.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
-.legend-item span{color:var(--text);opacity:0.7;}
-.chart-toggle{display:flex;gap:0;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
-.toggle-btn{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;transition:all 0.2s;}
-.toggle-btn.active{background:var(--green-glow);color:var(--accent);}
-.tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
-.tab{padding:12px 20px;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:2px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
-.tab:hover{color:var(--text);}
+body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow:hidden;}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+.logo-top{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:3px;color:var(--text);}
+.logo-bottom{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:3px;color:var(--accent);}
+.logo-sub{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.conn{font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;text-transform:uppercase;}
+.conn.connecting{color:var(--yellow);border:1px solid rgba(245,197,24,0.3);background:rgba(245,197,24,0.07);}
+.conn.connected{color:var(--green);border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07);}
+.conn.error{color:var(--red);border:1px solid rgba(255,59,59,0.3);background:rgba(255,59,59,0.07);}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:2px;color:var(--accent);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.ts{font-size:9px;color:var(--muted);}
+.mode-btn{padding:3px 8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:1px solid var(--border);background:var(--surface2);border-radius:2px;text-transform:uppercase;}
+
+.legend{display:flex;align-items:center;gap:12px;padding:6px 20px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:5px;color:var(--muted);}
+.ld{width:20px;height:3px;border-radius:1px;}
+.li span{color:var(--text);opacity:0.7;}
+.ct{display:flex;gap:0;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:2px;overflow:hidden;}
+.tb{padding:3px 8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;}
+.tb.active{background:var(--green-glow);color:var(--accent);}
+
+.tabs{display:flex;padding:0 20px;border-bottom:1px solid var(--border);background:var(--surface);}
+.tab{padding:10px 18px;font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:2px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.tab .tab-price{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:1px;display:block;margin-top:2px;font-weight:300;}
-.tab.up .tab-price{color:var(--green);}
-.tab.down .tab-price{color:var(--red);}
-.main{display:grid;grid-template-columns:1fr 270px;gap:0;height:calc(100vh - 158px);}
-.chart-area{position:relative;padding:16px 20px;border-right:1px solid var(--border);overflow:hidden;}
-.chart-container{position:relative;width:100%;height:100%;background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
-canvas{display:block;width:100%!important;height:100%!important;}
-.sidebar{display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
-.sidebar-section{padding:16px;border-bottom:1px solid var(--border);}
-.sidebar-title{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.level-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(26,42,28,0.5);font-size:10px;}
-.level-row:last-child{border-bottom:none;}
-.level-left{display:flex;align-items:center;gap:8px;}
-.level-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.level-type{font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
-.level-price{font-weight:600;letter-spacing:0.5px;}
-.level-size{font-size:9px;color:var(--muted);}
-.level-direction{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 5px;border-radius:2px;}
-.short-dir{background:rgba(255,59,59,0.12);color:var(--red);}
-.long-dir{background:rgba(74,222,128,0.1);color:var(--accent);}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px;}
-.stat-label{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.stat-value{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:1px;}
-.stat-value.up{color:var(--green);}
-.stat-value.down{color:var(--red);}
-.stat-value.neutral{color:var(--accent);}
-.stat-value.purple{color:var(--purple);}
-.commentary{padding:16px;flex:1;}
-.commentary-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:3px;padding:12px;font-size:10px;line-height:1.8;color:rgba(232,240,234,0.65);}
-.commentary-box strong{color:var(--accent);font-weight:600;}
-.commentary-box .mp{color:var(--purple);}
-.commentary-time{font-size:8px;letter-spacing:1px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;}
-.flush-alert{margin:0 16px 12px;border-radius:3px;padding:9px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
-.flush-alert.long-flush{background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.3);color:var(--green);}
-.flush-alert.short-flush{background:rgba(255,59,59,0.07);border:1px solid rgba(255,59,59,0.3);color:var(--red);}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
-.flush-alert.hidden{display:none;}
-.cq-attr{display:flex;align-items:center;gap:6px;padding:8px 16px;border-top:1px solid var(--border);background:var(--surface2);}
-.cq-attr-text{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
-.watermark{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:12px;letter-spacing:5px;color:rgba(74,222,128,0.04);pointer-events:none;white-space:nowrap;}
-::-webkit-scrollbar{width:3px;}
+.tab .tp{font-family:"JetBrains Mono",monospace;font-size:9px;display:block;margin-top:1px;font-weight:300;}
+.tab.up .tp{color:var(--green);}
+.tab.down .tp{color:var(--red);}
+
+/* Main layout: full width chart + narrow sidebar */
+.main{display:grid;grid-template-columns:1fr 240px;height:calc(100vh - 120px);}
+.chart-wrap{position:relative;overflow:hidden;background:var(--bg);}
+canvas#chart{display:block;width:100%;height:100%;}
+
+.sidebar{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;}
+.sb-section{padding:12px;border-bottom:1px solid var(--border);}
+.sb-title{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.lrow{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(26,42,28,0.4);font-size:9px;}
+.lrow:last-child{border-bottom:none;}
+.ll{display:flex;align-items:center;gap:6px;}
+.ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ltype{font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.lprice{font-weight:600;font-size:10px;}
+.lsize{font-size:8px;color:var(--muted);}
+.ldir{font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:1px 4px;border-radius:2px;}
+.sd{background:rgba(255,59,59,0.12);color:var(--red);}
+.ld2{background:rgba(74,222,128,0.1);color:var(--accent);}
+
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.sbox{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:8px;}
+.slabel{font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.sval{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:1px;}
+.sval.up{color:var(--green);}
+.sval.down{color:var(--red);}
+.sval.neutral{color:var(--accent);}
+.sval.purple{color:var(--purple);}
+
+.mread{padding:12px;flex:1;}
+.mbox{background:var(--surface2);border:1px solid var(--border);border-left:2px solid var(--accent);border-radius:2px;padding:10px;font-size:9px;line-height:1.8;color:rgba(232,240,234,0.6);}
+.mbox strong{color:var(--accent);}
+.mbox .mp{color:var(--purple);}
+.mtime{font-size:7px;letter-spacing:1px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;}
+
+.flush{margin:0 12px 10px;border-radius:2px;padding:7px 10px;font-size:8px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.flush.lf{background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.3);color:var(--green);}
+.flush.sf{background:rgba(255,59,59,0.07);border:1px solid rgba(255,59,59,0.3);color:var(--red);}
+.flush.hidden{display:none;}
+
+.attr{padding:6px 12px;border-top:1px solid var(--border);background:var(--surface2);font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.wm{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:11px;letter-spacing:5px;color:rgba(74,222,128,0.03);pointer-events:none;white-space:nowrap;}
+
+::-webkit-scrollbar{width:2px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-@media(max-width:900px){.main{grid-template-columns:1fr;height:auto;}.chart-area{height:60vw;min-height:280px;}}
+::-webkit-scrollbar-thumb{background:var(--border);}
+@media(max-width:800px){.main{grid-template-columns:1fr;}.sidebar{max-height:50vh;}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo-wrap">
-    <div>
-      <div style="display:flex;gap:0;"><span class="logo-top">SCOTTIE&nbsp;</span><span class="logo-bottom">SCALPS</span></div>
-      <div class="logo-subtitle">Live Liquidation Dashboard</div>
-    </div>
+  <div>
+    <div style="display:flex;gap:0;"><span class="logo-top">SCOTTIE&nbsp;</span><span class="logo-bottom">SCALPS</span></div>
+    <div class="logo-sub">Live Liquidation Dashboard</div>
   </div>
-  <div class="header-right">
-    <div class="conn-status connecting" id="connStatus">Connecting</div>
+  <div class="hdr-right">
+    <div class="conn connecting" id="connStatus">Connecting</div>
     <div class="live-badge"><div class="live-dot"></div>Live</div>
-    <div class="timestamp" id="timestamp">--:--:--</div>
-    <div class="timestamp" id="pingDisplay">-- ms</div>
-    <button class="mode-toggle" id="modeToggle" onclick="toggleMode()">☀ Light</button>
+    <span class="ts" id="ts">--:--:--</span>
+    <span class="ts" id="ping">-- ms</span>
+    <button class="mode-btn" onclick="toggleMode()">☀ Light</button>
   </div>
 </header>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#ff3b3b;"></div><span>100x Longs</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:#f5c518;"></div><span>50x Longs</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:#3b9eff;"></div><span>25x Longs</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:#ff8c00;"></div><span>Shorts</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:#a855f7;"></div><span>Max Pain</span></div>
-  <div class="legend-item"><div class="legend-dot" style="background:#4ade80;"></div><span>Price</span></div>
-  <div class="chart-toggle">
-    <button class="toggle-btn active" id="btnCandle" onclick="setChartType('candle')">Candle</button>
-    <button class="toggle-btn" id="btnLine" onclick="setChartType('line')">Line</button>
+  <div class="li"><div class="ld" style="background:#ff3b3b;"></div><span>100x Longs</span></div>
+  <div class="li"><div class="ld" style="background:#f5c518;"></div><span>50x Longs</span></div>
+  <div class="li"><div class="ld" style="background:#3b9eff;"></div><span>25x Longs</span></div>
+  <div class="li"><div class="ld" style="background:#ff8c00;"></div><span>Shorts</span></div>
+  <div class="li"><div class="ld" style="background:#a855f7;height:2px;"></div><span>Max Pain</span></div>
+  <div class="li"><div class="ld" style="background:#4ade80;"></div><span>Price</span></div>
+  <div class="ct">
+    <button class="tb active" id="btnC" onclick="setChart('candle')">Candle</button>
+    <button class="tb" id="btnL" onclick="setChart('line')">Line</button>
   </div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" id="tab-BTC" onclick="switchAsset('BTC')">BTC<span class="tab-price" id="price-BTC">Loading...</span></button>
-  <button class="tab" id="tab-ETH" onclick="switchAsset('ETH')">ETH<span class="tab-price" id="price-ETH">--</span></button>
-  <button class="tab" id="tab-XRP" onclick="switchAsset('XRP')">XRP<span class="tab-price" id="price-XRP">--</span></button>
+  <button class="tab active" id="tab-BTC" onclick="switchAsset('BTC')">BTC<span class="tp" id="price-BTC">--</span></button>
+  <button class="tab" id="tab-ETH" onclick="switchAsset('ETH')">ETH<span class="tp" id="price-ETH">--</span></button>
+  <button class="tab" id="tab-XRP" onclick="switchAsset('XRP')">XRP<span class="tp" id="price-XRP">--</span></button>
 </div>
 
 <div class="main">
-  <div class="chart-area">
-    <div class="chart-container">
-      <canvas id="chartCanvas"></canvas>
-      <div class="watermark">SCOTTIE SCALPS</div>
-    </div>
+  <div class="chart-wrap">
+    <canvas id="chart"></canvas>
+    <div class="wm">SCOTTIE SCALPS</div>
   </div>
   <div class="sidebar">
-    <div class="flush-alert hidden" id="flushAlert"><span id="flushIcon">⚡</span><span id="flushText">Flush detected</span></div>
-    <div class="sidebar-section">
-      <div class="sidebar-title">Liquidation Levels</div>
-      <div id="levelsList"><div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">Calculating...</div><div class="level-price" style="color:var(--muted);font-size:9px;">Loading OI data</div></div></div></div></div>
+    <div class="flush hidden" id="flushAlert"><span id="flushIcon">⚡</span><span id="flushText"></span></div>
+    <div class="sb-section">
+      <div class="sb-title">Liquidation Levels</div>
+      <div id="levelsList"><div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div></div>
     </div>
-    <div class="sidebar-section">
-      <div class="sidebar-title">Market Stats</div>
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-label">24h Change</div><div class="stat-value neutral" id="stat24h">--</div></div>
-        <div class="stat-box"><div class="stat-label">Funding</div><div class="stat-value neutral" id="statFunding">--</div></div>
-        <div class="stat-box"><div class="stat-label">Liq Levels</div><div class="stat-value neutral" id="statClusters">--</div></div>
-        <div class="stat-box"><div class="stat-label">Max Pain</div><div class="stat-value purple" id="statMaxPain">--</div></div>
+    <div class="sb-section">
+      <div class="sb-title">Market Stats</div>
+      <div class="sgrid">
+        <div class="sbox"><div class="slabel">24h Change</div><div class="sval neutral" id="s24h">--</div></div>
+        <div class="sbox"><div class="slabel">Funding</div><div class="sval neutral" id="sFund">--</div></div>
+        <div class="sbox"><div class="slabel">Liq Levels</div><div class="sval neutral" id="sLev">--</div></div>
+        <div class="sbox"><div class="slabel">Max Pain</div><div class="sval purple" id="sMP">--</div></div>
       </div>
     </div>
-    <div class="commentary">
-      <div class="sidebar-title">Market Read</div>
-      <div class="commentary-box">
-        <div class="commentary-time" id="commentaryTime">--</div>
-        <div id="commentaryText">Connecting...<br><br>Building liquidation map from Binance open interest data.</div>
-      </div>
+    <div class="mread">
+      <div class="sb-title">Market Read</div>
+      <div class="mbox"><div class="mtime" id="mtime">--</div><div id="mtext">Connecting to data feed...</div></div>
     </div>
-    <div class="cq-attr"><div class="cq-attr-text">Liq Model: Binance Futures OI · Price: Binance</div></div>
+    <div class="attr">Liq model: Binance OI · Price: Binance</div>
   </div>
 </div>
 
@@ -164,563 +154,442 @@ canvas{display:block;width:100%!important;height:100%!important;}
 const WORKER = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
 
 const ASSETS = {
-  BTC: { symbol: 'BTCUSDT', maintMarginRate: 0.004, tickSize: 10 },
-  ETH: { symbol: 'ETHUSDT', maintMarginRate: 0.005, tickSize: 1 },
-  XRP: { symbol: 'XRPUSDT', maintMarginRate: 0.01,  tickSize: 0.001 }
+  BTC: { symbol:'BTCUSDT', mmr:0.004, tick:10,    futSymbol:'BTCUSDT' },
+  ETH: { symbol:'ETHUSDT', mmr:0.005, tick:1,     futSymbol:'ETHUSDT' },
+  XRP: { symbol:'XRPUSDT', mmr:0.01,  tick:0.001, futSymbol:'XRPUSDT' }
 };
 
-// Leverage tiers with their colors
+// Leverage tiers — colour, label
 const TIERS = [
-  { lev: 100, longColor: [255, 59,  59],  label: '100x' },
-  { lev: 50,  longColor: [245, 197, 24],  label: '50x'  },
-  { lev: 25,  longColor: [59,  158, 255], label: '25x'  },
-  { lev: 10,  longColor: [74,  222, 128], label: '10x'  }
+  { lev:100, r:255, g:59,  b:59  },
+  { lev:50,  r:245, g:197, b:24  },
+  { lev:25,  r:59,  g:158, b:255 },
+  { lev:10,  r:74,  g:222, b:128 }
 ];
-const SHORT_COLOR = [255, 140, 0];
+const SHORT = [255, 140, 0];
 
-let currentAsset = 'BTC';
+let asset = 'BTC';
 let chartType = 'candle';
-let prices = { BTC: null, ETH: null, XRP: null };
+let prices = {BTC:null,ETH:null,XRP:null};
 let candles = [];
-let liqLevels = [];
-let maxPainLevel = null;
+// FIXED liquidation levels — calculated once from OI, don't move with price
+// Only recalculate when OI data refreshes (every 2 min)
+let fixedLevels = [];
+let maxPain = null;
 let priceWS = null;
 let candleWS = null;
-let fundingRate = null;
-let oiData = null;
-const MAX_CANDLES = 120;
+let funding = null;
+const MAX_C = 200; // more candles so price flows past fixed levels
 
-const canvas = document.getElementById('chartCanvas');
-const ctx = canvas.getContext('2d');
+const cv = document.getElementById('chart');
+const ctx = cv.getContext('2d');
 
-function resizeCanvas() {
-  canvas.width = canvas.parentElement.clientWidth;
-  canvas.height = canvas.parentElement.clientHeight;
-  drawChart();
+function resize() {
+  cv.width = cv.parentElement.clientWidth;
+  cv.height = cv.parentElement.clientHeight;
+  draw();
 }
-window.addEventListener('resize', resizeCanvas);
-setTimeout(resizeCanvas, 100);
+window.addEventListener('resize', resize);
+setTimeout(resize, 50);
 
-// ─── PROXY FETCH ──────────────────────────────────────────────────────────────
-async function proxyFetch(binanceUrl) {
-  const url = WORKER + '/?url=' + encodeURIComponent(binanceUrl);
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Proxy error ' + res.status);
-  return res.json();
+async function proxy(url) {
+  const r = await fetch(WORKER + '/?url=' + encodeURIComponent(url));
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
 }
 
-// ─── ASSET SWITCHING ──────────────────────────────────────────────────────────
-function switchAsset(asset) {
-  currentAsset = asset;
-  candles = []; liqLevels = []; maxPainLevel = null; fundingRate = null; oiData = null;
+// ─── ASSET SWITCH ─────────────────────────────────────────────────────────────
+function switchAsset(a) {
+  asset = a;
+  candles = []; fixedLevels = []; maxPain = null; funding = null;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + asset).classList.add('active');
-  updateLevelsList([]);
-  connectPriceWS(asset);
-  connectCandleWS(asset);
-  fetchOIandBuild(asset);
-  fetchFunding(asset);
+  document.getElementById('tab-'+a).classList.add('active');
+  document.getElementById('levelsList').innerHTML = '<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div>';
+  connectPrice(); connectCandles(); fetchOI(); fetchFunding();
 }
 
-function setChartType(t) {
+function setChart(t) {
   chartType = t;
-  document.getElementById('btnCandle').classList.toggle('active', t === 'candle');
-  document.getElementById('btnLine').classList.toggle('active', t === 'line');
-  drawChart();
+  document.getElementById('btnC').classList.toggle('active', t==='candle');
+  document.getElementById('btnL').classList.toggle('active', t==='line');
+  draw();
 }
 
-// ─── BINANCE WS via fstream (futures) ────────────────────────────────────────
-function connectPriceWS(asset) {
+// ─── WEBSOCKETS ───────────────────────────────────────────────────────────────
+function connectPrice() {
   if (priceWS) priceWS.close();
-  const streams = Object.values(ASSETS).map(a => a.symbol.toLowerCase() + '@miniTicker').join('/');
-  priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + streams);
-
-  priceWS.onmessage = (e) => {
-    const receiveTime = Date.now();
+  const streams = Object.values(ASSETS).map(a=>a.symbol.toLowerCase()+'@miniTicker').join('/');
+  priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams='+streams);
+  priceWS.onmessage = e => {
+    const rt = Date.now();
     const msg = JSON.parse(e.data);
     if (!msg.data) return;
     const d = msg.data;
-    const price = parseFloat(d.c);
-
+    const p = parseFloat(d.c);
     if (d.E) {
-      const ms = receiveTime - d.E;
-      const el = document.getElementById('pingDisplay');
-      if (el) {
-        el.textContent = ms + ' ms';
-        el.style.color = ms < 100 ? 'var(--accent)' : ms < 300 ? 'var(--yellow)' : 'var(--red)';
-      }
+      const ms = rt - d.E;
+      const el = document.getElementById('ping');
+      el.textContent = ms+' ms';
+      el.style.color = ms<100?'var(--accent)':ms<300?'var(--yellow)':'var(--red)';
     }
-
-    for (const [a, cfg] of Object.entries(ASSETS)) {
+    for (const [a,cfg] of Object.entries(ASSETS)) {
       if (cfg.symbol === d.s) {
         const prev = prices[a];
-        prices[a] = price;
-        const el = document.getElementById('price-' + a);
-        const tab = document.getElementById('tab-' + a);
+        prices[a] = p;
+        const el = document.getElementById('price-'+a);
+        const tab = document.getElementById('tab-'+a);
         if (el) {
-          el.textContent = formatPrice(price, a);
-          if (prev) {
-            tab.classList.toggle('up', price >= prev);
-            tab.classList.toggle('down', price < prev);
-          }
+          el.textContent = fmt(p,a);
+          if (prev) { tab.classList.toggle('up',p>=prev); tab.classList.toggle('down',p<prev); }
         }
-        if (a === currentAsset) {
-          updateTimestamp();
-          // Rebuild liq levels as price moves
-          if (prev && Math.abs(price - prev) / prev > 0.0003) {
-            buildLiqLevels(currentAsset);
-          }
-          checkFlushAlert(price);
-        }
+        if (a===asset) { updTS(); checkFlush(p); draw(); updStats(); }
       }
     }
   };
-
-  priceWS.onopen = () => setConnStatus('connected');
-  priceWS.onerror = () => setConnStatus('error');
-  priceWS.onclose = () => setTimeout(() => connectPriceWS(currentAsset), 3000);
+  priceWS.onopen = () => setConn('connected');
+  priceWS.onerror = () => setConn('error');
+  priceWS.onclose = () => setTimeout(connectPrice, 3000);
 }
 
-function connectCandleWS(asset) {
+function connectCandles() {
   if (candleWS) candleWS.close();
   const sym = ASSETS[asset].symbol.toLowerCase();
-  candleWS = new WebSocket('wss://fstream.binance.com/ws/' + sym + '@kline_1m');
-
-  candleWS.onmessage = (e) => {
-    const msg = JSON.parse(e.data);
-    if (!msg.k) return;
-    const k = msg.k;
-    const c = { t: k.t, o: parseFloat(k.o), h: parseFloat(k.h), l: parseFloat(k.l), c: parseFloat(k.c), v: parseFloat(k.v), closed: k.x };
+  candleWS = new WebSocket('wss://stream.binance.com:9443/ws/'+sym+'@kline_1m');
+  candleWS.onmessage = e => {
+    const k = JSON.parse(e.data).k;
+    if (!k) return;
+    const c = {t:k.t,o:parseFloat(k.o),h:parseFloat(k.h),l:parseFloat(k.l),c:parseFloat(k.c),v:parseFloat(k.v)};
     if (!candles.length) candles.push(c);
-    else if (candles[candles.length-1].t === c.t) candles[candles.length-1] = c;
-    else { candles.push(c); if (candles.length > MAX_CANDLES) candles.shift(); }
-    drawChart();
+    else if (candles[candles.length-1].t===c.t) candles[candles.length-1]=c;
+    else { candles.push(c); if (candles.length>MAX_C) candles.shift(); }
+    draw();
   };
-
-  candleWS.onopen = () => fetchCandles(asset);
+  candleWS.onopen = () => loadCandles();
 }
 
-async function fetchCandles(asset) {
+async function loadCandles() {
   try {
-    const sym = ASSETS[asset].symbol;
-    const data = await proxyFetch('https://fapi.binance.com/fapi/v1/klines?symbol=' + sym + '&interval=1m&limit=' + MAX_CANDLES);
-    candles = data.map(k => ({ t: k[0], o: parseFloat(k[1]), h: parseFloat(k[2]), l: parseFloat(k[3]), c: parseFloat(k[4]), v: parseFloat(k[5]), closed: true }));
-    drawChart();
-    updateStats();
-  } catch(e) { console.error('Candles failed', e); }
+    const data = await proxy('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].symbol+'&interval=1m&limit='+MAX_C);
+    candles = data.map(k=>({t:k[0],o:parseFloat(k[1]),h:parseFloat(k[2]),l:parseFloat(k[3]),c:parseFloat(k[4]),v:parseFloat(k[5])}));
+    draw(); updStats();
+  } catch(e) { console.error('Candles failed',e); }
 }
 
-// ─── LIQUIDATION MAP ─────────────────────────────────────────────────────────
-// Uses Binance futures open interest history to estimate position distribution
-// Then calculates liquidation prices for each leverage tier
-// This is the same methodology as Coinglass/CryptOn but built from scratch
+// ─── LIQUIDATION MODEL ────────────────────────────────────────────────────────
+// Key insight: levels are FIXED based on where positions WERE opened.
+// We calculate these from the order book depth + candle history.
+// Once set, levels stay fixed. Price moves toward them.
 
-async function fetchOIandBuild(asset) {
+async function fetchOI() {
   try {
     const sym = ASSETS[asset].symbol;
-    const [oiSnap, depth, premium] = await Promise.all([
-      proxyFetch("https://fapi.binance.com/fapi/v1/openInterest?symbol=" + sym),
-      proxyFetch("https://fapi.binance.com/fapi/v1/depth?symbol=" + sym + "&limit=100"),
-      proxyFetch("https://fapi.binance.com/fapi/v1/premiumIndex?symbol=" + sym)
+    const [oi, depth] = await Promise.all([
+      proxy('https://fapi.binance.com/fapi/v1/openInterest?symbol='+sym),
+      proxy('https://fapi.binance.com/fapi/v1/depth?symbol='+sym+'&limit=500')
     ]);
-    oiData = { oiSnap, depth, premium, asset };
-    // Wait for price if not yet available
-    if (prices[asset]) {
-      buildLiqLevels(asset);
-    } else {
-      const waitForPrice = setInterval(() => {
-        if (prices[asset]) {
-          clearInterval(waitForPrice);
-          buildLiqLevels(asset);
-        }
-      }, 500);
-    }
-    setTimeout(() => fetchOIandBuild(asset), 120000);
+    buildFixedLevels(oi, depth);
+    setTimeout(fetchOI, 120000);
   } catch(e) {
-    console.error("OI fetch failed:", e);
-    setTimeout(() => fetchOIandBuild(asset), 15000);
+    console.error('OI failed',e);
+    setTimeout(fetchOI, 15000);
   }
 }
 
-async function fetchFunding(asset) {
+async function fetchFunding() {
   try {
-    const sym = ASSETS[asset].symbol;
-    const data = await proxyFetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + sym);
-    fundingRate = parseFloat(data.lastFundingRate) * 100;
-    updateStats();
-    setTimeout(() => fetchFunding(asset), 30000);
-  } catch(e) { setTimeout(() => fetchFunding(asset), 30000); }
+    const data = await proxy('https://fapi.binance.com/fapi/v1/premiumIndex?symbol='+ASSETS[asset].symbol);
+    funding = parseFloat(data.lastFundingRate)*100;
+    updStats();
+    setTimeout(fetchFunding, 30000);
+  } catch(e) { setTimeout(fetchFunding,30000); }
 }
 
-function buildLiqLevels(asset) {
-  const price = prices[asset];
-  if (!price || !oiData || oiData.asset !== asset) return;
-
+function buildFixedLevels(oi, depth) {
   const cfg = ASSETS[asset];
-  const tick = cfg.tickSize;
-  const mmr = cfg.maintMarginRate;
+  const mmr = cfg.mmr;
   const levels = [];
 
-  // Total OI from snapshot
-  const totalOI = oiData.oiSnap
-    ? parseFloat(oiData.oiSnap.openInterest) * price
-    : price * 10000;
+  // Total OI gives us scale
+  const totalOI = parseFloat(oi.openInterest) * (prices[asset] || 70000);
 
-  // Build position distribution from order book + candle history
-  // Order book bids = long positions, asks = short positions
-  const positionMap = {};
+  // Build position map from order book
+  // Bids = buyers = long positions at those prices
+  // Asks = sellers = short positions at those prices
+  const posMap = {};
 
-  // Use order book depth to estimate where positions are clustered
-  if (oiData.depth && oiData.depth.bids && oiData.depth.asks) {
-    oiData.depth.bids.forEach(([p, q]) => {
-      const bp = parseFloat(p);
-      const bq = parseFloat(q) * bp;
-      const bucket = Math.round(bp / tick) * tick;
-      positionMap[bucket] = (positionMap[bucket] || 0) + bq;
-    });
-    oiData.depth.asks.forEach(([p, q]) => {
-      const ap = parseFloat(p);
-      const aq = parseFloat(q) * ap;
-      const bucket = Math.round(ap / tick) * tick;
-      positionMap[bucket] = (positionMap[bucket] || 0) + aq;
+  if (depth.bids) {
+    depth.bids.forEach(([p,q]) => {
+      const price = parseFloat(p);
+      const val = parseFloat(q) * price;
+      const bucket = Math.round(price / cfg.tick) * cfg.tick;
+      posMap[bucket] = (posMap[bucket]||0) + val;
     });
   }
-
-  // Also distribute OI across recent candle prices
-  if (candles.length > 0) {
-    const recent = candles.slice(-60);
-    recent.forEach((c, i) => {
-      const weight = (i + 1) / recent.length;
-      const bucket = Math.round(c.c / tick) * tick;
-      positionMap[bucket] = (positionMap[bucket] || 0) + (totalOI * 0.015 * weight);
+  if (depth.asks) {
+    depth.asks.forEach(([p,q]) => {
+      const price = parseFloat(p);
+      const val = parseFloat(q) * price;
+      const bucket = Math.round(price / cfg.tick) * cfg.tick;
+      posMap[bucket] = (posMap[bucket]||0) + val;
     });
   }
 
-  // Fallback synthetic distribution
-  if (Object.keys(positionMap).length === 0) {
-    const steps = 40;
-    for (let i = -steps; i <= steps; i++) {
-      const p = Math.round((price + i * tick * 10) / tick) * tick;
-      const weight = Math.exp(-Math.pow(i / 15, 2));
-      positionMap[p] = totalOI * weight * 0.025;
-    }
-  }
-
-  // Calculate liquidation prices for each entry bucket and leverage tier
-  Object.entries(positionMap).forEach(([entryStr, size]) => {
+  // For each price level in the order book, calculate where
+  // leveraged positions opened AT THAT PRICE get liquidated
+  Object.entries(posMap).forEach(([entryStr, size]) => {
     const entry = parseFloat(entryStr);
-    if (size < 1000) return;
+    if (size < 50000) return; // Skip tiny positions
 
     TIERS.forEach(tier => {
-      const { lev, longColor } = tier;
-      const longLiqPrice = entry * (1 - 1/lev + mmr);
-      const shortLiqPrice = entry * (1 + 1/lev - mmr);
+      const {lev, r, g, b} = tier;
+      // Long liq: if you opened a long at `entry` with `lev` leverage,
+      // you get liquidated at entry * (1 - 1/lev + mmr)
+      const longLiq = entry * (1 - 1/lev + mmr);
+      // Short liq: entry * (1 + 1/lev - mmr)
+      const shortLiq = entry * (1 + 1/lev - mmr);
 
-      if (longLiqPrice > price * 0.88 && longLiqPrice < price * 0.9995) {
-        levels.push({
-          price: longLiqPrice,
-          size: size * (1 / lev),
-          side: 'long',
-          leverage: lev,
-          r: longColor[0], g: longColor[1], b: longColor[2]
-        });
-      }
-
-      if (shortLiqPrice < price * 1.12 && shortLiqPrice > price * 1.0005) {
-        levels.push({
-          price: shortLiqPrice,
-          size: size * (1 / lev),
-          side: 'short',
-          leverage: lev,
-          r: SHORT_COLOR[0], g: SHORT_COLOR[1], b: SHORT_COLOR[2]
-        });
-      }
+      levels.push({ price: longLiq, size, side:'long', lev, r, g, b });
+      levels.push({ price: shortLiq, size, side:'short', lev, r: SHORT[0], g: SHORT[1], b: SHORT[2] });
     });
   });
 
-  // Cluster nearby levels together
-  const clustered = clusterLevels(levels, tick * 5);
+  // These levels are NOW FIXED — they won't move as price changes
+  // Sort by size
+  const bySize = [...levels].sort((a,b)=>b.size-a.size);
+  maxPain = bySize.length > 0 ? bySize[0].price : null;
+  fixedLevels = levels;
 
-  // Sort by size to find max pain
-  if (clustered.length > 0) {
-    const bySize = [...clustered].sort((a, b) => b.size - a.size);
-    maxPainLevel = bySize[0].price;
-  }
-
-  // Sort by proximity to price for sidebar
-  liqLevels = clustered.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
-
-  updateLevelsList(liqLevels);
-  updateStats();
-  updateCommentary();
-  drawChart();
+  updLevels();
+  updStats();
+  updRead();
+  draw();
 }
 
-function clusterLevels(levels, threshold) {
-  if (!levels.length) return [];
-  const sorted = [...levels].sort((a, b) => a.price - b.price);
-  const clusters = [];
-  let current = { ...sorted[0] };
+// ─── DRAWING ──────────────────────────────────────────────────────────────────
+function draw() {
+  if (!cv.width||!cv.height) return;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const W=cv.width, H=cv.height;
+  const PL=65, PR=8, PT=15, PB=25;
+  const CW=W-PL-PR, CH=H-PT-PB;
 
-  for (let i = 1; i < sorted.length; i++) {
-    const lvl = sorted[i];
-    if (lvl.price - current.price <= threshold && lvl.side === current.side && lvl.leverage === current.leverage) {
-      current.size += lvl.size;
-      current.price = (current.price + lvl.price) / 2;
-    } else {
-      clusters.push(current);
-      current = { ...lvl };
-    }
-  }
-  clusters.push(current);
-  return clusters;
-}
-
-// ─── CHART DRAWING ────────────────────────────────────────────────────────────
-function drawChart() {
-  if (!canvas.width || !canvas.height) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const W = canvas.width, H = canvas.height;
-  const padL = 72, padR = 14, padT = 20, padB = 30;
-  const chartW = W - padL - padR;
-  const chartH = H - padT - padB;
-
-  if (candles.length < 2) {
-    ctx.fillStyle = 'rgba(74,222,128,0.2)';
-    ctx.font = '11px JetBrains Mono';
-    ctx.textAlign = 'center';
+  if (candles.length<2) {
+    ctx.fillStyle='rgba(74,222,128,0.15)';
+    ctx.font='11px JetBrains Mono';
+    ctx.textAlign='center';
     ctx.fillText('Loading...', W/2, H/2);
     return;
   }
 
-  const price = prices[currentAsset] || candles[candles.length-1].c;
+  const price = prices[asset] || candles[candles.length-1].c;
 
-  // Price range: show candles in context, keep scale tight
-  const visCandles = candles.slice(-MAX_CANDLES);
-  let lo = Math.min(...visCandles.map(c => c.l));
-  let hi = Math.max(...visCandles.map(c => c.h));
+  // Price range based on candles — this is what scrolls
+  const vis = candles.slice(-MAX_C);
+  let lo = Math.min(...vis.map(c=>c.l));
+  let hi = Math.max(...vis.map(c=>c.h));
 
-  // Include liq levels in range
-  liqLevels.forEach(l => {
+  // Include ALL fixed levels in the price range
+  // So they show as fixed lines while candles move through them
+  fixedLevels.forEach(l => {
     if (l.price < lo) lo = l.price;
     if (l.price > hi) hi = l.price;
   });
-  if (maxPainLevel) {
-    if (maxPainLevel < lo) lo = maxPainLevel;
-    if (maxPainLevel > hi) hi = maxPainLevel;
+  if (maxPain) { if(maxPain<lo) lo=maxPain; if(maxPain>hi) hi=maxPain; }
+
+  const pad = (hi-lo)*0.05;
+  const minP = lo-pad, maxP = hi+pad;
+  const range = maxP-minP;
+  const toY = p => PT+CH-((p-minP)/range)*CH;
+  const gap = CW/MAX_C;
+  const cw = Math.max(1.5, gap*0.65);
+
+  // Grid
+  for (let i=0;i<=8;i++) {
+    const y = PT+(i/8)*CH;
+    const p = maxP-(i/8)*range;
+    ctx.strokeStyle='rgba(26,42,28,0.35)';
+    ctx.lineWidth=0.4;
+    ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
+    ctx.fillStyle='rgba(74,107,82,0.5)';
+    ctx.font='8px JetBrains Mono';
+    ctx.textAlign='right';
+    ctx.fillText(fmt(p,asset), PL-3, y+3);
   }
 
-  const pad = (hi - lo) * 0.06;
-  const minP = lo - pad;
-  const maxP = hi + pad;
-  const range = maxP - minP;
+  // ── FIXED LIQUIDATION LEVEL LINES ─────────────────────────────────────────
+  // These are drawn as horizontal lines spanning full chart width
+  // They STAY in place — candles move past them
+  const maxSz = fixedLevels.length>0 ? Math.max(...fixedLevels.map(l=>l.size)) : 1;
 
-  const toY = p => padT + chartH - ((p - minP) / range) * chartH;
-  const gap = chartW / MAX_CANDLES;
-  const candleW = Math.max(1.5, gap * 0.65);
+  fixedLevels.forEach(l => {
+    const y = toY(l.price);
+    if (y<PT-5||y>PT+CH+5) return;
+    const norm = Math.min(1, l.size/maxSz);
+    const alpha = 0.12 + norm*0.55;
+    const lw = l.lev>=100 ? 1.5 : l.lev>=50 ? 1.0 : 0.6;
 
-  // Background grid
-  const gridCount = 8;
-  for (let i = 0; i <= gridCount; i++) {
-    const y = padT + (i / gridCount) * chartH;
-    const p = maxP - (i / gridCount) * range;
-    ctx.strokeStyle = 'rgba(26,42,28,0.4)';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-    ctx.fillStyle = 'rgba(74,107,82,0.55)';
-    ctx.font = '9px JetBrains Mono';
-    ctx.textAlign = 'right';
-    ctx.fillText(formatPrice(p, currentAsset), padL - 4, y + 3);
-  }
-
-  // ── LIQUIDATION HEATMAP BARS ──────────────────────────────────────────────
-  // Find max size for normalising bar widths
-  const maxSize = liqLevels.length > 0 ? Math.max(...liqLevels.map(l => l.size)) : 1;
-  const maxBarW = 30; // max heat bar width in px
-
-  liqLevels.forEach(lvl => {
-    const y = toY(lvl.price);
-    if (y < padT - 2 || y > padT + chartH + 2) return;
-
-    const norm = Math.min(1, lvl.size / maxSize);
-    const alpha = 0.25 + norm * 0.65;
-    const barW = Math.max(3, norm * maxBarW);
-    const lineAlpha = 0.15 + norm * 0.55;
-
-    // Heat bar on left margin
-    ctx.fillStyle = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',' + alpha + ')';
-    ctx.fillRect(padL - barW - 2, y - 1.5, barW, 3);
-
-    // Horizontal level line across chart
-    ctx.strokeStyle = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',' + lineAlpha + ')';
-    ctx.lineWidth = lvl.leverage >= 50 ? 1.2 : 0.6;
-    ctx.setLineDash(lvl.leverage < 25 ? [2, 5] : []);
-    ctx.beginPath();
-    ctx.moveTo(padL, y);
-    ctx.lineTo(W - padR, y);
-    ctx.stroke();
+    ctx.strokeStyle = 'rgba('+l.r+','+l.g+','+l.b+','+alpha+')';
+    ctx.lineWidth = lw;
+    ctx.setLineDash(l.lev<25 ? [2,4] : []);
+    ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Price label for high-leverage significant levels
-    if (lvl.leverage >= 50 && norm > 0.4) {
-      ctx.fillStyle = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',0.8)';
-      ctx.font = '8px JetBrains Mono';
-      ctx.textAlign = 'right';
-      ctx.fillText(formatPrice(lvl.price, currentAsset), padL - maxBarW - 6, y + 3);
+    // Price label on left for significant levels
+    if (norm>0.3 && l.lev>=50) {
+      ctx.fillStyle='rgba('+l.r+','+l.g+','+l.b+',0.75)';
+      ctx.font='7px JetBrains Mono';
+      ctx.textAlign='right';
+      ctx.fillText(fmt(l.price,asset), PL-3, y-1);
     }
   });
 
-  // Max pain line
-  if (maxPainLevel) {
-    const y = toY(maxPainLevel);
-    if (y >= padT && y <= padT + chartH) {
-      ctx.strokeStyle = 'rgba(168,85,247,0.85)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([6, 3]);
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+  // Max pain — fixed purple line
+  if (maxPain) {
+    const y = toY(maxPain);
+    if (y>=PT&&y<=PT+CH) {
+      ctx.strokeStyle='rgba(168,85,247,0.85)';
+      ctx.lineWidth=1.5;
+      ctx.setLineDash([8,3]);
+      ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(168,85,247,0.9)';
-      ctx.font = '8px JetBrains Mono';
-      ctx.textAlign = 'left';
-      ctx.fillText('MAX PAIN ' + formatPrice(maxPainLevel, currentAsset), padL + 4, y - 3);
+      ctx.fillStyle='rgba(168,85,247,0.9)';
+      ctx.font='8px JetBrains Mono';
+      ctx.textAlign='left';
+      ctx.fillText('MAX PAIN '+fmt(maxPain,asset), PL+4, y-3);
     }
   }
 
-  // ── CANDLES ───────────────────────────────────────────────────────────────
-  if (chartType === 'line') {
-    ctx.strokeStyle = 'rgba(74,222,128,0.8)';
-    ctx.lineWidth = 1.5;
+  // ── CANDLES — these move left as time progresses ───────────────────────────
+  if (chartType==='line') {
+    ctx.strokeStyle='rgba(74,222,128,0.8)';
+    ctx.lineWidth=1.5;
     ctx.beginPath();
-    visCandles.forEach((c, i) => {
-      const x = padL + (i + (MAX_CANDLES - visCandles.length)) * gap + gap/2;
-      i === 0 ? ctx.moveTo(x, toY(c.c)) : ctx.lineTo(x, toY(c.c));
+    vis.forEach((c,i) => {
+      const x=PL+(i+(MAX_C-vis.length))*gap+gap/2;
+      i===0?ctx.moveTo(x,toY(c.c)):ctx.lineTo(x,toY(c.c));
     });
     ctx.stroke();
   } else {
-    visCandles.forEach((c, i) => {
-      const x = padL + (i + (MAX_CANDLES - visCandles.length)) * gap + gap/2;
-      const up = c.c >= c.o;
-      const col = up ? 'rgba(74,222,128,' : 'rgba(255,59,59,';
-      ctx.strokeStyle = col + '0.7)';
-      ctx.lineWidth = 0.7;
-      ctx.beginPath(); ctx.moveTo(x, toY(c.h)); ctx.lineTo(x, toY(c.l)); ctx.stroke();
-      const bodyTop = Math.min(toY(c.o), toY(c.c));
-      const bodyH = Math.max(1, Math.abs(toY(c.c) - toY(c.o)));
-      ctx.fillStyle = col + (up ? '0.85)' : '0.75)');
-      ctx.fillRect(x - candleW/2, bodyTop, candleW, bodyH);
+    vis.forEach((c,i) => {
+      const x=PL+(i+(MAX_C-vis.length))*gap+gap/2;
+      const up=c.c>=c.o;
+      const col=up?'rgba(74,222,128,':'rgba(255,59,59,';
+      ctx.strokeStyle=col+'0.7)'; ctx.lineWidth=0.7;
+      ctx.beginPath(); ctx.moveTo(x,toY(c.h)); ctx.lineTo(x,toY(c.l)); ctx.stroke();
+      const bt=Math.min(toY(c.o),toY(c.c));
+      const bh=Math.max(1,Math.abs(toY(c.c)-toY(c.o)));
+      ctx.fillStyle=col+(up?'0.85)':'0.75)');
+      ctx.fillRect(x-cw/2,bt,cw,bh);
     });
   }
 
-  // Current price line + tag
+  // Current price line — this IS the moving element
   if (price) {
-    const y = toY(price);
-    if (y >= padT && y <= padT + chartH) {
-      ctx.strokeStyle = 'rgba(74,222,128,0.9)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 3]);
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    const y=toY(price);
+    if (y>=PT&&y<=PT+CH) {
+      ctx.strokeStyle='rgba(74,222,128,0.9)';
+      ctx.lineWidth=1;
+      ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(74,222,128,0.95)';
-      const label = formatPrice(price, currentAsset);
-      const lw = ctx.measureText(label).width + 10;
-      ctx.fillRect(W - padR - lw - 2, y - 8, lw + 4, 16);
-      ctx.fillStyle = '#060a07';
-      ctx.font = 'bold 9px JetBrains Mono';
-      ctx.textAlign = 'left';
-      ctx.fillText(label, W - padR - lw, y + 4);
+      ctx.fillStyle='rgba(74,222,128,0.95)';
+      const lbl=fmt(price,asset);
+      const lw2=ctx.measureText(lbl).width+10;
+      ctx.fillRect(W-PR-lw2-2,y-8,lw2+4,16);
+      ctx.fillStyle='#060a07';
+      ctx.font='bold 9px JetBrains Mono';
+      ctx.textAlign='left';
+      ctx.fillText(lbl,W-PR-lw2,y+4);
     }
   }
 }
 
 // ─── UI ───────────────────────────────────────────────────────────────────────
-function updateLevelsList(levels) {
+function updLevels() {
   const el = document.getElementById('levelsList');
-  const price = prices[currentAsset] || 0;
-  if (!levels || levels.length === 0) {
-    el.innerHTML = '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:var(--muted);"></div><div><div class="level-type">Building map...</div></div></div></div>';
+  const p = prices[asset]||0;
+  if (!fixedLevels.length) {
+    el.innerHTML='<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Building...</div></div></div></div>';
     return;
   }
-  el.innerHTML = levels.slice(0, 10).map(lvl => {
-    const dist = price ? ((lvl.price - price) / price * 100).toFixed(2) : '--';
-    const dot = 'rgba(' + lvl.r + ',' + lvl.g + ',' + lvl.b + ',0.9)';
-    const dClass = lvl.side === 'short' ? 'short-dir' : 'long-dir';
-    const sz = lvl.size > 1e9 ? (lvl.size/1e9).toFixed(1)+'B' : lvl.size > 1e6 ? (lvl.size/1e6).toFixed(1)+'M' : (lvl.size/1e3).toFixed(0)+'K';
-    return '<div class="level-row"><div class="level-left"><div class="level-dot" style="background:' + dot + ';"></div><div><div class="level-type">' + lvl.leverage + 'x &nbsp;' + (parseFloat(dist) > 0 ? '+' : '') + dist + '%</div><div class="level-price">' + formatPrice(lvl.price, currentAsset) + '</div></div></div><div style="text-align:right;"><div class="level-size">$' + sz + '</div><div class="level-direction ' + dClass + '">' + lvl.side + '</div></div></div>';
+  const sorted = [...fixedLevels].sort((a,b)=>Math.abs(a.price-p)-Math.abs(b.price-p));
+  el.innerHTML = sorted.slice(0,12).map(l => {
+    const dist = p?((l.price-p)/p*100).toFixed(2):'--';
+    const dot='rgba('+l.r+','+l.g+','+l.b+',0.9)';
+    const dc=l.side==='short'?'sd':'ld2';
+    const sz=l.size>1e9?(l.size/1e9).toFixed(1)+'B':l.size>1e6?(l.size/1e6).toFixed(1)+'M':(l.size/1e3).toFixed(0)+'K';
+    return '<div class="lrow"><div class="ll"><div class="ldot" style="background:'+dot+'"></div><div><div class="ltype">'+l.lev+'x &nbsp;'+(parseFloat(dist)>0?'+':'')+dist+'%</div><div class="lprice">'+fmt(l.price,asset)+'</div></div></div><div style="text-align:right"><div class="lsize">$'+sz+'</div><div class="ldir '+dc+'">'+l.side+'</div></div></div>';
   }).join('');
 }
 
-function updateStats() {
-  const price = prices[currentAsset];
-  if (!price || candles.length < 2) return;
-  const ch = ((price - candles[0].o) / candles[0].o * 100).toFixed(2);
-  const el = document.getElementById('stat24h');
-  el.textContent = (ch >= 0 ? '+' : '') + ch + '%';
-  el.className = 'stat-value ' + (ch >= 0 ? 'up' : 'down');
-  if (fundingRate !== null) {
-    const fr = document.getElementById('statFunding');
-    fr.textContent = (fundingRate >= 0 ? '+' : '') + fundingRate.toFixed(4) + '%';
-    fr.className = 'stat-value ' + (fundingRate >= 0 ? 'up' : 'down');
+function updStats() {
+  const p=prices[asset];
+  if (!p||candles.length<2) return;
+  const ch=((p-candles[0].o)/candles[0].o*100).toFixed(2);
+  const el=document.getElementById('s24h');
+  el.textContent=(ch>=0?'+':'')+ch+'%';
+  el.className='sval '+(ch>=0?'up':'down');
+  if (funding!==null) {
+    const f=document.getElementById('sFund');
+    f.textContent=(funding>=0?'+':'')+funding.toFixed(4)+'%';
+    f.className='sval '+(funding>=0?'up':'down');
   }
-  document.getElementById('statClusters').textContent = liqLevels.length || '--';
-  if (maxPainLevel) document.getElementById('statMaxPain').textContent = formatPrice(maxPainLevel, currentAsset);
+  document.getElementById('sLev').textContent=fixedLevels.length||'--';
+  if (maxPain) document.getElementById('sMP').textContent=fmt(maxPain,asset);
 }
 
-function updateCommentary() {
-  const price = prices[currentAsset];
-  if (!price || !liqLevels.length) return;
-  const near = liqLevels.filter(l => Math.abs(l.price - price) / price < 0.005);
-  const above = liqLevels.filter(l => l.price > price).sort((a,b) => a.price - b.price)[0];
-  const below = liqLevels.filter(l => l.price < price).sort((a,b) => b.price - a.price)[0];
-  let txt = '<strong>' + currentAsset + ' @ ' + formatPrice(price, currentAsset) + '</strong><br><br>';
-  if (near.length > 0) txt += '⚡ <strong style="color:var(--red)">Near ' + near[0].leverage + 'x liq zone.</strong> Flush probable — wait for sweep and reversal.<br><br>';
-  if (above) txt += '▲ Short liq (' + above.leverage + 'x): <strong>' + formatPrice(above.price, currentAsset) + '</strong> (+' + ((above.price - price)/price*100).toFixed(2) + '%)<br>';
-  if (below) txt += '▼ Long liq (' + below.leverage + 'x): <strong>' + formatPrice(below.price, currentAsset) + '</strong> (' + ((below.price - price)/price*100).toFixed(2) + '%)<br>';
-  if (maxPainLevel) txt += '<br><span class="mp">■ Max Pain: ' + formatPrice(maxPainLevel, currentAsset) + '</span>';
-  document.getElementById('commentaryText').innerHTML = txt;
-  document.getElementById('commentaryTime').textContent = new Date().toLocaleTimeString();
+function updRead() {
+  const p=prices[asset];
+  if (!p||!fixedLevels.length) return;
+  const sorted=[...fixedLevels].sort((a,b)=>Math.abs(a.price-p)-Math.abs(b.price-p));
+  const near=sorted.filter(l=>Math.abs(l.price-p)/p<0.005);
+  const above=fixedLevels.filter(l=>l.price>p).sort((a,b)=>a.price-b.price)[0];
+  const below=fixedLevels.filter(l=>l.price<p).sort((a,b)=>b.price-a.price)[0];
+  let txt='<strong>'+asset+' @ '+fmt(p,asset)+'</strong><br><br>';
+  if (near.length) txt+='⚡ <strong style="color:var(--red)">Near '+near[0].lev+'x liq zone.</strong> Flush risk — wait for sweep.<br><br>';
+  if (above) txt+='▲ Short liq ('+above.lev+'x): <strong>'+fmt(above.price,asset)+'</strong> (+'+((above.price-p)/p*100).toFixed(2)+'%)<br>';
+  if (below) txt+='▼ Long liq ('+below.lev+'x): <strong>'+fmt(below.price,asset)+'</strong> ('+((below.price-p)/p*100).toFixed(2)+'%)<br>';
+  if (maxPain) txt+='<br><span class="mp">■ Max Pain: '+fmt(maxPain,asset)+'</span>';
+  document.getElementById('mtext').innerHTML=txt;
+  document.getElementById('mtime').textContent=new Date().toLocaleTimeString();
 }
 
-function checkFlushAlert(price) {
-  if (!liqLevels.length) return;
-  const nearby = liqLevels.find(l => Math.abs(l.price - price)/price < 0.001 && l.leverage >= 50);
+function checkFlush(p) {
+  if (!fixedLevels.length) return;
+  const nearby=fixedLevels.find(l=>Math.abs(l.price-p)/p<0.001&&l.lev>=50);
   if (!nearby) return;
-  const alert = document.getElementById('flushAlert');
-  const isLong = nearby.side !== 'short';
-  alert.className = 'flush-alert ' + (isLong ? 'long-flush' : 'short-flush');
-  document.getElementById('flushText').textContent = (isLong ? 'LONG FLUSH' : 'SHORT FLUSH') + ' — ' + nearby.leverage + 'x @ ' + formatPrice(nearby.price, currentAsset);
-  setTimeout(() => alert.classList.add('hidden'), 8000);
+  const al=document.getElementById('flushAlert');
+  const isLong=nearby.side!=='short';
+  al.className='flush '+(isLong?'lf':'sf');
+  document.getElementById('flushText').textContent=(isLong?'LONG FLUSH':'SHORT FLUSH')+' — '+nearby.lev+'x @ '+fmt(nearby.price,asset);
+  setTimeout(()=>al.classList.add('hidden'),8000);
 }
 
-function setConnStatus(s) {
-  const el = document.getElementById('connStatus');
-  el.className = 'conn-status ' + s;
-  el.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+function setConn(s) {
+  const el=document.getElementById('connStatus');
+  el.className='conn '+s;
+  el.textContent=s.charAt(0).toUpperCase()+s.slice(1);
 }
-
-function updateTimestamp() {
-  document.getElementById('timestamp').textContent = new Date().toLocaleTimeString('en-US', {hour12:false});
+function updTS() { document.getElementById('ts').textContent=new Date().toLocaleTimeString('en-US',{hour12:false}); }
+function fmt(p,a) {
+  if (!p||isNaN(p)) return '--';
+  a=a||asset;
+  if (a==='XRP') return '$'+p.toFixed(4);
+  if (a==='ETH') return '$'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$'+Math.round(p).toLocaleString('en-US');
 }
-
-function formatPrice(p, asset) {
-  if (!p || isNaN(p)) return '--';
-  asset = asset || currentAsset;
-  if (asset === 'XRP') return '$' + p.toFixed(4);
-  if (asset === 'ETH') return '$' + p.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  return '$' + Math.round(p).toLocaleString('en-US');
-}
-
 function toggleMode() {
-  const light = document.body.classList.toggle('light-mode');
-  document.getElementById('modeToggle').textContent = light ? '🌙 Dark' : '☀ Light';
+  const l=document.body.classList.toggle('light-mode');
+  document.querySelector('.mode-btn').textContent=l?'🌙 Dark':'☀ Light';
 }
 
-setConnStatus('connecting');
-connectPriceWS('BTC');
-connectCandleWS('BTC');
-fetchOIandBuild('BTC');
-fetchFunding('BTC');
-setInterval(updateTimestamp, 1000);
+setConn('connecting');
+connectPrice();
+connectCandles();
+fetchOI();
+fetchFunding();
+setInterval(updTS,1000);
+setInterval(updRead,5000);
 </script>
 </body>
 </html>
