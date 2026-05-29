@@ -268,7 +268,7 @@ function connectCandles() {
 
 async function loadCandles() {
   try {
-    const data = await proxy('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].symbol+'&interval=30s&limit='+MAX_C);
+    const data = await proxy('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].symbol+'&interval=1m&limit='+MAX_C);
     candles = data.map(k=>({t:k[0],o:parseFloat(k[1]),h:parseFloat(k[2]),l:parseFloat(k[3]),c:parseFloat(k[4]),v:parseFloat(k[5])}));
     draw(); updStats();
   } catch(e) { console.error('Candles failed',e); }
