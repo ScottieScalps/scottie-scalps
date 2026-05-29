@@ -6,110 +6,123 @@
 <title>Scottie Scalps — Live Liquidation Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080c09;--surface:#0b0f0c;--surface2:#111711;--border:#1a2a1c;--red:#ff3b3b;--yellow:#f5c518;--blue:#3b9eff;--purple:#a855f7;--green:#4ade80;--green-glow:rgba(74,222,128,0.12);--text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;--orange:#ff8c00;}
-body.light-mode{--bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;--text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;}
+:root{
+  --bg:#060908;--surface:#0a0d0a;--surface2:#0f1410;--border:#162018;
+  --red:#ff3b3b;--yellow:#f5c518;--blue:#3b9eff;--purple:#c084fc;
+  --green:#4ade80;--text:#e0ebe2;--muted:#3d5c45;--accent:#4ade80;
+  --orange:#ff7c00;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow:hidden;}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
-.logo-top{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:3px;color:var(--text);}
-.logo-bottom{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:3px;color:var(--accent);}
-.logo-sub{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.hdr-right{display:flex;align-items:center;gap:12px;}
-.conn{font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;text-transform:uppercase;}
-.conn.connecting{color:var(--yellow);border:1px solid rgba(245,197,24,0.3);background:rgba(245,197,24,0.07);}
-.conn.connected{color:var(--green);border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07);}
-.conn.error{color:var(--red);border:1px solid rgba(255,59,59,0.3);background:rgba(255,59,59,0.07);}
-.live-badge{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:2px;color:var(--accent);}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
-.ts{font-size:9px;color:var(--muted);}
-.mode-btn{padding:3px 8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:1px solid var(--border);background:var(--surface2);border-radius:2px;text-transform:uppercase;}
+body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;height:100vh;overflow:hidden;}
+header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--surface);}
+.logo{display:flex;align-items:baseline;gap:0;}
+.l1{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:3px;color:var(--text);}
+.l2{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:3px;color:var(--accent);}
+.lsub{font-size:7px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-left:10px;}
+.hr{display:flex;align-items:center;gap:10px;}
+.conn{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:2px;text-transform:uppercase;}
+.conn.connecting{color:var(--yellow);border:1px solid rgba(245,197,24,0.3);background:rgba(245,197,24,0.06);}
+.conn.connected{color:var(--green);border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.06);}
+.conn.error{color:var(--red);border:1px solid rgba(255,59,59,0.3);background:rgba(255,59,59,0.06);}
+.lb{display:flex;align-items:center;gap:5px;font-size:9px;letter-spacing:2px;color:var(--accent);}
+.ld{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent);animation:p 1.5s infinite;}
+@keyframes p{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.ts{font-size:8px;color:var(--muted);}
+.mbtn{padding:2px 7px;font-size:7px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:1px solid var(--border);background:var(--surface2);border-radius:2px;text-transform:uppercase;font-family:"JetBrains Mono",monospace;}
 
-.legend{display:flex;align-items:center;gap:12px;padding:6px 20px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
-.li{display:flex;align-items:center;gap:5px;color:var(--muted);}
-.ld{width:20px;height:3px;border-radius:1px;}
-.li span{color:var(--text);opacity:0.7;}
-.ct{display:flex;gap:0;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:2px;overflow:hidden;}
-.tb{padding:3px 8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;}
-.tb.active{background:var(--green-glow);color:var(--accent);}
+.legend{display:flex;align-items:center;gap:10px;padding:5px 16px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:7px;letter-spacing:1.5px;text-transform:uppercase;flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:4px;color:var(--muted);}
+.ld2{width:18px;height:2px;border-radius:1px;}
+.li span{color:var(--text);opacity:0.65;}
+.ct{display:flex;margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:2px;overflow:hidden;}
+.tb{padding:2px 7px;font-size:7px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;font-family:"JetBrains Mono",monospace;}
+.tb.active{background:rgba(74,222,128,0.1);color:var(--accent);}
 
-.tabs{display:flex;padding:0 20px;border-bottom:1px solid var(--border);background:var(--surface);}
-.tab{padding:10px 18px;font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:2px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;}
+.tabs{display:flex;padding:0 16px;border-bottom:1px solid var(--border);background:var(--surface);}
+.tab{padding:8px 16px;font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:2px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
 .tab .tp{font-family:"JetBrains Mono",monospace;font-size:9px;display:block;margin-top:1px;font-weight:300;}
 .tab.up .tp{color:var(--green);}
 .tab.down .tp{color:var(--red);}
 
-/* Main layout: full width chart + narrow sidebar */
-.main{display:grid;grid-template-columns:1fr 240px;height:calc(100vh - 120px);}
-.chart-wrap{position:relative;overflow:hidden;background:var(--bg);}
-canvas#chart{display:block;width:100%;height:100%;}
+.main{display:grid;grid-template-columns:1fr 220px;height:calc(100vh - 108px);}
+.cw{position:relative;overflow:hidden;}
+canvas{display:block;width:100%;height:100%;}
+.wm{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:10px;letter-spacing:6px;color:rgba(74,222,128,0.025);pointer-events:none;white-space:nowrap;}
 
-.sidebar{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;}
-.sb-section{padding:12px;border-bottom:1px solid var(--border);}
-.sb-title{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-.lrow{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(26,42,28,0.4);font-size:9px;}
+.sb{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;}
+.sbs{padding:10px 12px;border-bottom:1px solid var(--border);}
+.sbt{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.lrow{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(22,32,24,0.6);font-size:9px;}
 .lrow:last-child{border-bottom:none;}
-.ll{display:flex;align-items:center;gap:6px;}
-.ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ll{display:flex;align-items:center;gap:5px;}
+.ldot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 .ltype{font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
-.lprice{font-weight:600;font-size:10px;}
-.lsize{font-size:8px;color:var(--muted);}
-.ldir{font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:1px 4px;border-radius:2px;}
-.sd{background:rgba(255,59,59,0.12);color:var(--red);}
-.ld2{background:rgba(74,222,128,0.1);color:var(--accent);}
+.lprice{font-weight:600;font-size:10px;letter-spacing:0.3px;}
+.lsz{font-size:8px;color:var(--muted);}
+.ldir{font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:1px 3px;border-radius:2px;}
+.sd{background:rgba(255,59,59,0.1);color:var(--red);}
+.ld3{background:rgba(74,222,128,0.08);color:var(--accent);}
 
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.sbox{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:8px;}
-.slabel{font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
-.sval{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:1px;}
+/* Zone indicators */
+.zone-box{margin-bottom:6px;border-radius:2px;padding:7px 9px;font-size:9px;}
+.zone-box.above{background:rgba(255,100,0,0.08);border:1px solid rgba(255,100,0,0.25);border-left:3px solid #ff6400;}
+.zone-box.below{background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-left:3px solid var(--accent);}
+.zone-label{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.zone-price{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:1px;}
+.zone-price.above{color:#ff6400;}
+.zone-price.below{color:var(--accent);}
+.zone-meta{font-size:8px;color:var(--muted);margin-top:2px;}
+
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.sbox{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:7px;}
+.slabel{font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.sval{font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:1px;}
 .sval.up{color:var(--green);}
 .sval.down{color:var(--red);}
-.sval.neutral{color:var(--accent);}
-.sval.purple{color:var(--purple);}
+.sval.n{color:var(--accent);}
+.sval.p{color:var(--purple);}
 
-.mread{padding:12px;flex:1;}
-.mbox{background:var(--surface2);border:1px solid var(--border);border-left:2px solid var(--accent);border-radius:2px;padding:10px;font-size:9px;line-height:1.8;color:rgba(232,240,234,0.6);}
+.mread{padding:10px 12px;flex:1;}
+.mbox{background:var(--surface2);border:1px solid var(--border);border-left:2px solid var(--accent);border-radius:2px;padding:9px;font-size:9px;line-height:1.75;color:rgba(224,235,226,0.55);}
 .mbox strong{color:var(--accent);}
 .mbox .mp{color:var(--purple);}
-.mtime{font-size:7px;letter-spacing:1px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;}
+.mtime{font-size:7px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
 
-.flush{margin:0 12px 10px;border-radius:2px;padding:7px 10px;font-size:8px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
-.flush.lf{background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.3);color:var(--green);}
-.flush.sf{background:rgba(255,59,59,0.07);border:1px solid rgba(255,59,59,0.3);color:var(--red);}
+.flush{margin:0 10px 8px;border-radius:2px;padding:6px 9px;font-size:8px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.flush.lf{background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.25);color:var(--green);}
+.flush.sf{background:rgba(255,59,59,0.06);border:1px solid rgba(255,59,59,0.25);color:var(--red);}
 .flush.hidden{display:none;}
-
-.attr{padding:6px 12px;border-top:1px solid var(--border);background:var(--surface2);font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
-.wm{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:11px;letter-spacing:5px;color:rgba(74,222,128,0.03);pointer-events:none;white-space:nowrap;}
+.attr{padding:5px 12px;border-top:1px solid var(--border);font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
 
 ::-webkit-scrollbar{width:2px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);}
-@media(max-width:800px){.main{grid-template-columns:1fr;}.sidebar{max-height:50vh;}}
+@media(max-width:700px){.main{grid-template-columns:1fr;}.sb{max-height:45vh;}.lsub{display:none;}}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <div style="display:flex;gap:0;"><span class="logo-top">SCOTTIE&nbsp;</span><span class="logo-bottom">SCALPS</span></div>
-    <div class="logo-sub">Live Liquidation Dashboard</div>
+  <div style="display:flex;align-items:center;">
+    <div class="logo"><span class="l1">SCOTTIE&nbsp;</span><span class="l2">SCALPS</span></div>
+    <span class="lsub">Live Liquidation Dashboard</span>
   </div>
-  <div class="hdr-right">
-    <div class="conn connecting" id="connStatus">Connecting</div>
-    <div class="live-badge"><div class="live-dot"></div>Live</div>
+  <div class="hr">
+    <div class="conn connecting" id="conn">Connecting</div>
+    <div class="lb"><div class="ld"></div>Live</div>
     <span class="ts" id="ts">--:--:--</span>
-    <span class="ts" id="ping">-- ms</span>
-    <button class="mode-btn" onclick="toggleMode()">☀ Light</button>
+    <span class="ts" id="ping">--ms</span>
+    <button class="mbtn" onclick="toggleMode()">☀</button>
   </div>
 </header>
 
 <div class="legend">
-  <div class="li"><div class="ld" style="background:#ff3b3b;"></div><span>100x Longs</span></div>
-  <div class="li"><div class="ld" style="background:#f5c518;"></div><span>50x Longs</span></div>
-  <div class="li"><div class="ld" style="background:#3b9eff;"></div><span>25x Longs</span></div>
-  <div class="li"><div class="ld" style="background:#ff8c00;"></div><span>Shorts</span></div>
-  <div class="li"><div class="ld" style="background:#a855f7;height:2px;"></div><span>Max Pain</span></div>
-  <div class="li"><div class="ld" style="background:#4ade80;"></div><span>Price</span></div>
+  <div class="li"><div class="ld2" style="background:#ff3b3b;height:3px;"></div><span>100x Long Liq</span></div>
+  <div class="li"><div class="ld2" style="background:#f5c518;"></div><span>50x Long Liq</span></div>
+  <div class="li"><div class="ld2" style="background:#3b9eff;"></div><span>25x Long Liq</span></div>
+  <div class="li"><div class="ld2" style="background:#ff7c00;"></div><span>Short Liq</span></div>
+  <div class="li"><div class="ld2" style="background:#c084fc;height:2px;border-top:2px dashed #c084fc;"></div><span>Max Pain</span></div>
+  <div class="li"><div class="ld2" style="background:#4ade80;"></div><span>Price</span></div>
   <div class="ct">
     <button class="tb active" id="btnC" onclick="setChart('candle')">Candle</button>
     <button class="tb" id="btnL" onclick="setChart('line')">Line</button>
@@ -117,258 +130,230 @@ canvas#chart{display:block;width:100%;height:100%;}
 </div>
 
 <div class="tabs">
-  <button class="tab active" id="tab-BTC" onclick="switchAsset('BTC')">BTC<span class="tp" id="price-BTC">--</span></button>
-  <button class="tab" id="tab-ETH" onclick="switchAsset('ETH')">ETH<span class="tp" id="price-ETH">--</span></button>
-  <button class="tab" id="tab-XRP" onclick="switchAsset('XRP')">XRP<span class="tp" id="price-XRP">--</span></button>
+  <button class="tab active" id="tab-BTC" onclick="sw('BTC')">BTC<span class="tp" id="price-BTC">--</span></button>
+  <button class="tab" id="tab-ETH" onclick="sw('ETH')">ETH<span class="tp" id="price-ETH">--</span></button>
+  <button class="tab" id="tab-XRP" onclick="sw('XRP')">XRP<span class="tp" id="price-XRP">--</span></button>
 </div>
 
 <div class="main">
-  <div class="chart-wrap">
-    <canvas id="chart"></canvas>
-    <div class="wm">SCOTTIE SCALPS</div>
-  </div>
-  <div class="sidebar">
-    <div class="flush hidden" id="flushAlert"><span id="flushIcon">⚡</span><span id="flushText"></span></div>
-    <div class="sb-section">
-      <div class="sb-title">Liquidation Levels</div>
-      <div id="levelsList"><div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div></div>
+  <div class="cw"><canvas id="cv"></canvas><div class="wm">SCOTTIE SCALPS</div></div>
+  <div class="sb">
+    <div class="flush hidden" id="fa"><span id="fi">⚡</span><span id="ft"></span></div>
+    <div class="sbs">
+      <div class="sbt">Liquidation Zones</div>
+      <div id="zoneAbove" class="zone-box above">
+        <div class="zone-label">▲ Strongest Short Liq Above</div>
+        <div class="zone-price above" id="zpa">--</div>
+        <div class="zone-meta" id="zpam">--</div>
+      </div>
+      <div id="zoneBelow" class="zone-box below">
+        <div class="zone-label">▼ Strongest Long Liq Below</div>
+        <div class="zone-price below" id="zpb">--</div>
+        <div class="zone-meta" id="zpbm">--</div>
+      </div>
     </div>
-    <div class="sb-section">
-      <div class="sb-title">Market Stats</div>
+    <div class="sbs">
+      <div class="sbt">All Levels</div>
+      <div id="lvls"><div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div></div>
+    </div>
+    <div class="sbs">
+      <div class="sbt">Market Stats</div>
       <div class="sgrid">
-        <div class="sbox"><div class="slabel">24h Change</div><div class="sval neutral" id="s24h">--</div></div>
-        <div class="sbox"><div class="slabel">Funding</div><div class="sval neutral" id="sFund">--</div></div>
-        <div class="sbox"><div class="slabel">Liq Levels</div><div class="sval neutral" id="sLev">--</div></div>
-        <div class="sbox"><div class="slabel">Max Pain</div><div class="sval purple" id="sMP">--</div></div>
+        <div class="sbox"><div class="slabel">24h Chg</div><div class="sval n" id="s24">--</div></div>
+        <div class="sbox"><div class="slabel">Funding</div><div class="sval n" id="sfund">--</div></div>
+        <div class="sbox"><div class="slabel">Levels</div><div class="sval n" id="slev">--</div></div>
+        <div class="sbox"><div class="slabel">OI</div><div class="sval n" id="soi">--</div></div>
       </div>
     </div>
     <div class="mread">
-      <div class="sb-title">Market Read</div>
-      <div class="mbox"><div class="mtime" id="mtime">--</div><div id="mtext">Connecting to data feed...</div></div>
+      <div class="sbt">Market Read</div>
+      <div class="mbox"><div class="mtime" id="mt">--</div><div id="mx">Connecting...</div></div>
     </div>
-    <div class="attr">Liq model: Binance OI · Price: Binance</div>
+    <div class="attr">Liq model: Binance OI · Price: Binance WS</div>
   </div>
 </div>
 
 <script>
 const WORKER = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
-
 const ASSETS = {
-  BTC: { symbol:'BTCUSDT', mmr:0.004, tick:10,    futSymbol:'BTCUSDT' },
-  ETH: { symbol:'ETHUSDT', mmr:0.005, tick:1,     futSymbol:'ETHUSDT' },
-  XRP: { symbol:'XRPUSDT', mmr:0.01,  tick:0.001, futSymbol:'XRPUSDT' }
+  BTC:{sym:'BTCUSDT',mmr:0.004,tick:1},
+  ETH:{sym:'ETHUSDT',mmr:0.005,tick:0.1},
+  XRP:{sym:'XRPUSDT',mmr:0.01,tick:0.0001}
 };
 
-// Leverage tiers — colour, label
+// Only 3 leverage tiers — the ones that matter for scalping
 const TIERS = [
-  { lev:100, r:255, g:59,  b:59  },
-  { lev:50,  r:245, g:197, b:24  },
-  { lev:25,  r:59,  g:158, b:255 }
+  {lev:100, r:255,g:59,b:59},
+  {lev:50,  r:245,g:197,b:24},
+  {lev:25,  r:59,g:158,b:255}
 ];
-const SHORT = [255, 100, 0];
+const SHORT_RGB = [255,124,0];
 
-let asset = 'BTC';
-let chartType = 'candle';
-let prices = {BTC:null,ETH:null,XRP:null};
-let candles = [];
-// FIXED liquidation levels — calculated once from OI, don't move with price
-// Only recalculate when OI data refreshes (every 2 min)
-let fixedLevels = [];
-let maxPain = null;
-let priceWS = null;
-let candleWS = null;
-let funding = null;
-const MAX_C = 100;
+let asset='BTC', ct='candle';
+let prices={BTC:null,ETH:null,XRP:null};
+let candles=[], levels=[], maxAbove=null, maxBelow=null;
+let pWS=null, cWS=null, funding=null, totalOI=null;
+const MAX=100;
 
-const cv = document.getElementById('chart');
-const ctx = cv.getContext('2d');
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+function resize(){cv.width=cv.parentElement.clientWidth;cv.height=cv.parentElement.clientHeight;draw();}
+window.addEventListener('resize',resize);
+setTimeout(resize,50);
 
-function resize() {
-  cv.width = cv.parentElement.clientWidth;
-  cv.height = cv.parentElement.clientHeight;
-  draw();
-}
-window.addEventListener('resize', resize);
-setTimeout(resize, 50);
-
-async function proxy(url) {
-  const r = await fetch(WORKER + '/?url=' + encodeURIComponent(url));
-  if (!r.ok) throw new Error(r.status);
+async function pfetch(url){
+  const r=await fetch(WORKER+'/?url='+encodeURIComponent(url));
+  if(!r.ok) throw new Error(r.status);
   return r.json();
 }
 
-// ─── ASSET SWITCH ─────────────────────────────────────────────────────────────
-function switchAsset(a) {
-  asset = a;
-  candles = []; fixedLevels = []; maxPain = null; funding = null;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+function sw(a){
+  asset=a; candles=[]; levels=[]; maxAbove=null; maxBelow=null; funding=null; totalOI=null;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+a).classList.add('active');
-  document.getElementById('levelsList').innerHTML = '<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div>';
-  connectPrice(); connectCandles(); fetchOI(); fetchFunding();
+  document.getElementById('lvls').innerHTML='<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div>';
+  document.getElementById('zpa').textContent='--';
+  document.getElementById('zpb').textContent='--';
+  connectP(); connectC(); initOI(); fetchFund();
 }
-
-function setChart(t) {
-  chartType = t;
-  document.getElementById('btnC').classList.toggle('active', t==='candle');
-  document.getElementById('btnL').classList.toggle('active', t==='line');
-  draw();
-}
+function setChart(t){ct=t;document.getElementById('btnC').classList.toggle('active',t==='candle');document.getElementById('btnL').classList.toggle('active',t==='line');draw();}
 
 // ─── WEBSOCKETS ───────────────────────────────────────────────────────────────
-function connectPrice() {
-  if (priceWS) priceWS.close();
-  const streams = Object.values(ASSETS).map(a=>a.symbol.toLowerCase()+'@miniTicker').join('/');
-  priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams='+streams);
-  priceWS.onmessage = e => {
-    const rt = Date.now();
-    const msg = JSON.parse(e.data);
-    if (!msg.data) return;
-    const d = msg.data;
-    const p = parseFloat(d.c);
-    if (d.E) {
-      const ms = rt - d.E;
-      const el = document.getElementById('ping');
-      el.textContent = ms+' ms';
-      el.style.color = ms<100?'var(--accent)':ms<300?'var(--yellow)':'var(--red)';
-    }
-    for (const [a,cfg] of Object.entries(ASSETS)) {
-      if (cfg.symbol === d.s) {
-        const prev = prices[a];
-        prices[a] = p;
-        const el = document.getElementById('price-'+a);
-        const tab = document.getElementById('tab-'+a);
-        if (el) {
-          el.textContent = fmt(p,a);
-          if (prev) { tab.classList.toggle('up',p>=prev); tab.classList.toggle('down',p<prev); }
-        }
-        if (a===asset) { updTS(); checkFlush(p); draw(); updStats(); }
+function connectP(){
+  if(pWS) pWS.close();
+  const streams=Object.values(ASSETS).map(a=>a.sym.toLowerCase()+'@miniTicker').join('/');
+  pWS=new WebSocket('wss://stream.binance.com:9443/stream?streams='+streams);
+  pWS.onmessage=e=>{
+    const rt=Date.now(), msg=JSON.parse(e.data);
+    if(!msg.data) return;
+    const d=msg.data, p=parseFloat(d.c);
+    if(d.E){const ms=rt-d.E;const el=document.getElementById('ping');el.textContent=ms+'ms';el.style.color=ms<100?'var(--accent)':ms<300?'var(--yellow)':'var(--red)';}
+    for(const [a,cfg] of Object.entries(ASSETS)){
+      if(cfg.sym===d.s){
+        const prev=prices[a]; prices[a]=p;
+        const el=document.getElementById('price-'+a), tab=document.getElementById('tab-'+a);
+        if(el){el.textContent=fmt(p,a);if(prev){tab.classList.toggle('up',p>=prev);tab.classList.toggle('down',p<prev);}}
+        if(a===asset){updTS();checkFlush(p);draw();updStats();}
       }
     }
   };
-  priceWS.onopen = () => setConn('connected');
-  priceWS.onerror = () => setConn('error');
-  priceWS.onclose = () => setTimeout(connectPrice, 3000);
+  pWS.onopen=()=>setConn('connected');
+  pWS.onerror=()=>setConn('error');
+  pWS.onclose=()=>setTimeout(connectP,3000);
 }
 
-function connectCandles() {
-  if (candleWS) candleWS.close();
-  const sym = ASSETS[asset].symbol.toLowerCase();
-  candleWS = new WebSocket('wss://stream.binance.com:9443/ws/'+sym+'@kline_30s');
-  candleWS.onmessage = e => {
-    const k = JSON.parse(e.data).k;
-    if (!k) return;
-    const c = {t:k.t,o:parseFloat(k.o),h:parseFloat(k.h),l:parseFloat(k.l),c:parseFloat(k.c),v:parseFloat(k.v)};
-    if (!candles.length) candles.push(c);
-    else if (candles[candles.length-1].t===c.t) candles[candles.length-1]=c;
-    else { candles.push(c); if (candles.length>MAX_C) candles.shift(); }
+function connectC(){
+  if(cWS) cWS.close();
+  cWS=new WebSocket('wss://stream.binance.com:9443/ws/'+ASSETS[asset].sym.toLowerCase()+'@kline_30s');
+  cWS.onmessage=e=>{
+    const k=JSON.parse(e.data).k; if(!k) return;
+    const c={t:k.t,o:parseFloat(k.o),h:parseFloat(k.h),l:parseFloat(k.l),c:parseFloat(k.c),v:parseFloat(k.v)};
+    if(!candles.length) candles.push(c);
+    else if(candles[candles.length-1].t===c.t) candles[candles.length-1]=c;
+    else{candles.push(c);if(candles.length>MAX)candles.shift();}
     draw();
   };
-  candleWS.onopen = () => loadCandles();
+  cWS.onopen=()=>loadC();
 }
 
-async function loadCandles() {
-  try {
-    const data = await proxy('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].symbol+'&interval=1m&limit='+MAX_C);
-    candles = data.map(k=>({t:k[0],o:parseFloat(k[1]),h:parseFloat(k[2]),l:parseFloat(k[3]),c:parseFloat(k[4]),v:parseFloat(k[5])}));
+async function loadC(){
+  try{
+    const d=await pfetch('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].sym+'&interval=1m&limit='+MAX);
+    candles=d.map(k=>({t:k[0],o:parseFloat(k[1]),h:parseFloat(k[2]),l:parseFloat(k[3]),c:parseFloat(k[4]),v:parseFloat(k[5])}));
     draw(); updStats();
-  } catch(e) { console.error('Candles failed',e); }
+  }catch(e){console.error('Candles:',e);}
 }
 
-// ─── LIQUIDATION MODEL ────────────────────────────────────────────────────────
-// Key insight: levels are FIXED based on where positions WERE opened.
-// We calculate these from the order book depth + candle history.
-// Once set, levels stay fixed. Price moves toward them.
+// ─── LIQUIDATION ZONE MODEL ───────────────────────────────────────────────────
+// Core insight: use the FULL order book at fine granularity
+// Every price level in the order book = potential entry for leveraged positions
+// Calculate liq price for each entry × each leverage tier
+// Group results into zones (0.1% buckets) and sum size
+// Find the DENSEST zones — these are the liquidation magnets
 
-async function fetchOI() {
-  try {
-    const sym = ASSETS[asset].symbol;
-    const [oi, depth] = await Promise.all([
-      proxy('https://fapi.binance.com/fapi/v1/openInterest?symbol='+sym),
-      proxy('https://fapi.binance.com/fapi/v1/depth?symbol='+sym+'&limit=500')
+async function fetchOI(){
+  try{
+    const sym=ASSETS[asset].sym;
+    const [oi,depth]=await Promise.all([
+      pfetch('https://fapi.binance.com/fapi/v1/openInterest?symbol='+sym),
+      pfetch('https://fapi.binance.com/fapi/v1/depth?symbol='+sym+'&limit=1000')
     ]);
-    buildFixedLevels(oi, depth);
-    setTimeout(fetchOI, 120000);
-  } catch(e) {
-    console.error('OI failed',e);
-    setTimeout(fetchOI, 15000);
-  }
+    totalOI=parseFloat(oi.openInterest);
+    buildLevels(depth);
+    setTimeout(fetchOI,120000);
+  }catch(e){console.error('OI:',e);setTimeout(fetchOI,15000);}
 }
 
-async function fetchFunding() {
-  try {
-    const data = await proxy('https://fapi.binance.com/fapi/v1/premiumIndex?symbol='+ASSETS[asset].symbol);
-    funding = parseFloat(data.lastFundingRate)*100;
+async function fetchFund(){
+  try{
+    const d=await pfetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol='+ASSETS[asset].sym);
+    funding=parseFloat(d.lastFundingRate)*100;
     updStats();
-    setTimeout(fetchFunding, 30000);
-  } catch(e) { setTimeout(fetchFunding,30000); }
+    setTimeout(fetchFund,30000);
+  }catch(e){setTimeout(fetchFund,30000);}
 }
 
-function buildFixedLevels(oi, depth) {
-  const cfg = ASSETS[asset];
-  const mmr = cfg.mmr;
-  const p = prices[asset];
-  if (!p) return;
+function initOI(){
+  if(prices[asset]) fetchOI();
+  else setTimeout(initOI,300);
+}
 
-  // Aggregate order book into large buckets (0.5% of price each)
-  // This prevents hundreds of tiny levels — we want meaningful zones
-  const bucketPct = 0.005; // 0.5% buckets
-  const bucketSize = p * bucketPct;
-  const posMap = {};
+function buildLevels(depth){
+  const p=prices[asset]; if(!p) return;
+  const cfg=ASSETS[asset];
+  const mmr=cfg.mmr;
 
-  if (depth.bids) {
-    depth.bids.forEach(([px,q]) => {
-      const ep = parseFloat(px);
-      const val = parseFloat(q) * ep;
-      const bucket = Math.round(ep / bucketSize) * bucketSize;
-      posMap[bucket] = (posMap[bucket]||0) + val;
-    });
-  }
-  if (depth.asks) {
-    depth.asks.forEach(([px,q]) => {
-      const ep = parseFloat(px);
-      const val = parseFloat(q) * ep;
-      const bucket = Math.round(ep / bucketSize) * bucketSize;
-      posMap[bucket] = (posMap[bucket]||0) + val;
-    });
-  }
+  // Use fine buckets — 0.1% of price
+  // This creates enough density to show clusters visually
+  const bucketPct=0.001;
+  const bucketSz=p*bucketPct;
 
-  // Only keep the top buckets by size — max 20 entry zones
-  const topBuckets = Object.entries(posMap)
-    .sort((a,b) => b[1]-a[1])
-    .slice(0, 20);
+  // Accumulate order book into fine buckets
+  const posMap={};
+  const addPos=(px,qty)=>{
+    const ep=parseFloat(px), val=parseFloat(qty)*ep;
+    if(val<1000) return;
+    const b=Math.round(ep/bucketSz)*bucketSz;
+    posMap[b]=(posMap[b]||0)+val;
+  };
+  if(depth.bids) depth.bids.forEach(([p,q])=>addPos(p,q));
+  if(depth.asks) depth.asks.forEach(([p,q])=>addPos(p,q));
 
-  const levels = [];
+  // For each entry bucket, calculate liq prices for each tier
+  // Accumulate into OUTPUT liq zones (also 0.1% buckets)
+  const liqMap={};
+  Object.entries(posMap).forEach(([eStr,size])=>{
+    const entry=parseFloat(eStr);
+    TIERS.forEach(tier=>{
+      const {lev,r,g,b}=tier;
+      // Long liq: positions opened at `entry` with `lev` leverage get liquidated at:
+      const longLiq=entry*(1-1/lev+mmr);
+      // Short liq:
+      const shortLiq=entry*(1+1/lev-mmr);
 
-  topBuckets.forEach(([entryStr, size]) => {
-    const entry = parseFloat(entryStr);
-
-    TIERS.forEach(tier => {
-      const {lev, r, g, b} = tier;
-      const longLiq = entry * (1 - 1/lev + mmr);
-      const shortLiq = entry * (1 + 1/lev - mmr);
-
-      // Only include levels within ±8% of current price
-      if (longLiq > p * 0.92 && longLiq < p * 0.9998) {
-        levels.push({ price: longLiq, size, side:'long', lev, r, g, b });
+      // Only within ±6% of current price
+      if(longLiq>p*0.94&&longLiq<p*0.9999){
+        const lb=Math.round(longLiq/bucketSz)*bucketSz;
+        if(!liqMap[lb]) liqMap[lb]={price:lb,size:0,side:'long',lev,r,g,b};
+        else if(liqMap[lb].size<size*0.5){liqMap[lb].r=r;liqMap[lb].g=g;liqMap[lb].b=b;liqMap[lb].lev=lev;}
+        liqMap[lb].size+=size*(1/lev);
       }
-      if (shortLiq < p * 1.08 && shortLiq > p * 1.0002) {
-        levels.push({ price: shortLiq, size, side:'short', lev, r:SHORT[0], g:SHORT[1], b:SHORT[2] });
+      if(shortLiq<p*1.06&&shortLiq>p*1.0001){
+        const sb=Math.round(shortLiq/bucketSz)*bucketSz;
+        if(!liqMap[sb]) liqMap[sb]={price:shortLiq,size:0,side:'short',lev,r:SHORT_RGB[0],g:SHORT_RGB[1],b:SHORT_RGB[2]};
+        liqMap[sb].size+=size*(1/lev);
       }
     });
   });
 
-  // Find max pain above AND below current price separately
-  const above = levels.filter(l=>l.price>p).sort((a,b)=>b.size-a.size);
-  const below = levels.filter(l=>l.price<p).sort((a,b)=>b.size-a.size);
-  // maxPain is the single largest level overall
-  const allBySize = [...levels].sort((a,b)=>b.size-a.size);
-  maxPain = allBySize.length > 0 ? allBySize[0].price : null;
-  // Store top pain above and below for display
-  window._painAbove = above.length > 0 ? above[0].price : null;
-  window._painBelow = below.length > 0 ? below[0].price : null;
+  levels=Object.values(liqMap).sort((a,b)=>a.price-b.price);
 
-  fixedLevels = levels;
+  // Find the STRONGEST zone above and below price separately
+  const above=levels.filter(l=>l.price>p).sort((a,b)=>b.size-a.size);
+  const below=levels.filter(l=>l.price<p).sort((a,b)=>b.size-a.size);
+  maxAbove=above.length>0?above[0]:null;
+  maxBelow=below.length>0?below[0]:null;
 
+  updZones();
   updLevels();
   updStats();
   updRead();
@@ -376,240 +361,195 @@ function buildFixedLevels(oi, depth) {
 }
 
 // ─── DRAWING ──────────────────────────────────────────────────────────────────
-function draw() {
-  if (!cv.width||!cv.height) return;
+function draw(){
+  if(!cv.width||!cv.height) return;
   ctx.clearRect(0,0,cv.width,cv.height);
-  const W=cv.width, H=cv.height;
-  const PL=65, PR=8, PT=15, PB=25;
-  const CW=W-PL-PR, CH=H-PT-PB;
+  const W=cv.width,H=cv.height;
+  const PL=62,PR=8,PT=12,PB=22;
+  const CW=W-PL-PR,CH=H-PT-PB;
 
-  if (candles.length<2) {
-    ctx.fillStyle='rgba(74,222,128,0.15)';
-    ctx.font='11px JetBrains Mono';
-    ctx.textAlign='center';
-    ctx.fillText('Loading...', W/2, H/2);
-    return;
+  if(candles.length<2){
+    ctx.fillStyle='rgba(74,222,128,0.12)';ctx.font='10px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText('Loading...',W/2,H/2);return;
   }
 
-  const price = prices[asset] || candles[candles.length-1].c;
+  const price=prices[asset]||candles[candles.length-1].c;
+  const vis=candles.slice(-MAX);
 
-  // Price range based on candles — this is what scrolls
-  const vis = candles.slice(-MAX_C);
-  let lo = Math.min(...vis.map(c=>c.l));
-  let hi = Math.max(...vis.map(c=>c.h));
-
-  // Include fixed levels but cap range to ±8% so chart stays readable
-  const priceMid = prices[asset] || candles[candles.length-1].c;
-  fixedLevels.forEach(l => {
-    if (l.price < lo && l.price > priceMid*0.96) lo = l.price;
-    if (l.price > hi && l.price < priceMid*1.04) hi = l.price;
+  // Price range: candle range + level range, capped at ±6%
+  let lo=Math.min(...vis.map(c=>c.l));
+  let hi=Math.max(...vis.map(c=>c.h));
+  levels.forEach(l=>{
+    if(l.price>price*0.94&&l.price<lo) lo=l.price;
+    if(l.price<price*1.06&&l.price>hi) hi=l.price;
   });
-  if (window._painAbove && window._painAbove < priceMid*1.04) { if(window._painAbove>hi) hi=window._painAbove; }
-  if (window._painBelow && window._painBelow > priceMid*0.96) { if(window._painBelow<lo) lo=window._painBelow; }
+  if(maxAbove&&maxAbove.price<price*1.06&&maxAbove.price>hi) hi=maxAbove.price;
+  if(maxBelow&&maxBelow.price>price*0.94&&maxBelow.price<lo) lo=maxBelow.price;
 
-  const pad = (hi-lo)*0.05;
-  const minP = lo-pad, maxP = hi+pad;
-  const range = maxP-minP;
-  const toY = p => PT+CH-((p-minP)/range)*CH;
-  const gap = CW/MAX_C;
-  const cw = Math.max(1.5, gap*0.65);
+  const pad=(hi-lo)*0.04;
+  const mn=lo-pad, mx=hi+pad, rng=mx-mn;
+  const toY=p=>PT+CH-((p-mn)/rng)*CH;
+  const gap=CW/MAX, cw=Math.max(1.2,gap*0.65);
 
   // Grid
-  for (let i=0;i<=8;i++) {
-    const y = PT+(i/8)*CH;
-    const p = maxP-(i/8)*range;
-    ctx.strokeStyle='rgba(26,42,28,0.35)';
-    ctx.lineWidth=0.4;
-    ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
-    ctx.fillStyle='rgba(74,107,82,0.5)';
-    ctx.font='8px JetBrains Mono';
-    ctx.textAlign='right';
-    ctx.fillText(fmt(p,asset), PL-3, y+3);
+  for(let i=0;i<=7;i++){
+    const y=PT+(i/7)*CH, gp=mx-(i/7)*rng;
+    ctx.strokeStyle='rgba(22,32,24,0.5)';ctx.lineWidth=0.4;
+    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
+    ctx.fillStyle='rgba(61,92,69,0.5)';ctx.font='8px JetBrains Mono';ctx.textAlign='right';
+    ctx.fillText(fmt(gp,asset),PL-3,y+3);
   }
 
-  // ── FIXED LIQUIDATION LEVEL LINES ─────────────────────────────────────────
-  // These are drawn as horizontal lines spanning full chart width
-  // They STAY in place — candles move past them
-  const maxSz = fixedLevels.length>0 ? Math.max(...fixedLevels.map(l=>l.size)) : 1;
-
-  fixedLevels.forEach(l => {
-    const y = toY(l.price);
-    if (y<PT-5||y>PT+CH+5) return;
-    const norm = Math.min(1, l.size/maxSz);
-    const alpha = 0.12 + norm*0.55;
-    const lw = l.lev>=100 ? 2.5 : l.lev>=50 ? 1.5 : 0.8;
-
-    ctx.strokeStyle = 'rgba('+l.r+','+l.g+','+l.b+','+alpha+')';
-    ctx.lineWidth = lw;
-    ctx.setLineDash(l.lev<25 ? [2,4] : []);
-    ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Price label on left for significant levels
-    if (norm>0.3 && l.lev>=50) {
-      ctx.fillStyle='rgba('+l.r+','+l.g+','+l.b+',0.75)';
-      ctx.font='7px JetBrains Mono';
-      ctx.textAlign='right';
-      ctx.fillText(fmt(l.price,asset), PL-3, y-1);
-    }
-  });
-
-  // Max pain lines — one above price, one below
-  [[window._painAbove,'▲ MAX PAIN '],[window._painBelow,'▼ MAX PAIN ']].forEach(([mp,label]) => {
-    if (!mp) return;
-    const y = toY(mp);
-    if (y>=PT-2&&y<=PT+CH+2) {
-      ctx.strokeStyle='rgba(168,85,247,0.85)';
-      ctx.lineWidth=1.5;
-      ctx.setLineDash([8,3]);
-      ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
+  // ── LIQUIDATION LEVEL LINES ───────────────────────────────────────────────
+  // Draw ALL levels — fine density shows cluster bands naturally
+  // Size determines opacity and thickness — dense zones appear as solid bands
+  if(levels.length>0){
+    const maxSz=Math.max(...levels.map(l=>l.size));
+    levels.forEach(l=>{
+      const y=toY(l.price);
+      if(y<PT-2||y>PT+CH+2) return;
+      const norm=Math.min(1,l.size/maxSz);
+      // Opacity scaled by relative size — this creates the band effect
+      const alpha=0.06+norm*0.7;
+      const lw=norm>0.7?2.5:norm>0.4?1.5:norm>0.2?1:0.5;
+      ctx.strokeStyle='rgba('+l.r+','+l.g+','+l.b+','+alpha+')';
+      ctx.lineWidth=lw;
+      ctx.setLineDash(norm<0.15?[2,5]:[]);
+      ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle='rgba(168,85,247,0.9)';
-      ctx.font='8px JetBrains Mono';
-      ctx.textAlign='left';
-      ctx.fillText(label+fmt(mp,asset), PL+4, y-3);
-    }
+    });
+  }
+
+  // ── MAX PAIN ZONES — thick bright lines ───────────────────────────────────
+  [[maxAbove,'▲ MAX PAIN '],[maxBelow,'▼ MAX PAIN ']].forEach(([mp,lbl])=>{
+    if(!mp) return;
+    const y=toY(mp.price);
+    if(y<PT-5||y>PT+CH+5) return;
+    // Glow effect — draw multiple times with decreasing opacity
+    [0.15,0.3,0.6].forEach((a,i)=>{
+      ctx.strokeStyle='rgba(192,132,252,'+a+')';
+      ctx.lineWidth=4-i;
+      ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
+    });
+    ctx.setLineDash([8,4]);
+    ctx.strokeStyle='rgba(192,132,252,0.9)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(192,132,252,0.9)';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='left';
+    ctx.fillText(lbl+fmt(mp.price,asset),PL+4,y-3);
   });
 
-  // ── CANDLES — these move left as time progresses ───────────────────────────
-  if (chartType==='line') {
-    ctx.strokeStyle='rgba(74,222,128,0.8)';
-    ctx.lineWidth=1.5;
-    ctx.beginPath();
-    vis.forEach((c,i) => {
-      const x=PL+(i+(MAX_C-vis.length))*gap+gap/2;
-      i===0?ctx.moveTo(x,toY(c.c)):ctx.lineTo(x,toY(c.c));
-    });
+  // ── CANDLES ───────────────────────────────────────────────────────────────
+  if(ct==='line'){
+    ctx.strokeStyle='rgba(74,222,128,0.8)';ctx.lineWidth=1.5;ctx.beginPath();
+    vis.forEach((c,i)=>{const x=PL+(i+(MAX-vis.length))*gap+gap/2;i===0?ctx.moveTo(x,toY(c.c)):ctx.lineTo(x,toY(c.c));});
     ctx.stroke();
   } else {
-    vis.forEach((c,i) => {
-      const x=PL+(i+(MAX_C-vis.length))*gap+gap/2;
-      const up=c.c>=c.o;
-      const col=up?'rgba(74,222,128,':'rgba(255,59,59,';
-      ctx.strokeStyle=col+'0.7)'; ctx.lineWidth=0.7;
-      ctx.beginPath(); ctx.moveTo(x,toY(c.h)); ctx.lineTo(x,toY(c.l)); ctx.stroke();
-      const bt=Math.min(toY(c.o),toY(c.c));
-      const bh=Math.max(1,Math.abs(toY(c.c)-toY(c.o)));
-      ctx.fillStyle=col+(up?'0.85)':'0.75)');
-      ctx.fillRect(x-cw/2,bt,cw,bh);
+    vis.forEach((c,i)=>{
+      const x=PL+(i+(MAX-vis.length))*gap+gap/2;
+      const up=c.c>=c.o, col=up?'rgba(74,222,128,':'rgba(255,59,59,';
+      ctx.strokeStyle=col+'0.65)';ctx.lineWidth=0.6;
+      ctx.beginPath();ctx.moveTo(x,toY(c.h));ctx.lineTo(x,toY(c.l));ctx.stroke();
+      const bt=Math.min(toY(c.o),toY(c.c)), bh=Math.max(1,Math.abs(toY(c.c)-toY(c.o)));
+      ctx.fillStyle=col+(up?'0.8)':'0.7)');ctx.fillRect(x-cw/2,bt,cw,bh);
     });
   }
 
-  // Current price line — this IS the moving element
-  if (price) {
+  // ── PRICE LINE — this moves through the fixed levels ─────────────────────
+  if(price){
     const y=toY(price);
-    if (y>=PT&&y<=PT+CH) {
-      ctx.strokeStyle='rgba(74,222,128,0.9)';
-      ctx.lineWidth=1;
-      ctx.setLineDash([4,3]);
-      ctx.beginPath(); ctx.moveTo(PL,y); ctx.lineTo(W-PR,y); ctx.stroke();
-      ctx.setLineDash([]);
+    if(y>=PT&&y<=PT+CH){
+      ctx.strokeStyle='rgba(74,222,128,0.85)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle='rgba(74,222,128,0.95)';
-      const lbl=fmt(price,asset);
-      const lw2=ctx.measureText(lbl).width+10;
-      ctx.fillRect(W-PR-lw2-2,y-8,lw2+4,16);
-      ctx.fillStyle='#060a07';
-      ctx.font='bold 9px JetBrains Mono';
-      ctx.textAlign='left';
-      ctx.fillText(lbl,W-PR-lw2,y+4);
+      const lbl=fmt(price,asset), lw=ctx.measureText(lbl).width+8;
+      ctx.fillRect(W-PR-lw-2,y-7,lw+4,14);
+      ctx.fillStyle='#040706';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='left';
+      ctx.fillText(lbl,W-PR-lw,y+4);
     }
   }
 }
 
-// ─── UI ───────────────────────────────────────────────────────────────────────
-function updLevels() {
-  const el = document.getElementById('levelsList');
-  const p = prices[asset]||0;
-  if (!fixedLevels.length) {
-    el.innerHTML='<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Building...</div></div></div></div>';
-    return;
+// ─── SIDEBAR UPDATES ──────────────────────────────────────────────────────────
+function updZones(){
+  const p=prices[asset]||0;
+  if(maxAbove){
+    document.getElementById('zpa').textContent=fmt(maxAbove.price,asset);
+    const dist=((maxAbove.price-p)/p*100).toFixed(2);
+    const sz=fmtSz(maxAbove.size);
+    document.getElementById('zpam').textContent='+'+dist+'% away · $'+sz+' at risk · '+maxAbove.lev+'x';
   }
-  const sorted = [...fixedLevels].sort((a,b)=>Math.abs(a.price-p)-Math.abs(b.price-p));
-  el.innerHTML = sorted.slice(0,12).map(l => {
-    const dist = p?((l.price-p)/p*100).toFixed(2):'--';
+  if(maxBelow){
+    document.getElementById('zpb').textContent=fmt(maxBelow.price,asset);
+    const dist=((p-maxBelow.price)/p*100).toFixed(2);
+    const sz=fmtSz(maxBelow.size);
+    document.getElementById('zpbm').textContent='-'+dist+'% away · $'+sz+' at risk · '+maxBelow.lev+'x';
+  }
+}
+
+function updLevels(){
+  const p=prices[asset]||0;
+  if(!levels.length){document.getElementById('lvls').innerHTML='<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Building...</div></div></div></div>';return;}
+  const sorted=[...levels].sort((a,b)=>Math.abs(a.price-p)-Math.abs(b.price-p));
+  document.getElementById('lvls').innerHTML=sorted.slice(0,10).map(l=>{
+    const dist=p?((l.price-p)/p*100).toFixed(2):'--';
     const dot='rgba('+l.r+','+l.g+','+l.b+',0.9)';
-    const dc=l.side==='short'?'sd':'ld2';
-    const sz=l.size>1e9?(l.size/1e9).toFixed(1)+'B':l.size>1e6?(l.size/1e6).toFixed(1)+'M':(l.size/1e3).toFixed(0)+'K';
-    return '<div class="lrow"><div class="ll"><div class="ldot" style="background:'+dot+'"></div><div><div class="ltype">'+l.lev+'x &nbsp;'+(parseFloat(dist)>0?'+':'')+dist+'%</div><div class="lprice">'+fmt(l.price,asset)+'</div></div></div><div style="text-align:right"><div class="lsize">$'+sz+'</div><div class="ldir '+dc+'">'+l.side+'</div></div></div>';
+    const dc=l.side==='short'?'sd':'ld3';
+    return '<div class="lrow"><div class="ll"><div class="ldot" style="background:'+dot+'"></div><div><div class="ltype">'+l.lev+'x '+(parseFloat(dist)>0?'+':'')+dist+'%</div><div class="lprice">'+fmt(l.price,asset)+'</div></div></div><div style="text-align:right"><div class="lsz">$'+fmtSz(l.size)+'</div><div class="ldir '+dc+'">'+l.side+'</div></div></div>';
   }).join('');
 }
 
-function updStats() {
+function updStats(){
   const p=prices[asset];
-  if (!p||candles.length<2) return;
+  if(!p||candles.length<2) return;
   const ch=((p-candles[0].o)/candles[0].o*100).toFixed(2);
-  const el=document.getElementById('s24h');
-  el.textContent=(ch>=0?'+':'')+ch+'%';
-  el.className='sval '+(ch>=0?'up':'down');
-  if (funding!==null) {
-    const f=document.getElementById('sFund');
-    f.textContent=(funding>=0?'+':'')+funding.toFixed(4)+'%';
-    f.className='sval '+(funding>=0?'up':'down');
-  }
-  document.getElementById('sLev').textContent=fixedLevels.length||'--';
-  if (maxPain) document.getElementById('sMP').textContent=fmt(maxPain,asset);
+  const el=document.getElementById('s24');el.textContent=(ch>=0?'+':'')+ch+'%';el.className='sval '+(ch>=0?'up':'down');
+  if(funding!==null){const f=document.getElementById('sfund');f.textContent=(funding>=0?'+':'')+funding.toFixed(4)+'%';f.className='sval '+(funding>=0?'up':'down');}
+  document.getElementById('slev').textContent=levels.length||'--';
+  if(totalOI) document.getElementById('soi').textContent=totalOI>1e6?(totalOI/1e6).toFixed(1)+'M':(totalOI/1e3).toFixed(0)+'K';
 }
 
-function updRead() {
-  const p=prices[asset];
-  if (!p||!fixedLevels.length) return;
-  const sorted=[...fixedLevels].sort((a,b)=>Math.abs(a.price-p)-Math.abs(b.price-p));
-  const near=sorted.filter(l=>Math.abs(l.price-p)/p<0.005);
-  const above=fixedLevels.filter(l=>l.price>p).sort((a,b)=>a.price-b.price)[0];
-  const below=fixedLevels.filter(l=>l.price<p).sort((a,b)=>b.price-a.price)[0];
+function updRead(){
+  const p=prices[asset]; if(!p||!levels.length) return;
+  const near=levels.filter(l=>Math.abs(l.price-p)/p<0.003);
   let txt='<strong>'+asset+' @ '+fmt(p,asset)+'</strong><br><br>';
-  if (near.length) txt+='⚡ <strong style="color:var(--red)">Near '+near[0].lev+'x liq zone.</strong> Flush risk — wait for sweep.<br><br>';
-  if (above) txt+='▲ Short liq ('+above.lev+'x): <strong>'+fmt(above.price,asset)+'</strong> (+'+((above.price-p)/p*100).toFixed(2)+'%)<br>';
-  if (below) txt+='▼ Long liq ('+below.lev+'x): <strong>'+fmt(below.price,asset)+'</strong> ('+((below.price-p)/p*100).toFixed(2)+'%)<br>';
-  if (maxPain) txt+='<br><span class="mp">■ Max Pain: '+fmt(maxPain,asset)+'</span>';
-  document.getElementById('mtext').innerHTML=txt;
-  document.getElementById('mtime').textContent=new Date().toLocaleTimeString();
+  if(near.length) txt+='⚡ <strong style="color:var(--red)">Near '+near[0].lev+'x liq zone.</strong> Flush risk.<br><br>';
+  if(maxAbove) txt+='▲ Max pain above: <strong>'+fmt(maxAbove.price,asset)+'</strong> (+'+((maxAbove.price-p)/p*100).toFixed(2)+'%)<br>';
+  if(maxBelow) txt+='▼ Max pain below: <strong>'+fmt(maxBelow.price,asset)+'</strong> ('+((maxBelow.price-p)/p*100).toFixed(2)+'%)<br>';
+  const between=levels.filter(l=>maxBelow&&maxAbove&&l.price>maxBelow.price&&l.price<maxAbove.price).length;
+  if(between>0) txt+='<br><span class="mp">'+between+' liq clusters between pain zones</span>';
+  document.getElementById('mx').innerHTML=txt;
+  document.getElementById('mt').textContent=new Date().toLocaleTimeString();
 }
 
-function checkFlush(p) {
-  if (!fixedLevels.length) return;
-  const nearby=fixedLevels.find(l=>Math.abs(l.price-p)/p<0.001&&l.lev>=50);
-  if (!nearby) return;
-  const al=document.getElementById('flushAlert');
-  const isLong=nearby.side!=='short';
-  al.className='flush '+(isLong?'lf':'sf');
-  document.getElementById('flushText').textContent=(isLong?'LONG FLUSH':'SHORT FLUSH')+' — '+nearby.lev+'x @ '+fmt(nearby.price,asset);
+function checkFlush(p){
+  if(!levels.length) return;
+  const nearby=levels.find(l=>Math.abs(l.price-p)/p<0.001&&l.lev>=50);
+  if(!nearby) return;
+  const al=document.getElementById('fa');
+  const isL=nearby.side!=='short';
+  al.className='flush '+(isL?'lf':'sf');
+  document.getElementById('ft').textContent=(isL?'LONG FLUSH':'SHORT FLUSH')+' — '+nearby.lev+'x @ '+fmt(nearby.price,asset);
   setTimeout(()=>al.classList.add('hidden'),8000);
 }
 
-function setConn(s) {
-  const el=document.getElementById('connStatus');
-  el.className='conn '+s;
-  el.textContent=s.charAt(0).toUpperCase()+s.slice(1);
-}
-function updTS() { document.getElementById('ts').textContent=new Date().toLocaleTimeString('en-US',{hour12:false}); }
-function fmt(p,a) {
-  if (!p||isNaN(p)) return '--';
-  a=a||asset;
-  if (a==='XRP') return '$'+p.toFixed(4);
-  if (a==='ETH') return '$'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function setConn(s){const el=document.getElementById('conn');el.className='conn '+s;el.textContent=s.charAt(0).toUpperCase()+s.slice(1);}
+function updTS(){document.getElementById('ts').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
+function fmt(p,a){
+  if(!p||isNaN(p)) return '--'; a=a||asset;
+  if(a==='XRP') return '$'+p.toFixed(4);
+  if(a==='ETH') return '$'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   return '$'+Math.round(p).toLocaleString('en-US');
 }
-function toggleMode() {
-  const l=document.body.classList.toggle('light-mode');
-  document.querySelector('.mode-btn').textContent=l?'🌙 Dark':'☀ Light';
-}
+function fmtSz(s){return s>1e9?(s/1e9).toFixed(1)+'B':s>1e6?(s/1e6).toFixed(1)+'M':(s/1e3).toFixed(0)+'K';}
+function toggleMode(){document.body.classList.toggle('light-mode');}
 
 setConn('connecting');
-connectPrice();
-connectCandles();
-fetchFunding();
+connectP(); connectC(); fetchFund();
 setInterval(updTS,1000);
 setInterval(updRead,5000);
-// Retry fetchOI until price is available
-function initOI() {
-  if (prices[asset]) {
-    fetchOI();
-  } else {
-    setTimeout(initOI, 500);
-  }
-}
-setTimeout(initOI, 1000);
+function initOI(){if(prices[asset])fetchOI();else setTimeout(initOI,300);}
+setTimeout(initOI,800);
 </script>
 </body>
 </html>
