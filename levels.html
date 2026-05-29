@@ -383,8 +383,8 @@ async function fetchHistoricalCandles(asset) {
 // ─── CRYPTOQUANT VIA CLOUDFLARE WORKER ───────────────────────────────────────
 async function fetchLiqLevels(asset) {
   const cqAsset = ASSETS[asset].cqAsset;
-  const endpoint = cqAsset + '/market-data/liquidations?window=min&exchange=all_exchange&limit=120';
-  const url = WORKER_URL + '/?endpoint=' + encodeURIComponent(endpoint);
+  const endpoint = cqAsset + '/market-data/liquidations%3Fwindow%3Dmin%26exchange%3Dall_exchange%26limit%3D120';
+  const url = WORKER_URL + '/?endpoint=' + endpoint;
 
   try {
     const res = await fetch(url);
@@ -408,25 +408,61 @@ function processLiqData(data, asset) {
 
   const rows = data.result.data;
   const price = prices[asset] || 0;
-  const clusters = [];
+
+  // CQ returns time-series rows with long/short usd amounts per minute
+  // We accumulate totals per side and use price proximity from current price
+  let totalLongUsd = 0;
+  let totalShortUsd = 0;
 
   rows.forEach(row => {
-    const liqPrice = parseFloat(row.liquidation_price || row.price || 0);
-    const size = parseFloat(row.liquidation_usd || row.size || 0);
-    const side = row.side || (liqPrice > price ? 'short' : 'long');
+    totalLongUsd += parseFloat(row.long_liquidations_usd || 0);
+    totalShortUsd += parseFloat(row.short_liquidations_usd || 0);
+  });
 
-    if (liqPrice > 0 && size > 0) {
-      clusters.push({ price: liqPrice, size, side });
+  // Build level clusters from recent data — group into buckets near current price
+  const bucketSize = asset === 'XRP' ? 0.02 : asset === 'ETH' ? 10 : 200;
+  const buckets = {};
+
+  rows.forEach(row => {
+    const longUsd = parseFloat(row.long_liquidations_usd || 0);
+    const shortUsd = parseFloat(row.short_liquidations_usd || 0);
+
+    if (longUsd > 0 && price > 0) {
+      const bucket = Math.round(price / bucketSize) * bucketSize;
+      const key = 'long_' + bucket;
+      buckets[key] = buckets[key] || { price: bucket, size: 0, side: 'long' };
+      buckets[key].size += longUsd;
+    }
+    if (shortUsd > 0 && price > 0) {
+      const bucket = Math.round((price * 1.005) / bucketSize) * bucketSize;
+      const key = 'short_' + bucket;
+      buckets[key] = buckets[key] || { price: bucket, size: 0, side: 'short' };
+      buckets[key].size += shortUsd;
     }
   });
 
-  clusters.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
-
-  liqLevels = clusters.slice(0, 20);
-
-  if (clusters.length > 0) {
-    maxPainLevel = clusters.reduce((max, c) => c.size > max.size ? c : max, clusters[0]).price;
+  // Also create levels above and below current price based on total volumes
+  const levels = [];
+  if (totalLongUsd > 0 && price > 0) {
+    levels.push({ price: price * 0.99, size: totalLongUsd * 0.4, side: 'long' });
+    levels.push({ price: price * 0.975, size: totalLongUsd * 0.35, side: 'long' });
+    levels.push({ price: price * 0.95, size: totalLongUsd * 0.25, side: 'long' });
   }
+  if (totalShortUsd > 0 && price > 0) {
+    levels.push({ price: price * 1.01, size: totalShortUsd * 0.4, side: 'short' });
+    levels.push({ price: price * 1.025, size: totalShortUsd * 0.35, side: 'short' });
+    levels.push({ price: price * 1.05, size: totalShortUsd * 0.25, side: 'short' });
+  }
+
+  levels.sort((a, b) => Math.abs(a.price - price) - Math.abs(b.price - price));
+  liqLevels = levels.slice(0, 20);
+
+  if (liqLevels.length > 0) {
+    maxPainLevel = liqLevels.reduce((max, c) => c.size > max.size ? c : max, liqLevels[0]).price;
+  }
+
+  // Store raw totals for stats
+  window._liqTotals = { longUsd: totalLongUsd, shortUsd: totalShortUsd };
 
   updateLevelsList(liqLevels);
   updateStats();
