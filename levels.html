@@ -12,6 +12,13 @@
   --green:#4ade80;--green-glow:rgba(74,222,128,0.12);
   --text:#e8f0ea;--muted:#4a6b52;--accent:#4ade80;
 }
+body.light-mode {
+  --bg:#f0f4f1;--surface:#ffffff;--surface2:#e8f0ea;--border:#c8dcc8;
+  --text:#0d1f0f;--muted:#4a7a52;--accent:#1a8a3a;--green-glow:rgba(26,138,58,0.1);
+}
+body.light-mode .live-dot{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.mode-toggle{padding:4px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--muted);cursor:pointer;border:1px solid var(--border);background:var(--surface2);border-radius:3px;text-transform:uppercase;transition:all 0.2s;}
+.mode-toggle:hover{color:var(--accent);border-color:var(--accent);}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;min-height:100vh;overflow-x:hidden;}
 body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:1000;}
@@ -116,6 +123,8 @@ canvas{display:block;width:100%!important;height:100%!important;}
     <div class="conn-status connecting" id="connStatus">Connecting</div>
     <div class="live-badge"><div class="live-dot"></div>Live</div>
     <div class="timestamp" id="timestamp">--:--:--</div>
+    <div class="timestamp" id="pingDisplay">-- ms</div>
+    <button class="mode-toggle" id="modeToggle" onclick="toggleMode()">☀ Light</button>
   </div>
 </header>
 
@@ -214,7 +223,7 @@ canvas{display:block;width:100%!important;height:100%!important;}
 
 <script>
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const CQ_API_KEY = 'lAvVwAL3l3xDSnE7S4VHLDWff0YkkjyrCsFMxJKJK7dkbu4HUmF16PLhHM7ApdY4Y3cENfudcxIMoLdQNAHU0AwF';
+const CQ_API_KEY = 'YOUR_CQ_API_KEY'; // Replace with your CryptoQuant API key
 
 const ASSETS = {
   BTC: { symbol: 'BTCUSDT', cqAsset: 'btc', name: 'Bitcoin' },
@@ -281,12 +290,23 @@ function connectPriceWS(asset) {
   priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + allSymbols);
 
   priceWS.onmessage = (e) => {
+    const receiveTime = Date.now();
     const msg = JSON.parse(e.data);
     if (!msg.data) return;
     const d = msg.data;
     const ticker = d.s; // e.g. BTCUSDT
     const price = parseFloat(d.c);
     const change = ((parseFloat(d.c) - parseFloat(d.o)) / parseFloat(d.o) * 100).toFixed(2);
+
+    // Ping = exchange event time vs local receive time
+    if (d.E) {
+      const pingMs = receiveTime - d.E;
+      const pingEl = document.getElementById('pingDisplay');
+      if (pingEl) {
+        pingEl.textContent = pingMs + ' ms';
+        pingEl.style.color = pingMs < 100 ? 'var(--accent)' : pingMs < 300 ? 'var(--yellow)' : 'var(--red)';
+      }
+    }
 
     for (const [a, cfg] of Object.entries(ASSETS)) {
       if (cfg.symbol === ticker) {
@@ -369,7 +389,8 @@ async function fetchHistoricalCandles(asset) {
 // Clean API URL — no Outlook SafeLinks wrapper
 async function fetchLiqLevels(asset) {
   const cqAsset = ASSETS[asset].cqAsset;
-  const url = `https://cryptoquant-proxy.scottchristie049.workers.dev/?endpoint=${cqAsset}/market-data/liquidations?window=min&exchange=all_exchange&limit=120`;
+  const url = `https://api.cryptoquant.com/v1/${cqAsset}/market-data/liquidations?window=min&exchange=all_exchange&limit=120`;
+
   try {
     const res = await fetch(url, {
       headers: {
@@ -721,6 +742,10 @@ function formatPrice(p, asset) {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
+function toggleMode() {
+  const isLight = document.body.classList.toggle('light-mode');
+  document.getElementById('modeToggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+}
 setConnStatus('connecting');
 connectPriceWS('BTC');
 connectCandleWS('BTC');
