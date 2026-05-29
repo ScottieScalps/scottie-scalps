@@ -164,7 +164,6 @@ nav {
 .liq-line.yellow { background:rgba(245,197,24,0.5); }
 .liq-line.blue { border-top:1px dashed rgba(59,158,255,0.4); }
 
-/* Liq level labels — these were missing and causing invisible text */
 .liq-label {
   position:absolute;
   right:8px;
@@ -383,7 +382,7 @@ footer {
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">Live Liquidation Levels · Powered by CryptoQuant</div>
+  <div class="hero-eyebrow">Live Liquidation Levels · 5 Assets · Real Time</div>
   <h1 class="hero-title">
     <span class="white">Bitcoin Moves</span><br>
     <span class="white">For A </span><span class="green">Reason.</span><br>
@@ -414,11 +413,13 @@ footer {
       <div class="preview-live"><div class="preview-live-dot"></div>Live</div>
     </div>
     <div class="preview-chart">
-      <!-- 3 asset tabs only -->
+      <!-- 5 asset tabs -->
       <div class="mock-tabs">
         <div class="mock-tab active">BTC</div>
         <div class="mock-tab">ETH</div>
         <div class="mock-tab">XRP</div>
+        <div class="mock-tab">SOL</div>
+        <div class="mock-tab">HYPE</div>
       </div>
       <div class="mock-canvas">
         <div class="liq-line red" style="top:10%"><span class="liq-label red-label">$107,240 · 100x</span></div>
@@ -449,12 +450,12 @@ footer {
       <div class="feat-num">01</div>
       <span class="feat-icon">⚡</span>
       <div class="feat-title">Real Time Liquidation Levels</div>
-      <p class="feat-text">Live liquidation clusters powered by CryptoQuant data — updating every minute. See exactly where the exchange is hunting leveraged positions before price gets there. Not estimated. Not lagging. Real.</p>
+      <p class="feat-text">Live liquidation clusters — updating every minute. See exactly where the exchange is hunting leveraged positions before price gets there. Not estimated. Not lagging. Real.</p>
     </div>
     <div class="feat-small">
       <span class="feat-icon">📊</span>
-      <div class="feat-title">3 Assets, One View</div>
-      <p class="feat-text">BTC, ETH and XRP. Toggle instantly. Real CryptoQuant data on every asset.</p>
+      <div class="feat-title">5 Assets, One View</div>
+      <p class="feat-text">BTC, ETH, XRP, SOL and HYPE. Toggle instantly. Real liquidation data on every asset.</p>
     </div>
     <div class="feat-small">
       <span class="feat-icon">🎯</span>
@@ -538,11 +539,13 @@ footer {
 <!-- ASSETS -->
 <section class="assets-section">
   <span class="section-tag">Covered Markets</span>
-  <h2 class="section-title">3 Assets.<br><span>One Dashboard.</span></h2>
+  <h2 class="section-title">5 Assets.<br><span>One Dashboard.</span></h2>
   <div class="asset-grid">
     <div class="asset-pill"><div class="asset-dot"></div>Bitcoin · BTC</div>
     <div class="asset-pill"><div class="asset-dot"></div>Ethereum · ETH</div>
     <div class="asset-pill"><div class="asset-dot"></div>XRP</div>
+    <div class="asset-pill"><div class="asset-dot"></div>Solana · SOL</div>
+    <div class="asset-pill"><div class="asset-dot"></div>Hyperliquid · HYPE</div>
   </div>
 </section>
 
@@ -556,17 +559,14 @@ footer {
       <div class="price-amount">$19.99</div>
       <div class="price-period">per month · cancel anytime</div>
       <ul class="price-features">
-        <li><span class="price-check">✓</span>Live liquidation levels — BTC, ETH &amp; XRP</li>
+        <li><span class="price-check">✓</span>Live liquidation levels — BTC, ETH, XRP, SOL &amp; HYPE</li>
         <li><span class="price-check">✓</span>30 second candle chart</li>
         <li><span class="price-check">✓</span>Candle &amp; line view toggle</li>
         <li><span class="price-check">✓</span>Real time flush detection alerts</li>
         <li><span class="price-check">✓</span>Funding rate &amp; market stats</li>
-        <li><span class="price-check">✓</span>Powered by CryptoQuant data</li>
+        <li><span class="price-check">✓</span>5 assets — one clean dashboard</li>
       </ul>
       <a href="https://whop.com/scottiescalps" class="price-btn">Access The Dashboard</a>
-      <div class="attribution">
-        <div class="attr-text">Data Source: CryptoQuant</div>
-      </div>
     </div>
     <div class="price-right">
       <div class="cred-title">Why traders<br>trust <span>Scottie Scalps</span></div>
@@ -581,7 +581,7 @@ footer {
         <div class="cred-icon">🏛️</div>
         <div>
           <div class="cred-label">Institutional Data</div>
-          <div class="cred-desc">Powered by CryptoQuant — the same data source used by professional trading desks worldwide.</div>
+          <div class="cred-desc">The same liquidation levels used by professional trading desks — visualised in real time for retail scalpers.</div>
         </div>
       </div>
       <div class="cred-item">
@@ -616,7 +616,7 @@ footer {
     <a href="https://instagram.com/scottiescalps" class="foot-link" target="_blank">Instagram</a>
     <a href="https://bitfunded.io" class="foot-link" target="_blank">BitFunded</a>
   </div>
-  <div class="foot-copy">© 2025 Scottie Scalps · Dubai, UAE · Data: CryptoQuant</div>
+  <div class="foot-copy">© 2025 Scottie Scalps · Dubai, UAE</div>
 </footer>
 
 <script>
