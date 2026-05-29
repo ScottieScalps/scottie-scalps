@@ -163,10 +163,9 @@ const ASSETS = {
 const TIERS = [
   { lev:100, r:255, g:59,  b:59  },
   { lev:50,  r:245, g:197, b:24  },
-  { lev:25,  r:59,  g:158, b:255 },
-  { lev:10,  r:74,  g:222, b:128 }
+  { lev:25,  r:59,  g:158, b:255 }
 ];
-const SHORT = [255, 140, 0];
+const SHORT = [255, 100, 0];
 
 let asset = 'BTC';
 let chartType = 'candle';
@@ -179,7 +178,7 @@ let maxPain = null;
 let priceWS = null;
 let candleWS = null;
 let funding = null;
-const MAX_C = 200; // more candles so price flows past fixed levels
+const MAX_C = 100;
 
 const cv = document.getElementById('chart');
 const ctx = cv.getContext('2d');
@@ -254,7 +253,7 @@ function connectPrice() {
 function connectCandles() {
   if (candleWS) candleWS.close();
   const sym = ASSETS[asset].symbol.toLowerCase();
-  candleWS = new WebSocket('wss://stream.binance.com:9443/ws/'+sym+'@kline_1m');
+  candleWS = new WebSocket('wss://stream.binance.com:9443/ws/'+sym+'@kline_30s');
   candleWS.onmessage = e => {
     const k = JSON.parse(e.data).k;
     if (!k) return;
@@ -269,7 +268,7 @@ function connectCandles() {
 
 async function loadCandles() {
   try {
-    const data = await proxy('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].symbol+'&interval=1m&limit='+MAX_C);
+    const data = await proxy('https://api.binance.com/api/v3/klines?symbol='+ASSETS[asset].symbol+'&interval=30s&limit='+MAX_C);
     candles = data.map(k=>({t:k[0],o:parseFloat(k[1]),h:parseFloat(k[2]),l:parseFloat(k[3]),c:parseFloat(k[4]),v:parseFloat(k[5])}));
     draw(); updStats();
   } catch(e) { console.error('Candles failed',e); }
@@ -402,11 +401,11 @@ function draw() {
   // Include fixed levels but cap range to ±8% so chart stays readable
   const priceMid = prices[asset] || candles[candles.length-1].c;
   fixedLevels.forEach(l => {
-    if (l.price < lo && l.price > priceMid*0.92) lo = l.price;
-    if (l.price > hi && l.price < priceMid*1.08) hi = l.price;
+    if (l.price < lo && l.price > priceMid*0.96) lo = l.price;
+    if (l.price > hi && l.price < priceMid*1.04) hi = l.price;
   });
-  if (window._painAbove && window._painAbove < priceMid*1.08) { if(window._painAbove>hi) hi=window._painAbove; }
-  if (window._painBelow && window._painBelow > priceMid*0.92) { if(window._painBelow<lo) lo=window._painBelow; }
+  if (window._painAbove && window._painAbove < priceMid*1.04) { if(window._painAbove>hi) hi=window._painAbove; }
+  if (window._painBelow && window._painBelow > priceMid*0.96) { if(window._painBelow<lo) lo=window._painBelow; }
 
   const pad = (hi-lo)*0.05;
   const minP = lo-pad, maxP = hi+pad;
@@ -438,7 +437,7 @@ function draw() {
     if (y<PT-5||y>PT+CH+5) return;
     const norm = Math.min(1, l.size/maxSz);
     const alpha = 0.12 + norm*0.55;
-    const lw = l.lev>=100 ? 1.5 : l.lev>=50 ? 1.0 : 0.6;
+    const lw = l.lev>=100 ? 2.5 : l.lev>=50 ? 1.5 : 0.8;
 
     ctx.strokeStyle = 'rgba('+l.r+','+l.g+','+l.b+','+alpha+')';
     ctx.lineWidth = lw;
