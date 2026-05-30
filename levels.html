@@ -412,12 +412,12 @@ function draw(){
   // Price range: candle range + level range, capped at ±6%
   let lo=Math.min(...vis.map(c=>c.l));
   let hi=Math.max(...vis.map(c=>c.h));
+  // Y axis scales to candles only — levels draw freely without distorting scale
+  // Only include levels within 0.5% of price in the scale so nearby clusters stay visible
   levels.forEach(l=>{
-    if(l.price>price*0.975&&l.price<lo) lo=l.price;
-    if(l.price<price*1.025&&l.price>hi) hi=l.price;
+    if(l.price>price*0.995&&l.price<lo) lo=l.price;
+    if(l.price<price*1.005&&l.price>hi) hi=l.price;
   });
-  if(maxAbove&&maxAbove.price<price*1.025&&maxAbove.price>hi) hi=maxAbove.price;
-  if(maxBelow&&maxBelow.price>price*0.975&&maxBelow.price<lo) lo=maxBelow.price;
 
   const pad=(hi-lo)*0.04;
   const mn=lo-pad, mx=hi+pad, rng=mx-mn;
