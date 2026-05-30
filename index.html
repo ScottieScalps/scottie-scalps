@@ -321,6 +321,78 @@ footer {
 .foot-link:hover { color:var(--accent); }
 .foot-copy { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--muted); opacity:0.5; }
 
+
+/* HAMBURGER */
+.nav-burger {
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+  width:32px;
+  height:32px;
+  cursor:pointer;
+  padding:2px;
+  background:none;
+  border:none;
+}
+.nav-burger span {
+  display:block;
+  height:1.5px;
+  background:var(--text);
+  border-radius:2px;
+  transition:all 0.25s ease;
+  transform-origin:center;
+}
+.nav-burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.nav-burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+.nav-drawer {
+  display:none;
+  position:fixed;
+  top:64px;
+  left:0; right:0;
+  background:rgba(6,10,7,0.98);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:20px 24px 28px;
+  z-index:99;
+  flex-direction:column;
+  gap:0;
+}
+.nav-drawer.open { display:flex; }
+.nav-drawer a {
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+  transition:color 0.2s;
+}
+.nav-drawer a:last-child { border-bottom:none; }
+.nav-drawer a:hover { color:var(--accent); }
+.nav-drawer a.drawer-cta {
+  margin-top:16px;
+  color:var(--bg);
+  background:var(--accent);
+  text-align:center;
+  padding:14px;
+  border-radius:20px;
+  border:none;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:14px;
+  letter-spacing:2px;
+}
+.nav-drawer a.drawer-cta:hover { background:#6ee89a; }
+
+@media(max-width:768px){
+  .nav-link{ display:none; }
+  .nav-burger{ display:flex; }
+}
+
 /* MOBILE */
 @media(max-width:768px){
   nav{ padding:14px 20px; }
@@ -368,8 +440,21 @@ footer {
     <a href="/market" class="nav-link">Market Data</a>
     <a href="https://bitfunded.io" class="nav-link" target="_blank">BitFunded</a>
     <a href="#pricing" class="nav-cta">Access Dashboard</a>
+    <button class="nav-burger" id="navBurger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="#how">How It Works</a>
+  <a href="#read">Read The Dashboard</a>
+  <a href="#pricing">Pricing</a>
+  <a href="/market">Market Data</a>
+  <a href="https://bitfunded.io" target="_blank">BitFunded</a>
+  <a href="#pricing" class="drawer-cta">Access Dashboard</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -663,6 +748,23 @@ footer {
     window.addEventListener('load', drawMockChart);
   }
   window.addEventListener('resize', drawMockChart);
+})();
+
+// Hamburger menu
+(function(){
+  const burger = document.getElementById('navBurger');
+  const drawer = document.getElementById('navDrawer');
+  if(!burger || !drawer) return;
+  burger.addEventListener('click', function(){
+    const open = drawer.classList.toggle('open');
+    burger.classList.toggle('open', open);
+  });
+  drawer.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      drawer.classList.remove('open');
+      burger.classList.remove('open');
+    });
+  });
 })();
 </script>
 </body>
