@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scottie Scalps: Market Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #080c09;
+  --surface:  #0f1410;
+  --surface2: #141a15;
+  --border:   rgba(255,255,255,0.07);
+  --green:    #39ff6a;
+  --green-dim:rgba(57,255,106,0.12);
+  --green-border:rgba(57,255,106,0.25);
+  --red:      #ff4040;
+  --red-dim:  rgba(255,64,64,0.1);
+  --text:     #ffffff;
+  --text-2:   rgba(255,255,255,0.5);
+  --text-3:   rgba(255,255,255,0.25);
+  --font-mono:'Space Mono', monospace;
+  --font-cond:'Barlow Condensed', sans-serif;
+  --font-body:'Inter', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);}
+
+/* ── NAV ── */
+nav {
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,12,9,0.97);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;align-items:stretch;gap:0;
+  height:54px;
+}
+.nav-wordmark {
+  font-family:var(--font-cond);font-weight:800;font-size:18px;
+  letter-spacing:.12em;text-transform:uppercase;
+  display:flex;align-items:center;gap:0;
+  margin-right:24px;white-space:nowrap;text-decoration:none;
+}
+.nav-wordmark .w1{color:#fff;}
+.nav-wordmark .w2{color:var(--green);}
+.nav-tabs{display:flex;align-items:stretch;gap:2px;flex:1;}
+.nav-tab {
+  font-family:var(--font-cond);font-weight:600;font-size:13px;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:0 16px;
+  display:flex;align-items:center;
+  cursor:pointer;color:var(--text-2);
+  border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;
+  white-space:nowrap;
+  user-select:none;
+}
+.nav-tab:hover{color:rgba(255,255,255,0.8);}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green);}
+.nav-cta {
+  margin-left:auto;
+  font-family:var(--font-cond);font-weight:700;font-size:13px;
+  letter-spacing:.1em;text-transform:uppercase;
+  display:flex;align-items:center;padding:0 18px;
+  background:var(--green-dim);
+  border-left:1px solid var(--green-border);
+  color:var(--green);cursor:pointer;
+  text-decoration:none;
+  transition:background .15s;
+  white-space:nowrap;
+}
+.nav-cta:hover{background:rgba(57,255,106,0.2);}
+
+/* ── MAIN ── */
+main{max-width:1100px;margin:0 auto;padding:40px 32px 80px;}
+
+/* panel description */
+.panel-meta{margin-bottom:28px;}
+.panel-title{font-family:var(--font-cond);font-weight:800;font-size:28px;letter-spacing:.05em;text-transform:uppercase;color:#fff;margin-bottom:6px;}
+.panel-desc{font-size:14px;color:var(--text-2);line-height:1.6;max-width:620px;}
+
+/* panels */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── OVERVIEW ── */
+.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;}
+.asset-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px 18px;}
+.ac-symbol{font-family:var(--font-cond);font-weight:800;font-size:26px;color:#fff;letter-spacing:.04em;}
+.ac-price{font-family:var(--font-mono);font-size:18px;font-weight:700;color:#fff;margin:8px 0 4px;}
+.ac-change{font-family:var(--font-mono);font-size:12px;font-weight:700;}
+.ac-change.pos{color:var(--green);}
+.ac-change.neg{color:var(--red);}
+.ac-change.neu{color:var(--text-3);}
+.ac-divider{height:1px;background:var(--border);margin:14px 0;}
+.ac-stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.ac-stat-label{font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;}
+.ac-stat-val{font-family:var(--font-mono);font-size:12px;font-weight:700;}
+.ac-stat-val.pos{color:var(--green);}
+.ac-stat-val.neg{color:var(--red);}
+.ac-stat-val.neu{color:var(--text-2);}
+
+/* overview CTA strip */
+.cta-strip{background:var(--surface);border:1px solid var(--green-border);border-radius:8px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.cta-text h3{font-family:var(--font-cond);font-weight:800;font-size:20px;letter-spacing:.05em;text-transform:uppercase;color:#fff;margin-bottom:4px;}
+.cta-text p{font-size:13px;color:var(--text-2);max-width:500px;line-height:1.5;}
+.cta-btn{font-family:var(--font-cond);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;background:var(--green);color:#080c09;padding:12px 24px;border-radius:4px;text-decoration:none;white-space:nowrap;transition:opacity .15s;}
+.cta-btn:hover{opacity:.85;}
+
+/* ── FUNDING ── */
+.funding-grid{display:flex;flex-direction:column;gap:0;}
+.funding-row{display:grid;grid-template-columns:100px 1fr 200px;align-items:center;gap:24px;padding:24px 0;border-bottom:1px solid var(--border);}
+.funding-row:first-child{border-top:1px solid var(--border);}
+.fr-symbol{font-family:var(--font-cond);font-weight:800;font-size:30px;color:#fff;}
+.fr-price{font-size:11px;color:var(--text-3);margin-top:3px;}
+.fr-bar-wrap{display:flex;flex-direction:column;gap:7px;}
+.fr-track{height:5px;background:rgba(255,255,255,0.07);position:relative;}
+.fr-fill{position:absolute;top:0;height:100%;}
+.fr-fill.pos{left:50%;background:var(--green);}
+.fr-fill.neg{right:50%;background:var(--red);}
+.fr-fill.neu{left:50%;width:1px;background:var(--text-3);}
+.fr-center{position:absolute;left:50%;top:-3px;width:1px;height:11px;background:rgba(255,255,255,0.15);}
+.fr-labels{display:flex;justify-content:space-between;font-size:8px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;}
+.fr-val-wrap{text-align:right;}
+.fr-rate{font-family:var(--font-mono);font-size:28px;font-weight:700;line-height:1;}
+.fr-rate.pos{color:var(--green);}
+.fr-rate.neg{color:var(--red);}
+.fr-rate.neu{color:var(--text-2);}
+.fr-label{font-size:9px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;}
+.fr-tag{display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;margin-top:6px;}
+.fr-tag.pos{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);}
+.fr-tag.neg{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,64,64,0.25);}
+.fr-tag.neu{background:rgba(255,255,255,0.05);color:var(--text-2);border:1px solid rgba(255,255,255,0.1);}
+
+/* reset strip */
+.reset-strip{margin-top:24px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;gap:32px;}
+.rs-item{display:flex;flex-direction:column;gap:3px;}
+.rs-label{font-size:9px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;}
+.rs-val{font-family:var(--font-mono);font-size:14px;font-weight:700;color:#fff;}
+.rs-val.green{color:var(--green);}
+
+/* ── OPEN INTEREST ── */
+.oi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.oi-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px 18px;}
+.oi-symbol{font-family:var(--font-cond);font-weight:800;font-size:22px;color:#fff;margin-bottom:12px;}
+.oi-val{font-family:var(--font-mono);font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;}
+.oi-delta-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.oi-delta{font-family:var(--font-mono);font-size:13px;font-weight:700;}
+.oi-delta.pos{color:var(--green);}
+.oi-delta.neg{color:var(--red);}
+.oi-delta.neu{color:var(--text-3);}
+.oi-delta-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;}
+.oi-bar-bg{height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.oi-bar-fill{height:100%;border-radius:2px;transition:width .5s ease;}
+.oi-bar-fill.pos{background:var(--green);}
+.oi-bar-fill.neg{background:var(--red);}
+.oi-bar-fill.neu{background:rgba(255,255,255,0.2);}
+.oi-meaning{margin-top:10px;font-size:10px;color:var(--text-3);line-height:1.5;}
+
+/* ── TAKER ── */
+.taker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.taker-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px 18px;}
+.tk-symbol{font-family:var(--font-cond);font-weight:800;font-size:22px;color:#fff;margin-bottom:14px;}
+.tk-ratio-wrap{display:flex;height:8px;border-radius:2px;overflow:hidden;margin-bottom:10px;}
+.tk-buy{background:var(--green);transition:width .5s ease;}
+.tk-sell{background:var(--red);transition:width .5s ease;}
+.tk-legend{display:flex;justify-content:space-between;margin-bottom:12px;}
+.tk-leg-item{display:flex;align-items:center;gap:5px;}
+.tk-dot{width:7px;height:7px;border-radius:50%;}
+.tk-dot.buy{background:var(--green);}
+.tk-dot.sell{background:var(--red);}
+.tk-leg-label{font-size:10px;color:var(--text-3);letter-spacing:.06em;}
+.tk-leg-val{font-family:var(--font-mono);font-size:11px;font-weight:700;}
+.tk-leg-val.buy{color:var(--green);}
+.tk-leg-val.sell{color:var(--red);}
+.tk-bias{font-size:11px;color:var(--text-3);margin-top:8px;line-height:1.4;}
+.tk-bias strong{color:var(--text);}
+.data-note{font-size:11px;color:var(--text-3);background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 16px;margin-top:0;}
+
+/* ── NETFLOW ── */
+.netflow-hero{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+.nf-stat{display:flex;flex-direction:column;gap:5px;}
+.nf-label{font-size:10px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;}
+.nf-val{font-family:var(--font-mono);font-size:28px;font-weight:700;}
+.nf-val.pos{color:var(--green);}
+.nf-val.neg{color:var(--red);}
+.nf-val.neu{color:#fff;}
+.nf-sub{font-size:11px;color:var(--text-3);line-height:1.4;}
+.netflow-explainer{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.nf-exp-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;}
+.nf-exp-title{font-family:var(--font-cond);font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.nf-exp-title.pos{color:var(--green);}
+.nf-exp-title.neg{color:var(--red);}
+.nf-exp-body{font-size:12px;color:var(--text-2);line-height:1.6;}
+
+/* ── loading / error ── */
+.loading{font-size:12px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;padding:40px 0;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-wordmark" href="/"><span class="w1">SCOTTIE </span><span class="w2">SCALPS</span></a>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-panel="overview">Overview</div>
+    <div class="nav-tab" data-panel="funding">Funding</div>
+    <div class="nav-tab" data-panel="oi">Open Interest</div>
+    <div class="nav-tab" data-panel="taker">Taker Ratio</div>
+    <div class="nav-tab" data-panel="netflow">Netflow</div>
+  </div>
+  <a class="nav-cta" href="https://scottiescalps.com/levels">Live Levels ↗</a>
+</nav>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <div class="panel active" id="panel-overview">
+    <div class="panel-meta">
+      <div class="panel-title">Overview</div>
+      <div class="panel-desc">BTC · ETH · XRP · SOL. Price, 24h change, current funding rate and open interest for each asset in one view. Start here before you trade.</div>
+    </div>
+    <div class="overview-grid" id="overview-grid">
+      <div class="loading">Loading market data...</div>
+    </div>
+    <div class="cta-strip">
+      <div class="cta-text">
+        <h3>See the exact levels price is hunting</h3>
+        <p>This page shows the macro picture. The Levels dashboard shows the micro: real-time liquidation clusters updated every 30 seconds. That is where the setups are.</p>
+      </div>
+      <a class="cta-btn" href="https://scottiescalps.com/levels">Access Levels Dashboard</a>
+    </div>
+  </div>
+
+  <!-- FUNDING -->
+  <div class="panel" id="panel-funding">
+    <div class="panel-meta">
+      <div class="panel-title">Funding Rates</div>
+      <div class="panel-desc">The 8-hour funding rate shows who is paying who to hold their position. Positive means longs are paying shorts and the market is leaning bullish. Extreme readings in either direction often precede sharp reversals.</div>
+    </div>
+    <div class="funding-grid" id="funding-grid">
+      <div class="loading">Loading funding rates...</div>
+    </div>
+    <div class="reset-strip" id="reset-strip"></div>
+  </div>
+
+  <!-- OPEN INTEREST -->
+  <div class="panel" id="panel-oi">
+    <div class="panel-meta">
+      <div class="panel-title">Open Interest</div>
+      <div class="panel-desc">Open interest is the total value of all active futures positions. Rising OI means new money is entering and leverage is building. Falling OI means positions are being closed. Watch OI alongside price to judge whether a move has conviction.</div>
+    </div>
+    <div class="oi-grid" id="oi-grid">
+      <div class="loading">Loading open interest...</div>
+    </div>
+  </div>
+
+  <!-- TAKER -->
+  <div class="panel" id="panel-taker">
+    <div class="panel-meta">
+      <div class="panel-title">Taker Buy/Sell Ratio</div>
+      <div class="panel-desc">The taker ratio shows who is being aggressive. Are buyers hitting the ask or sellers hitting the bid? A ratio above 0.5 means buyers are initiating most trades. Below 0.5 means sellers are in control. Use this as a real-time directional bias for your scalp entries.</div>
+    </div>
+    <div class="taker-grid" id="taker-grid">
+      <div class="loading">Loading taker data...</div>
+    </div>
+    <div class="data-note" id="taker-note"></div>
+  </div>
+
+  <!-- NETFLOW -->
+  <div class="panel" id="panel-netflow">
+    <div class="panel-meta">
+      <div class="panel-title">Exchange Netflow</div>
+      <div class="panel-desc">Netflow tracks BTC moving into and out of exchanges. When more BTC flows in than out, selling pressure is building and holders are moving coins to exchanges to sell. When BTC flows out it is leaving into cold storage, a sign of accumulation and reduced sell-side supply.</div>
+    </div>
+    <div class="netflow-hero" id="netflow-hero">
+      <div class="loading">Loading netflow data...</div>
+    </div>
+    <div class="netflow-explainer">
+      <div class="nf-exp-card">
+        <div class="nf-exp-title pos">Outflow: bullish signal</div>
+        <div class="nf-exp-body">BTC leaving exchanges means holders are moving to cold storage. Less BTC available to sell means reduced supply pressure. Sustained outflow during a price dip is one of the strongest accumulation signals on chain.</div>
+      </div>
+      <div class="nf-exp-card">
+        <div class="nf-exp-title neg">Inflow: bearish signal</div>
+        <div class="nf-exp-body">BTC entering exchanges means holders are preparing to sell. Rising inflow ahead of a price move often signals distribution. Watch for large inflow spikes. These frequently precede sharp drops as sell orders hit the book.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────
+const WORKER = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
+const ASSETS = [
+  { symbol:'BTCUSDT', display:'BTC' },
+  { symbol:'ETHUSDT', display:'ETH' },
+  { symbol:'XRPUSDT', display:'XRP' },
+  { symbol:'SOLUSDT', display:'SOL' },
+];
+const FALLBACK = {
+  prices:   { BTCUSDT:107240, ETHUSDT:2816, XRPUSDT:2.14, SOLUSDT:148 },
+  changes:  { BTCUSDT:1.8,    ETHUSDT:-0.6, XRPUSDT:3.2,  SOLUSDT:-1.1 },
+  funding:  { BTCUSDT:0.0001, ETHUSDT:0.00008, XRPUSDT:-0.00012, SOLUSDT:0.00005 },
+  oi:       { BTCUSDT:18400000000, ETHUSDT:8200000000, XRPUSDT:1100000000, SOLUSDT:3800000000 },
+  oiDelta:  { BTCUSDT:2.1, ETHUSDT:-1.4, XRPUSDT:4.3, SOLUSDT:-0.8 },
+  taker:    { BTCUSDT:0.54, ETHUSDT:0.48, XRPUSDT:0.51, SOLUSDT:0.44 },
+};
+
+// ── HELPERS ─────────────────────────────────────────────────────
+const fmtPrice = p => p>=1000?'$'+p.toLocaleString('en-US',{maximumFractionDigits:0}):p>=1?'$'+p.toFixed(4):'$'+p.toFixed(5);
+const fmtRate  = r => (r>=0?'+':'')+(r*100).toFixed(4)+'%';
+const fmtOI    = v => { if(v>=1e9) return '$'+(v/1e9).toFixed(2)+'B'; if(v>=1e6) return '$'+(v/1e6).toFixed(0)+'M'; return '$'+v.toLocaleString(); };
+const fmtPct   = v => (v>=0?'+':'')+v.toFixed(2)+'%';
+const rc       = r => r>0.00005?'pos':r<-0.00005?'neg':'neu';
+const rc2      = v => v>0?'pos':v<0?'neg':'neu';
+const barW     = r => (Math.min(Math.abs(r)*100,0.1)/0.1*48).toFixed(1)+'%';
+const sentiment= r => r>0.00005?{t:'Longs paying',c:'pos'}:r<-0.00005?{t:'Shorts paying',c:'neg'}:{t:'Neutral',c:'neu'};
+
+// ── TAB NAV ─────────────────────────────────────────────────────
+let loaded = {};
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    const id = tab.dataset.panel;
+    document.getElementById('panel-'+id).classList.add('active');
+    if(!loaded[id]) { loadPanel(id); loaded[id]=true; }
+  });
+});
+
+async function loadPanel(id) {
+  if(id==='overview') loadOverview();
+  else if(id==='funding') loadFunding();
+  else if(id==='oi') loadOI();
+  else if(id==='taker') loadTaker();
+  else if(id==='netflow') loadNetflow();
+}
+
+// ── OVERVIEW ────────────────────────────────────────────────────
+async function loadOverview() {
+  loaded['overview'] = true;
+  let prices=FALLBACK.prices, changes=FALLBACK.changes, funding=FALLBACK.funding, oi=FALLBACK.oi;
+  try {
+    const [tickerRes, fundRes, oiRes] = await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/ticker/24hr'),
+      fetch('https://fapi.binance.com/fapi/v1/premiumIndex'),
+      fetch('https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT'), // just to test
+    ]);
+    const tickers = await tickerRes.json();
+    const funds   = await fundRes.json();
+    tickers.forEach(t=>{ if(prices[t.symbol]!==undefined){ prices[t.symbol]=parseFloat(t.lastPrice); changes[t.symbol]=parseFloat(t.priceChangePercent); }});
+    funds.forEach(f=>{ if(funding[f.symbol]!==undefined) funding[f.symbol]=parseFloat(f.lastFundingRate); });
+    // OI per asset
+    const oiAll = await Promise.all(ASSETS.map(a=>fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${a.symbol}`).then(r=>r.json())));
+    oiAll.forEach((d,i)=>{ oi[ASSETS[i].symbol]=parseFloat(d.openInterest)*prices[ASSETS[i].symbol]; });
+  } catch(e){}
+  const grid = document.getElementById('overview-grid');
+  grid.innerHTML = ASSETS.map(a=>{
+    const p=prices[a.symbol], ch=changes[a.symbol], fr=funding[a.symbol], oiV=oi[a.symbol];
+    const chCls=ch>0?'pos':ch<0?'neg':'neu';
+    const frCls=rc(fr);
+    return `<div class="asset-card">
+      <div class="ac-symbol">${a.display}</div>
+      <div class="ac-price">${fmtPrice(p)}</div>
+      <div class="ac-change ${chCls}">${fmtPct(ch)}</div>
+      <div class="ac-divider"></div>
+      <div class="ac-stat"><span class="ac-stat-label">Funding</span><span class="ac-stat-val ${frCls}">${fmtRate(fr)}</span></div>
+      <div class="ac-stat"><span class="ac-stat-label">OI</span><span class="ac-stat-val neu">${fmtOI(oiV)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ── FUNDING ─────────────────────────────────────────────────────
+async function loadFunding() {
+  let prices=FALLBACK.prices, funding=FALLBACK.funding;
+  try {
+    const [p,f] = await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/ticker/price').then(r=>r.json()),
+      fetch('https://fapi.binance.com/fapi/v1/premiumIndex').then(r=>r.json()),
+    ]);
+    p.forEach(t=>{ if(prices[t.symbol]!==undefined) prices[t.symbol]=parseFloat(t.price); });
+    f.forEach(t=>{ if(funding[t.symbol]!==undefined) funding[t.symbol]=parseFloat(t.lastFundingRate); });
+  } catch(e){}
+  const grid = document.getElementById('funding-grid');
+  let total=0;
+  grid.innerHTML = ASSETS.map(a=>{
+    const r=funding[a.symbol], s=sentiment(r), cls=rc(r);
+    total+=r;
+    return `<div class="funding-row">
+      <div><div class="fr-symbol">${a.display}</div><div class="fr-price">${fmtPrice(prices[a.symbol])}</div></div>
+      <div class="fr-bar-wrap">
+        <div class="fr-track"><div class="fr-center"></div><div class="fr-fill ${cls}" style="width:${barW(r)}"></div></div>
+        <div class="fr-labels"><span>Short bias</span><span>Long bias</span></div>
+      </div>
+      <div class="fr-val-wrap">
+        <div class="fr-rate ${cls}">${fmtRate(r)}</div>
+        <div class="fr-label">8hr rate</div>
+        <div class="fr-tag ${s.c}">${s.t}</div>
+      </div>
+    </div>`;
+  }).join('');
+  // reset strip
+  const now=new Date(), h=now.getUTCHours();
+  const next=[0,8,16].find(r=>h<r)??24;
+  const avg=total/ASSETS.length;
+  const avgCls=rc(avg);
+  document.getElementById('reset-strip').innerHTML=`
+    <div class="rs-item"><span class="rs-label">Next reset</span><span class="rs-val">${next-h}h</span></div>
+    <div class="rs-item"><span class="rs-label">Avg funding</span><span class="rs-val ${avgCls==='pos'?'green':avgCls==='neg'?'':''}">${fmtRate(avg)}</span></div>
+    <div class="rs-item"><span class="rs-label">Reset times (UTC)</span><span class="rs-val">00:00 · 08:00 · 16:00</span></div>
+    <div class="rs-item"><span class="rs-label">Last updated</span><span class="rs-val">${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Dubai'})} GST</span></div>`;
+}
+
+// ── OPEN INTEREST ────────────────────────────────────────────────
+async function loadOI() {
+  let prices=FALLBACK.prices, oi={}, oiDelta=FALLBACK.oiDelta;
+  ASSETS.forEach(a=>{ oi[a.symbol]=FALLBACK.oi[a.symbol]; });
+  try {
+    const [priceRes, oiRes] = await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/ticker/price').then(r=>r.json()),
+      Promise.all(ASSETS.map(a=>fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${a.symbol}`).then(r=>r.json()))),
+    ]);
+    priceRes.forEach(t=>{ if(prices[t.symbol]!==undefined) prices[t.symbol]=parseFloat(t.price); });
+    oiRes.forEach((d,i)=>{ oi[ASSETS[i].symbol]=parseFloat(d.openInterest)*prices[ASSETS[i].symbol]; });
+    // OI history for delta (last 2 x 30min candles)
+    const hist = await Promise.all(ASSETS.map(a=>
+      fetch(`https://fapi.binance.com/fapi/v1/continuousKlines?pair=${a.symbol}&contractType=PERPETUAL&interval=30m&limit=2`).then(r=>r.json())
+    ));
+    hist.forEach((d,i)=>{
+      if(d&&d.length>=2){ const prev=parseFloat(d[0][9])*prices[ASSETS[i].symbol], curr=parseFloat(d[1][9])*prices[ASSETS[i].symbol]; oiDelta[ASSETS[i].symbol]=((curr-prev)/prev*100); }
+    });
+  } catch(e){}
+  const maxOI = Math.max(...ASSETS.map(a=>oi[a.symbol]));
+  document.getElementById('oi-grid').innerHTML = ASSETS.map(a=>{
+    const v=oi[a.symbol], d=oiDelta[a.symbol], cls=rc2(d);
+    const barPct=(v/maxOI*100).toFixed(0);
+    const meaning = d>1?'Leverage building, new positions opening':d<-1?'Leverage unwinding, positions closing':'OI relatively stable';
+    return `<div class="oi-card">
+      <div class="oi-symbol">${a.display}</div>
+      <div class="oi-val">${fmtOI(v)}</div>
+      <div class="oi-delta-row">
+        <span class="oi-delta ${cls}">${fmtPct(d)}</span>
+        <span class="oi-delta-label">30m change</span>
+      </div>
+      <div class="oi-bar-bg"><div class="oi-bar-fill ${cls}" style="width:${barPct}%"></div></div>
+      <div class="oi-meaning">${meaning}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── TAKER RATIO ─────────────────────────────────────────────────
+async function loadTaker() {
+  let taker=FALLBACK.taker;
+  let live=false;
+  try {
+    const res = await fetch(`${WORKER}?endpoint=/market-indicator/taker-buy-sell-ratio/taker-buy-sell-ratio&window=30m&limit=1`);
+    const data = await res.json();
+    if(data&&data.data&&data.data.list) {
+      data.data.list.forEach(item=>{ if(taker[item.symbol]!==undefined) taker[item.symbol]=parseFloat(item.buyRatio); });
+      live=true;
+    }
+  } catch(e){}
+  document.getElementById('taker-grid').innerHTML = ASSETS.map(a=>{
+    const ratio=taker[a.symbol], buyPct=(ratio*100).toFixed(1), sellPct=(100-ratio*100).toFixed(1);
+    const bias = ratio>0.55?'Strong buy aggression. Buyers initiating most trades.':ratio>0.5?'Slight buy bias. Buyers marginally more aggressive.':ratio<0.45?'Strong sell aggression. Sellers initiating most trades.':ratio<0.5?'Slight sell bias. Sellers marginally more aggressive.':'Balanced. Neither side dominant.';
+    return `<div class="taker-card">
+      <div class="tk-symbol">${a.display}</div>
+      <div class="tk-ratio-wrap"><div class="tk-buy" style="width:${buyPct}%"></div><div class="tk-sell" style="width:${sellPct}%"></div></div>
+      <div class="tk-legend">
+        <div class="tk-leg-item"><div class="tk-dot buy"></div><span class="tk-leg-label">Buy</span><span class="tk-leg-val buy">&nbsp;${buyPct}%</span></div>
+        <div class="tk-leg-item"><div class="tk-dot sell"></div><span class="tk-leg-label">Sell</span><span class="tk-leg-val sell">&nbsp;${sellPct}%</span></div>
+      </div>
+      <div class="tk-bias">${bias}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('taker-note').textContent = live
+    ? 'Live data via CryptoQuant. 30-minute window. Updates on refresh.'
+    : 'Showing sample data. Live data loads when hosted on scottiescalps.com.';
+}
+
+// ── NETFLOW ──────────────────────────────────────────────────────
+async function loadNetflow() {
+  let inflow=1240, outflow=980, net=-260;
+  let live=false;
+  try {
+    const res = await fetch(`${WORKER}?endpoint=/flow-indicator/exchange-flow-sum/exchange-netflow&window=24h&limit=1`);
+    const data = await res.json();
+    if(data&&data.data&&data.data.list&&data.data.list.length) {
+      const d=data.data.list[0];
+      inflow=parseFloat(d.inflowTotal||inflow);
+      outflow=parseFloat(d.outflowTotal||outflow);
+      net=parseFloat(d.netflow||net);
+      live=true;
+    }
+  } catch(e){}
+  const netCls = net<0?'pos':net>0?'neg':'neu';
+  const netLabel = net<0?'Net outflow: accumulation signal':net>0?'Net inflow: selling pressure building':'Balanced flow';
+  document.getElementById('netflow-hero').innerHTML=`
+    <div class="nf-stat">
+      <span class="nf-label">24h Inflow (BTC)</span>
+      <span class="nf-val neg">${inflow.toLocaleString('en-US',{maximumFractionDigits:0})}</span>
+      <span class="nf-sub">BTC moved onto exchanges</span>
+    </div>
+    <div class="nf-stat">
+      <span class="nf-label">24h Outflow (BTC)</span>
+      <span class="nf-val pos">${outflow.toLocaleString('en-US',{maximumFractionDigits:0})}</span>
+      <span class="nf-sub">BTC moved off exchanges</span>
+    </div>
+    <div class="nf-stat">
+      <span class="nf-label">Net (BTC)</span>
+      <span class="nf-val ${netCls}">${net>0?'+':''}${net.toLocaleString('en-US',{maximumFractionDigits:0})}</span>
+      <span class="nf-sub">${netLabel}${!live?' . Sample data':' . Live. 24h window'}</span>
+    </div>`;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+loadOverview();
+loaded['overview'] = true;
+</script>
+</body>
+</html>
