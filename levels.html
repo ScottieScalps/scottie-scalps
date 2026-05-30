@@ -413,11 +413,11 @@ function draw(){
   let lo=Math.min(...vis.map(c=>c.l));
   let hi=Math.max(...vis.map(c=>c.h));
   levels.forEach(l=>{
-    if(l.price>price*0.985&&l.price<lo) lo=l.price;
-    if(l.price<price*1.015&&l.price>hi) hi=l.price;
+    if(l.price>price*0.975&&l.price<lo) lo=l.price;
+    if(l.price<price*1.025&&l.price>hi) hi=l.price;
   });
-  if(maxAbove&&maxAbove.price<price*1.015&&maxAbove.price>hi) hi=maxAbove.price;
-  if(maxBelow&&maxBelow.price>price*0.985&&maxBelow.price<lo) lo=maxBelow.price;
+  if(maxAbove&&maxAbove.price<price*1.025&&maxAbove.price>hi) hi=maxAbove.price;
+  if(maxBelow&&maxBelow.price>price*0.975&&maxBelow.price<lo) lo=maxBelow.price;
 
   const pad=(hi-lo)*0.04;
   const mn=lo-pad, mx=hi+pad, rng=mx-mn;
