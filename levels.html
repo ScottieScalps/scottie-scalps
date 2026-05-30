@@ -98,6 +98,20 @@ canvas{display:block;width:100%;height:100%;}
 ::-webkit-scrollbar{width:2px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);}
+.market-link{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:4px 10px;border-radius:2px;transition:color 0.2s,border-color 0.2s;white-space:nowrap;}
+  .market-link:hover{color:var(--accent);border-color:rgba(74,222,128,0.3);}
+  .nav-burger-lv{display:none;flex-direction:column;justify-content:center;gap:5px;width:32px;height:32px;cursor:pointer;padding:2px;background:none;border:none;}
+  .nav-burger-lv span{display:block;height:1.5px;background:var(--text);border-radius:2px;transition:all 0.25s ease;transform-origin:center;}
+  .nav-burger-lv.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+  .nav-burger-lv.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+  .nav-burger-lv.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+  .lv-drawer{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(8,12,9,0.98);backdrop-filter:blur(8px);z-index:999;flex-direction:column;align-items:flex-start;justify-content:center;padding:48px 32px;gap:0;}
+  .lv-drawer.open{display:flex;}
+  .lv-drawer a{font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:rgba(232,240,234,0.4);text-decoration:none;padding:20px 0;border-bottom:1px solid var(--border);width:100%;transition:color 0.2s;}
+  .lv-drawer a:last-child{border-bottom:none;}
+  .lv-drawer a:hover{color:var(--accent);}
+  .lv-drawer-close{position:absolute;top:20px;right:24px;background:none;border:none;cursor:pointer;font-size:22px;color:var(--muted);line-height:1;}
+  @media(max-width:768px){.market-link{display:none;}.nav-burger-lv{display:flex;}.timestamp{display:none;}}
 @media(max-width:700px){.main{grid-template-columns:1fr;}.sb{max-height:45vh;}.lsub{display:none;}}
 </style>
 </head>
@@ -107,14 +121,22 @@ canvas{display:block;width:100%;height:100%;}
     <div class="logo"><span class="l1">SCOTTIE&nbsp;</span><span class="l2">SCALPS</span></div>
     <span class="lsub">Live Liquidation Dashboard</span>
   </div>
-  <div class="hr">
+ <div class="hr">
+    <a href="/market" class="market-link">Market Data</a>
     <div class="conn connecting" id="conn">Connecting</div>
     <div class="lb"><div class="ld"></div>Live</div>
     <span class="ts" id="ts">--:--:--</span>
     <span class="ts" id="ping">--ms</span>
     <button class="mbtn" onclick="toggleMode()">☀</button>
+    <button class="nav-burger-lv" id="lvBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
   </div>
 </header>
+
+<div class="lv-drawer" id="lvDrawer">
+  <button class="lv-drawer-close" id="lvClose">&#x2715;</button>
+  <a href="/">Home</a>
+  <a href="/market">Market Data</a>
+</div>
 
 <div class="legend">
   <div class="li"><div class="ld2" style="background:#ff3b3b;height:3px;"></div><span>100x Long Liq</span></div>
@@ -578,6 +600,28 @@ setInterval(updTS,1000);
 setInterval(updRead,5000);
 function initOI(){if(prices[asset])fetchOI();else setTimeout(initOI,300);}
 setTimeout(initOI,800);
+</script>
+<script>
+(function(){
+  var burger=document.getElementById('lvBurger');
+  var drawer=document.getElementById('lvDrawer');
+  var close=document.getElementById('lvClose');
+  if(!burger||!drawer) return;
+  burger.addEventListener('click',function(){
+    drawer.classList.toggle('open');
+    burger.classList.toggle('open');
+  });
+  if(close) close.addEventListener('click',function(){
+    drawer.classList.remove('open');
+    burger.classList.remove('open');
+  });
+  drawer.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){
+      drawer.classList.remove('open');
+      burger.classList.remove('open');
+    });
+  });
+})();
 </script>
 </body>
 </html>
