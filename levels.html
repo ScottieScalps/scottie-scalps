@@ -225,6 +225,7 @@ let asset='BTC', ct='candle';
 let prices={BTC:null,ETH:null,XRP:null};
 let candles=[], levels=[], maxAbove=null, maxBelow=null;
 let pWS=null, cWS=null, funding=null, totalOI=null;
+let windowMid=null; // tracks the smooth-following chart centre
 const MAX=100;
 
 const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
@@ -239,7 +240,7 @@ async function pfetch(url){
 }
 
 function sw(a){
-  asset=a; candles=[]; levels=[]; maxAbove=null; maxBelow=null; funding=null; totalOI=null;
+  asset=a; candles=[]; levels=[]; maxAbove=null; maxBelow=null; funding=null; totalOI=null; windowMid=null;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+a).classList.add('active');
   document.getElementById('lvls').innerHTML='<div class="lrow"><div class="ll"><div class="ldot" style="background:var(--muted)"></div><div><div class="ltype">Calculating...</div></div></div></div>';
@@ -410,17 +411,20 @@ function draw(){
   const vis=candles.slice(-MAX);
 
   // Price range: candle range + level range, capped at ±6%
-  let lo=Math.min(...vis.map(c=>c.l));
-  let hi=Math.max(...vis.map(c=>c.h));
-  levels.forEach(l=>{
-    if(l.price>price*0.94&&l.price<lo) lo=l.price;
-    if(l.price<price*1.06&&l.price>hi) hi=l.price;
-  });
-  if(maxAbove&&maxAbove.price<price*1.06&&maxAbove.price>hi) hi=maxAbove.price;
-  if(maxBelow&&maxBelow.price>price*0.94&&maxBelow.price<lo) lo=maxBelow.price;
-
-  const pad=(hi-lo)*0.04;
-  const mn=lo-pad, mx=hi+pad, rng=mx-mn;
+  // ── FIXED WINDOW — price always centred, window slides smoothly ──────────
+  const winPct = 0.025; // ±2.5% window either side of centre
+  if(windowMid===null) windowMid=price;
+  // Smoothly nudge window toward price — 8% blend per frame keeps it fluid
+  windowMid = windowMid*0.92 + price*0.08;
+  // If price is within 10% of edge, accelerate recentring so it never goes off screen
+  const edgeThreshold = windowMid * winPct * 0.8;
+  if(Math.abs(price - windowMid) > edgeThreshold) {
+    windowMid = windowMid*0.7 + price*0.3;
+  }
+  const mn = windowMid*(1-winPct);
+  const mx = windowMid*(1+winPct);
+  const rng = mx - mn;
+  // price at exact vertical centre (50%)
   const toY=p=>PT+CH-((p-mn)/rng)*CH;
   const gap=CW/MAX, cw=Math.max(1.2,gap*0.65);
 
