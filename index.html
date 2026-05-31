@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scottie Scalps: Live Liquidation Dashboard</title>
+<title>Scottie Scalps — Live Liquidation Dashboard</title>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C88KR87056"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C88KR87056');
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -163,14 +173,21 @@ nav {
 .liq-line.red { background:rgba(255,59,59,0.65); }
 .liq-line.yellow { background:rgba(245,197,24,0.5); }
 .liq-line.blue { border-top:1px dashed rgba(59,158,255,0.4); }
+
 .liq-label {
-  position:absolute; right:8px;
-  font-family:'JetBrains Mono',monospace; font-size:7px; letter-spacing:0.5px;
-  transform:translateY(-9px); opacity:0.75; pointer-events:none;
+  position:absolute;
+  right:8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:7px;
+  letter-spacing:0.5px;
+  transform:translateY(-9px);
+  opacity:0.75;
+  pointer-events:none;
 }
 .red-label { color:#ff5a5a; }
 .yellow-label { color:#f5c518; }
 .blue-label { color:#3b9eff; }
+
 .price-line {
   position:absolute; left:0; right:0; height:1px;
   background:rgba(74,222,128,0.6); box-shadow:0 0 6px rgba(74,222,128,0.3);
@@ -224,7 +241,7 @@ canvas#mockChart { position:absolute; inset:0; width:100%; height:100%; }
 .tl-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; color:var(--text); margin-bottom:10px; }
 .tl-text { font-size:14px; line-height:1.85; color:var(--text-dim); max-width:560px; font-weight:300; }
 
-/* HOW TO READ */
+/* HOW TO READ THE DASHBOARD */
 .read-section { position:relative; z-index:1; max-width:1000px; margin:0 auto 100px; padding:0 24px; }
 .read-intro { font-size:15px; line-height:1.85; color:var(--text-dim); max-width:620px; font-weight:300; margin-top:20px; margin-bottom:44px; }
 .read-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
@@ -241,7 +258,10 @@ canvas#mockChart { position:absolute; inset:0; width:100%; height:100%; }
 .read-card--teal::before   { background:#2dd4bf; }
 .read-card--gold::before   { background:#C9A84C; }
 .read-card-icon { font-size:20px; margin-bottom:12px; display:block; line-height:1; }
-.read-card-label { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; opacity:0.6; }
+.read-card-label {
+  font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px; opacity:0.6;
+}
 .read-card--red .read-card-label    { color:#ff3b3b; }
 .read-card--yellow .read-card-label { color:#f5c518; }
 .read-card--blue .read-card-label   { color:#3b9eff; }
@@ -321,78 +341,6 @@ footer {
 .foot-link:hover { color:var(--accent); }
 .foot-copy { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--muted); opacity:0.5; }
 
-
-/* HAMBURGER */
-.nav-burger {
-  display:none;
-  flex-direction:column;
-  justify-content:center;
-  gap:5px;
-  width:32px;
-  height:32px;
-  cursor:pointer;
-  padding:2px;
-  background:none;
-  border:none;
-}
-.nav-burger span {
-  display:block;
-  height:1.5px;
-  background:var(--text);
-  border-radius:2px;
-  transition:all 0.25s ease;
-  transform-origin:center;
-}
-.nav-burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
-.nav-burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
-.nav-burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
-
-.nav-drawer {
-  display:none;
-  position:fixed;
-  top:64px;
-  left:0; right:0;
-  background:rgba(6,10,7,0.98);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:20px 24px 28px;
-  z-index:99;
-  flex-direction:column;
-  gap:0;
-}
-.nav-drawer.open { display:flex; }
-.nav-drawer a {
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  text-decoration:none;
-  padding:14px 0;
-  border-bottom:1px solid var(--border);
-  transition:color 0.2s;
-}
-.nav-drawer a:last-child { border-bottom:none; }
-.nav-drawer a:hover { color:var(--accent); }
-.nav-drawer a.drawer-cta {
-  margin-top:16px;
-  color:var(--bg);
-  background:var(--accent);
-  text-align:center;
-  padding:14px;
-  border-radius:20px;
-  border:none;
-  font-family:'Bebas Neue',sans-serif;
-  font-size:14px;
-  letter-spacing:2px;
-}
-.nav-drawer a.drawer-cta:hover { background:#6ee89a; }
-
-@media(max-width:768px){
-  .nav-link{ display:none; }
-  .nav-burger{ display:flex; }
-}
-
 /* MOBILE */
 @media(max-width:768px){
   nav{ padding:14px 20px; }
@@ -437,28 +385,14 @@ footer {
     <a href="#how" class="nav-link">How It Works</a>
     <a href="#read" class="nav-link">Read The Dashboard</a>
     <a href="#pricing" class="nav-link">Pricing</a>
-    <a href="/market" class="nav-link">Market Data</a>
     <a href="https://bitfunded.io" class="nav-link" target="_blank">BitFunded</a>
-    <a href="/levels" class="nav-cta">Access Dashboard</a>
-    <button class="nav-burger" id="navBurger" aria-label="Open menu">
-      <span></span><span></span><span></span>
-    </button>
+    <a href="#pricing" class="nav-cta">Access Dashboard</a>
   </div>
 </nav>
 
-<!-- MOBILE DRAWER -->
-<div class="nav-drawer" id="navDrawer">
-  <a href="#how">How It Works</a>
-  <a href="#read">Read The Dashboard</a>
-  <a href="#pricing">Pricing</a>
-  <a href="/market">Market Data</a>
-  <a href="https://bitfunded.io" target="_blank">BitFunded</a>
-  <a href="#pricing" class="drawer-cta">Access Dashboard</a>
-</div>
-
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">Live Liquidation Levels · 4 Assets · Real Time</div>
+  <div class="hero-eyebrow">Live Liquidation Levels · Powered by CryptoQuant</div>
   <h1 class="hero-title">
     <span class="white">Bitcoin Moves</span><br>
     <span class="white">For A </span><span class="green">Reason.</span><br>
@@ -470,7 +404,7 @@ footer {
     You just need to know <em>where to look.</em>
   </p>
   <div class="hero-cta-group">
-    <a href="/levels" class="btn-primary">Access The Dashboard</a>
+    <a href="#pricing" class="btn-primary">Access The Dashboard</a>
     <a href="#how" class="btn-secondary">See How It Works</a>
   </div>
 </section>
@@ -493,7 +427,6 @@ footer {
         <div class="mock-tab active">BTC</div>
         <div class="mock-tab">ETH</div>
         <div class="mock-tab">XRP</div>
-        <div class="mock-tab">SOL</div>
       </div>
       <div class="mock-canvas">
         <div class="liq-line red" style="top:10%"><span class="liq-label red-label">$107,240 · 100x</span></div>
@@ -524,12 +457,12 @@ footer {
       <div class="feat-num">01</div>
       <span class="feat-icon">⚡</span>
       <div class="feat-title">Real Time Liquidation Levels</div>
-      <p class="feat-text">Live liquidation clusters updating every 30 seconds. See exactly where the exchange is hunting leveraged positions before price gets there. Not estimated. Not lagging. Real.</p>
+      <p class="feat-text">Live liquidation clusters powered by CryptoQuant data — updating every minute. See exactly where the exchange is hunting leveraged positions before price gets there. Not estimated. Not lagging. Real.</p>
     </div>
     <div class="feat-small">
       <span class="feat-icon">📊</span>
-      <div class="feat-title">4 Assets, One View</div>
-      <p class="feat-text">BTC, ETH, XRP and SOL. Toggle instantly across all four assets in real time.</p>
+      <div class="feat-title">3 Assets, One View</div>
+      <p class="feat-text">BTC, ETH and XRP. Toggle instantly. Real CryptoQuant data on every asset.</p>
     </div>
     <div class="feat-small">
       <span class="feat-icon">🎯</span>
@@ -548,19 +481,19 @@ footer {
       <div class="tl-dot"></div>
       <div class="tl-num">Step 01</div>
       <div class="tl-title">See The Levels</div>
-      <p class="tl-text">The dashboard shows real liquidation clusters at the exact price points where the exchange will forcibly close leveraged positions. These are fixed. They don't move with price. Price moves toward them.</p>
+      <p class="tl-text">The dashboard shows real liquidation clusters — the exact price points where the exchange will forcibly close leveraged positions. These are fixed. They don't move with price. Price moves toward them.</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot"></div>
       <div class="tl-num">Step 02</div>
       <div class="tl-title">Watch The Hunt</div>
-      <p class="tl-text">Bitcoin doesn't move randomly. It hunts liquidity. You can watch price approaching a cluster in real time. The bigger the cluster, the stronger the magnetic pull. This is the edge most traders never see.</p>
+      <p class="tl-text">Bitcoin doesn't move randomly. It hunts liquidity. You can watch price approaching a cluster in real time — the bigger the cluster, the stronger the magnetic pull. This is the edge most traders never see.</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot"></div>
       <div class="tl-num">Step 03</div>
       <div class="tl-title">Enter The Flush</div>
-      <p class="tl-text">When price flushes through a cluster and reverses. That is your entry. High probability setup. Clear invalidation. Clean exit. This is scalping with the house, not against it.</p>
+      <p class="tl-text">When price flushes through a cluster and reverses — that's your entry. High probability setup. Clear invalidation. Clean exit. This is scalping with the house, not against it.</p>
     </div>
   </div>
 </section>
@@ -569,13 +502,13 @@ footer {
 <section class="read-section" id="read">
   <span class="section-tag">Reading The Dashboard</span>
   <h2 class="section-title">Know What<br><span>You're Seeing</span></h2>
-  <p class="read-intro">Every line on the dashboard means something. Each colour represents a different leverage tier and how often those positions get wiped. Here's what you're looking at.</p>
+  <p class="read-intro">Every line on the dashboard means something. Each colour represents a different leverage tier — and how often those positions get wiped. Here's what you're looking at.</p>
   <div class="read-grid">
     <div class="read-card read-card--purple">
       <span class="read-card-icon">🟣</span>
       <div class="read-card-label">Aggregate</div>
       <div class="read-card-title">Max Pain Lines</div>
-      <p class="read-card-text">The price level that causes maximum pain to the maximum number of traders. Price gets pulled toward these like a magnet. The exchange wants every one of those leveraged positions closed before reversing.</p>
+      <p class="read-card-text">The price level that causes maximum pain to the maximum number of traders. Price gets pulled toward these like a magnet — the exchange wants every one of those leveraged positions closed before reversing.</p>
     </div>
     <div class="read-card read-card--teal">
       <span class="read-card-icon">🔵</span>
@@ -587,25 +520,25 @@ footer {
       <span class="read-card-icon">🔴</span>
       <div class="read-card-label">100x Leverage</div>
       <div class="read-card-title">Red Lines</div>
-      <p class="read-card-text">100x leveraged positions. These get liquidated multiple times every single day. High-frequency targets. When price approaches a red cluster, expect a sharp flush through and a fast reversal. These are the bread and butter setups.</p>
+      <p class="read-card-text">100x leveraged positions. These get liquidated multiple times every single day. High-frequency targets — when price approaches a red cluster, expect a sharp flush through and a fast reversal. These are the bread and butter setups.</p>
     </div>
     <div class="read-card read-card--yellow">
       <span class="read-card-icon">🟡</span>
-      <div class="read-card-label">50-100x Leverage</div>
+      <div class="read-card-label">50–100x Leverage</div>
       <div class="read-card-title">Yellow Lines</div>
-      <p class="read-card-text">50-100x leveraged positions. These get liquidated roughly once every four days, 90% of the time. Reliable, high-probability setups. When price grinds into a yellow cluster and sweeps it, the reversal is usually clean.</p>
+      <p class="read-card-text">50–100x leveraged positions. These get liquidated roughly once every four days — 90% of the time. Reliable, high-probability setups. When price grinds into a yellow cluster and sweeps it, the reversal is usually clean.</p>
     </div>
     <div class="read-card read-card--blue">
       <span class="read-card-icon">🔵</span>
-      <div class="read-card-label">25-50x Leverage</div>
+      <div class="read-card-label">25–50x Leverage</div>
       <div class="read-card-title">Blue Lines</div>
-      <p class="read-card-text">25-50x leveraged positions. Liquidated roughly once a week. Bigger price movement required to reach these. When they hit, the flush is usually deeper and the reversal more sustained. Larger setups, bigger reward.</p>
+      <p class="read-card-text">25–50x leveraged positions. Liquidated roughly once a week. Bigger price movement required to reach these — but when they hit, the flush is usually deeper and the reversal more sustained. Larger setups, bigger reward.</p>
     </div>
     <div class="read-card read-card--gold">
       <span class="read-card-icon">⚡</span>
       <div class="read-card-label">The Setup</div>
       <div class="read-card-title">The Edge</div>
-      <p class="read-card-text">Never enter as price approaches a level. Wait for the sweep. Price breaks through, wipes the leveraged positions, then reverses hard. That reversal is your entry. Patient. Precise. This is what separates scalpers from gamblers.</p>
+      <p class="read-card-text">Never enter as price approaches a level. Wait for the sweep — price breaks through, wipes the leveraged positions, then reverses hard. That reversal is your entry. Patient. Precise. This is what separates scalpers from gamblers.</p>
     </div>
   </div>
 </section>
@@ -613,12 +546,11 @@ footer {
 <!-- ASSETS -->
 <section class="assets-section">
   <span class="section-tag">Covered Markets</span>
-  <h2 class="section-title">4 Assets.<br><span>One Dashboard.</span></h2>
+  <h2 class="section-title">3 Assets.<br><span>One Dashboard.</span></h2>
   <div class="asset-grid">
     <div class="asset-pill"><div class="asset-dot"></div>Bitcoin · BTC</div>
     <div class="asset-pill"><div class="asset-dot"></div>Ethereum · ETH</div>
     <div class="asset-pill"><div class="asset-dot"></div>XRP</div>
-    <div class="asset-pill"><div class="asset-dot"></div>Solana · SOL</div>
   </div>
 </section>
 
@@ -629,18 +561,20 @@ footer {
   <div class="price-layout">
     <div class="price-card">
       <div class="price-tag-label">Full Dashboard Access</div>
-      <div class="price-amount" style="font-size:48px;margin-bottom:8px;">Free</div>
-      <div class="price-period">during launch period · no card required</div>
+      <div class="price-amount">$19.99</div>
+      <div class="price-period">per month · cancel anytime</div>
       <ul class="price-features">
-        <li><span class="price-check">✓</span>Live liquidation levels: BTC, ETH, XRP &amp; SOL</li>
+        <li><span class="price-check">✓</span>Live liquidation levels — BTC, ETH &amp; XRP</li>
         <li><span class="price-check">✓</span>30 second candle chart</li>
         <li><span class="price-check">✓</span>Candle &amp; line view toggle</li>
         <li><span class="price-check">✓</span>Real time flush detection alerts</li>
         <li><span class="price-check">✓</span>Funding rate &amp; market stats</li>
-        <li><span class="price-check">✓</span>Free market data dashboard</li>
+        <li><span class="price-check">✓</span>Powered by CryptoQuant data</li>
       </ul>
-      <a href="/levels" class="price-btn">Access The Dashboard</a>
-      
+      <a href="https://whop.com/scottiescalps" class="price-btn">Access The Dashboard</a>
+      <div class="attribution">
+        <div class="attr-text">Data Source: CryptoQuant</div>
+      </div>
     </div>
     <div class="price-right">
       <div class="cred-title">Why traders<br>trust <span>Scottie Scalps</span></div>
@@ -654,15 +588,15 @@ footer {
       <div class="cred-item">
         <div class="cred-icon">🏛️</div>
         <div>
-          <div class="cred-label">Real Data</div>
-          <div class="cred-desc">Live market data across 4 assets. Liquidation levels, funding rates, open interest and more.</div>
+          <div class="cred-label">Institutional Data</div>
+          <div class="cred-desc">Powered by CryptoQuant — the same data source used by professional trading desks worldwide.</div>
         </div>
       </div>
       <div class="cred-item">
         <div class="cred-icon">🇦🇪</div>
         <div>
           <div class="cred-label">Dubai Based</div>
-          <div class="cred-desc">Trading from Dubai covering London and New York session overlap, the most liquid window of the day.</div>
+          <div class="cred-desc">Trading from Dubai covering London and New York session overlap — the most liquid window of the day.</div>
         </div>
       </div>
     </div>
@@ -675,7 +609,7 @@ footer {
     <div>
       <div class="bf-tag">Coming Soon · Dubai</div>
       <div class="bf-title">BITFUNDED</div>
-      <p class="bf-text">A Bitcoin-only prop firm built for scalpers. Prove your edge on the challenge, get funded, earn higher splits. No multi-asset noise. One market, mastered.</p>
+      <p class="bf-text">A Bitcoin-only prop firm built for scalpers. Prove your edge on the challenge — get funded, earn higher splits. No multi-asset noise. One market, mastered.</p>
     </div>
     <a href="https://bitfunded.io" class="bf-btn" target="_blank">Join The Waitlist →</a>
   </div>
@@ -690,7 +624,7 @@ footer {
     <a href="https://instagram.com/scottiescalps" class="foot-link" target="_blank">Instagram</a>
     <a href="https://bitfunded.io" class="foot-link" target="_blank">BitFunded</a>
   </div>
-  <div class="foot-copy">© 2025 Scottie Scalps · Dubai, UAE</div>
+  <div class="foot-copy">© 2025 Scottie Scalps · Dubai, UAE · Data: CryptoQuant</div>
 </footer>
 
 <script>
@@ -704,6 +638,7 @@ footer {
     canvas.width = w;
     canvas.height = h;
     ctx.clearRect(0, 0, w, h);
+
     const candles = [];
     let price = 104820;
     const numCandles = Math.floor(w / 7);
@@ -716,6 +651,7 @@ footer {
       candles.push({ open, high, low, close });
       price = close;
     }
+
     const allPrices = candles.flatMap(c => [c.high, c.low]);
     const minP = Math.min(...allPrices) - 50;
     const maxP = Math.max(...allPrices) + 50;
@@ -726,6 +662,7 @@ footer {
     const toY = p => padT + cH - ((p - minP) / range) * cH;
     const candleW = Math.max(1.5, (cW / numCandles) * 0.55);
     const gap = cW / numCandles;
+
     candles.forEach((c, i) => {
       const x = padL + i * gap + gap / 2;
       const up = c.close >= c.open;
@@ -742,29 +679,13 @@ footer {
       ctx.fillRect(x - candleW / 2, top, candleW, bodyH);
     });
   }
+
   if (document.readyState === 'complete') {
     drawMockChart();
   } else {
     window.addEventListener('load', drawMockChart);
   }
   window.addEventListener('resize', drawMockChart);
-})();
-
-// Hamburger menu
-(function(){
-  const burger = document.getElementById('navBurger');
-  const drawer = document.getElementById('navDrawer');
-  if(!burger || !drawer) return;
-  burger.addEventListener('click', function(){
-    const open = drawer.classList.toggle('open');
-    burger.classList.toggle('open', open);
-  });
-  drawer.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', function(){
-      drawer.classList.remove('open');
-      burger.classList.remove('open');
-    });
-  });
 })();
 </script>
 </body>
