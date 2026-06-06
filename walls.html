@@ -248,32 +248,50 @@ function fmtP(p,d){return p==null?'—':Number(p).toLocaleString('en-US',{minimu
 function fmtUsd(v){if(v>=1e9)return'$'+(v/1e9).toFixed(2)+'B';if(v>=1e6)return'$'+(v/1e6).toFixed(1)+'M';if(v>=1e3)return'$'+(v/1e3).toFixed(0)+'K';return'$'+v.toFixed(0);}
 function bUrl(p){return`${PROXY}?url=${encodeURIComponent('https://fapi.binance.com'+p)}`;}
 
-// Price tickers for all tabs (always running)
+// Price tickers for all tabs — WebSocket with REST fallback
 function startAllTickers(){
   Object.keys(ASSETS).forEach(asset=>{
     const sym=ASSETS[asset].symbol.toLowerCase();
     const ws=new WebSocket(`wss://fstream.binance.com/ws/${sym}@ticker`);
     ws.onmessage=e=>{
       const d=JSON.parse(e.data);
-      livePrices[asset]={price:parseFloat(d.c),change:parseFloat(d.P)};
-      const tab=document.querySelector(`.tab[data-asset="${asset}"] .tab-price`);
-      if(tab){
-        tab.textContent='$'+fmtP(parseFloat(d.c),ASSETS[asset].decimals);
-        const t=document.querySelector(`.tab[data-asset="${asset}"]`);
-        t.classList.toggle('up',parseFloat(d.P)>=0);
-        t.classList.toggle('down',parseFloat(d.P)<0);
-      }
-      if(asset===currentAsset){
-        livePrice=parseFloat(d.c);
-        document.getElementById('currentPrice').textContent=fmtP(livePrice,ASSETS[asset].decimals);
-        const chEl=document.getElementById('priceChange');
-        chEl.textContent=(parseFloat(d.P)>=0?'+':'')+parseFloat(d.P).toFixed(2)+'%';
-        chEl.className='price-change '+(parseFloat(d.P)>=0?'up':'down');
-        if(currentCandle){currentCandle.c=livePrice;currentCandle.h=Math.max(currentCandle.h,livePrice);currentCandle.l=Math.min(currentCandle.l,livePrice);drawChart();}
-      }
+      updatePrice(asset,parseFloat(d.c),parseFloat(d.P));
     };
     wsPrice[asset]=ws;
   });
+  // REST fallback — poll every 3s in case WS is slow
+  setInterval(async()=>{
+    try{
+      const syms=Object.keys(ASSETS).map(a=>ASSETS[a].symbol);
+      const url=`https://fapi.binance.com/fapi/v1/ticker/24hr`;
+      const res=await fetch(PROXY+'?url='+encodeURIComponent(url));
+      const data=await res.json();
+      if(!Array.isArray(data))return;
+      for(const asset of Object.keys(ASSETS)){
+        const d=data.find(x=>x.symbol===ASSETS[asset].symbol);
+        if(d)updatePrice(asset,parseFloat(d.lastPrice),parseFloat(d.priceChangePercent));
+      }
+    }catch(e){}
+  },3000);
+}
+
+function updatePrice(asset,price,changePct){
+  livePrices[asset]={price,change:changePct};
+  const tab=document.querySelector(`.tab[data-asset="${asset}"] .tab-price`);
+  if(tab){
+    tab.textContent='$'+fmtP(price,ASSETS[asset].decimals);
+    const t=document.querySelector(`.tab[data-asset="${asset}"]`);
+    t.classList.toggle('up',changePct>=0);
+    t.classList.toggle('down',changePct<0);
+  }
+  if(asset===currentAsset){
+    livePrice=price;
+    document.getElementById('currentPrice').textContent=fmtP(livePrice,ASSETS[asset].decimals);
+    const chEl=document.getElementById('priceChange');
+    chEl.textContent=(changePct>=0?'+':'')+changePct.toFixed(2)+'%';
+    chEl.className='price-change '+(changePct>=0?'up':'down');
+    if(currentCandle){currentCandle.c=livePrice;currentCandle.h=Math.max(currentCandle.h,livePrice);currentCandle.l=Math.min(currentCandle.l,livePrice);drawChart();}
+  }
 }
 
 async function fetchDepth(){
