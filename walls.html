@@ -222,6 +222,11 @@
 </div>
 
 <script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>{
+    for(const reg of regs) reg.unregister();
+  });
+}
 const PROXY = 'https://cryptoquant-proxy.scottchristie049.workers.dev';
 const ASSETS = {
   BTC:{symbol:'BTCUSDT',decimals:0,minWallUsd:2_000_000},
