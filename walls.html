@@ -273,7 +273,7 @@ function startAllTickers(){
 
 async function fetchDepth(){
   const asset=ASSETS[currentAsset];
-  if(!livePrice)return;
+  if(!livePrice){setTimeout(fetchDepth,1000);return;}
   try{
     const res=await fetch(bUrl(`/fapi/v1/depth?symbol=${asset.symbol}&limit=${DEPTH_LIMIT}`));
     const data=await res.json();
@@ -283,11 +283,12 @@ async function fetchDepth(){
     const bidB={},askB={};
     for(const[p,q]of data.bids){const fp=+p,fq=+q;if(fp<rangeLow)continue;const b=Math.floor(fp/bucket)*bucket;bidB[b]=(bidB[b]||0)+fp*fq;}
     for(const[p,q]of data.asks){const fp=+p,fq=+q;if(fp>rangeHigh)continue;const b=Math.floor(fp/bucket)*bucket;askB[b]=(askB[b]||0)+fp*fq;}
-    buyWalls=Object.entries(bidB).map(([p,usd])=>({price:+p,usd})).filter(w=>w.usd>=asset.minWallUsd).sort((a,b)=>b.usd-a.usd);
-    sellWalls=Object.entries(askB).map(([p,usd])=>({price:+p,usd})).filter(w=>w.usd>=asset.minWallUsd).sort((a,b)=>b.usd-a.usd);
+    const minUsd=asset.minWallUsd*0.1;
+    buyWalls=Object.entries(bidB).map(([p,usd])=>({price:+p,usd})).filter(w=>w.usd>=minUsd).sort((a,b)=>b.usd-a.usd);
+    sellWalls=Object.entries(askB).map(([p,usd])=>({price:+p,usd})).filter(w=>w.usd>=minUsd).sort((a,b)=>b.usd-a.usd);
     updateSidebar(); drawChart();
     document.getElementById('loadingOverlay').style.display='none';
-  }catch(e){console.error('Depth error',e);}
+  }catch(e){console.error('Depth error',e);document.getElementById('loadingOverlay').style.display='none';}
 }
 
 function updateSidebar(){
