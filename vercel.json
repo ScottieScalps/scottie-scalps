@@ -1,9 +1,32 @@
 {
   "routes": [
-    { "src": "/levels", "dest": "/levels.html" },
-    { "src": "/walls", "dest": "/walls.html" },
-    { "src": "/manifest.json", "dest": "/manifest.json" },
-    { "src": "/sw.js", "dest": "/sw.js" },
-    { "src": "/api/(.*)", "dest": "/api/$1" }
+    {
+      "src": "/levels",
+      "dest": "/levels.html"
+    },
+    {
+      "src": "/walls",
+      "dest": "/walls.html"
+    },
+    {
+      "src": "/market",
+      "dest": "/market/index.html"
+    },
+    {
+      "src": "/edge",
+      "dest": "/edge.html"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/sw.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
   ]
 }
