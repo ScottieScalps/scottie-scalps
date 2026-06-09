@@ -304,6 +304,15 @@ canvas { display:block; width:100%; height:100%; }
       <div class="sbt">Market Read</div>
       <div class="mbox"><div class="mtime" id="mt">--</div><div id="mx">Connecting...</div></div>
     </div>
+    <div class="sbs" id="liqFeedSection">
+      <div class="sbt" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Live Liquidations</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:7px;letter-spacing:1px;color:var(--accent);"><span class="ld" style="width:4px;height:4px;"></span>STREAM</span>
+      </div>
+      <div id="liqFeedSb" style="display:flex;flex-direction:column;gap:3px;max-height:160px;overflow-y:auto;">
+        <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:4px 0;">Connecting...</div>
+      </div>
+    </div>
     <div class="attr">Liq model: Binance Futures OI · Price: Binance</div>
   </div>
 </div>
@@ -817,6 +826,40 @@ setTimeout(initOI,800);
       burger.classList.remove('open');
     });
   });
+})();
+</script>
+<script>
+(function(){
+  var MAX_LIQ=20;
+  var liqs=[];
+  function fmtU(v){return v>=1e6?"$"+(v/1e6).toFixed(1)+"M":v>=1e3?"$"+(v/1e3).toFixed(0)+"K":"$"+v.toFixed(0);}
+  function fmt2(p){return p==null?"--":"$"+Math.round(p).toLocaleString("en-US");}
+  function render(){
+    var el=document.getElementById("liqFeedSb");
+    if(!el)return;
+    if(!liqs.length){el.innerHTML="<div style=\"font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:4px 0;\">Waiting...</div>";return;}
+    el.innerHTML=liqs.map(function(f){
+      var sc=f.usd>=1000000?"var(--purple)":f.usd>=100000?"var(--yellow)":f.side==="long"?"var(--red)":"var(--green)";
+      var lbl=f.side==="long"?"▼ LONG":"▲ SHORT";
+      return "<div style=\"display:flex;align-items:center;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(28,42,32,0.4);\">"+"<div><div style=\"font-size:7px;letter-spacing:1px;color:"+sc+";text-transform:uppercase;\">"+lbl+"</div><div style=\"font-size:9px;font-weight:600;\">"+fmt2(f.price)+"</div></div>"+"<div style=\"text-align:right;\"><div style=\"font-family:Bebas Neue,sans-serif;font-size:13px;letter-spacing:1px;color:"+sc+";\">"+(f.usd>=1000000?"🐋 ":f.usd>=100000?"⚡ ":"")+fmtU(f.usd)+"</div><div style=\"font-size:7px;color:var(--muted)\">"+f.time+"</div></div></div>";
+    }).join("");
+  }
+  function connect(){
+    var ws=new WebSocket("wss://fstream.binance.com/ws/btcusdt@forceOrder");
+    ws.onmessage=function(e){
+      var o=JSON.parse(e.data).o; if(!o)return;
+      var side=o.S==="BUY"?"short":"long";
+      var price=parseFloat(o.p), qty=parseFloat(o.q), usd=price*qty;
+      if(usd<10000)return;
+      var now=new Date();
+      var t=now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      liqs.unshift({side:side,price:price,usd:usd,time:t});
+      if(liqs.length>MAX_LIQ)liqs=liqs.slice(0,MAX_LIQ);
+      render();
+    };
+    ws.onclose=function(){setTimeout(connect,3000);};
+  }
+  connect();
 })();
 </script>
 </body>
