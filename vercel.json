@@ -17,6 +17,10 @@
       "dest": "/edge.html"
     },
     {
+      "src": "/heatmap",
+      "dest": "/heatmap.html"
+    },
+    {
       "src": "/manifest.json",
       "dest": "/manifest.json"
     },
