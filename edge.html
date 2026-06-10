@@ -245,11 +245,13 @@ let fundingRate=null, oiCurrent=null, oiPrev=null, takerRatio=null;
 
 async function cqFetch(ep,params){
   const p=new URLSearchParams({endpoint:ep,...params});
-  const r=await fetch(WORKER+'?'+p.toString());
+  const r=await fetch(WORKER+'?'+p.toString(),{cache:'no-store'});
   return r.json();
 }
 async function binFetch(url){
-  const r=await fetch(WORKER+'?url='+encodeURIComponent(url));
+  // append cache-buster so Cloudflare never serves stale data
+  const bust=url+(url.includes('?')?'&':'?')+'_cb='+Date.now();
+  const r=await fetch(WORKER+'?url='+encodeURIComponent(bust),{cache:'no-store'});
   return r.json();
 }
 
@@ -459,10 +461,9 @@ function updateEdgeCards(){
 }
 
 function setCard(id,value,valueCls,sub,tagTxt,tagCls){
-  const card=document.getElementById(id); if(!card)return;
-  const valEl=card.querySelector('.edge-card-value');
-  const subEl=card.querySelector('.edge-card-sub');
-  const tagEl=card.querySelector('.edge-card-tag');
+  const valEl=document.getElementById(id);
+  const subEl=document.getElementById(id+'-sub');
+  const tagEl=document.getElementById(id+'-tag');
   if(valEl){valEl.textContent=value;valEl.className='edge-card-value '+valueCls;}
   if(subEl)subEl.textContent=sub;
   if(tagEl){tagEl.textContent=tagTxt;tagEl.className='edge-card-tag '+tagCls;}
