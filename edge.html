@@ -16,279 +16,111 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0d1117;
-  --surface:#121920;
-  --surface2:#161f28;
-  --border:#1c2a20;
-  --border-green:rgba(74,222,128,0.13);
-  --green:#4ade80;
-  --red:#ff4d4d;
-  --yellow:#f5c518;
-  --blue:#3b9eff;
-  --purple:#c084fc;
-  --orange:#ff7c00;
-  --text:#e8f0ea;
-  --text-2:rgba(232,240,234,0.52);
-  --text-3:rgba(232,240,234,0.24);
-  --muted:#3a5a42;
-  --accent:#4ade80;
+  --bg:#0d1117;--surface:#121920;--surface2:#161f28;--border:#1c2a20;
+  --border-green:rgba(74,222,128,0.13);--green:#4ade80;--red:#ff4d4d;
+  --yellow:#f5c518;--blue:#3b9eff;--purple:#c084fc;--orange:#ff7c00;
+  --text:#e8f0ea;--text-2:rgba(232,240,234,0.52);--text-3:rgba(232,240,234,0.24);
+  --muted:#3a5a42;--accent:#4ade80;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:stretch;height:52px;}
+.nav-wordmark{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;display:flex;align-items:center;margin-right:28px;text-decoration:none;white-space:nowrap;}
+.nav-wordmark .w1{color:var(--text);opacity:0.75;}.nav-wordmark .w2{color:var(--accent);}
+.nav-links{display:flex;align-items:stretch;gap:2px;flex:1;}
+.nav-link{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:0 16px;display:flex;align-items:center;color:var(--text-3);text-decoration:none;transition:color .15s;white-space:nowrap;}
+.nav-link:hover{color:var(--text-2);}
+.nav-link.active{color:var(--accent);border-bottom:2px solid var(--accent);}
+.nav-cta{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;padding:0 18px;background:rgba(74,222,128,0.08);border-left:1px solid var(--border-green);color:var(--accent);text-decoration:none;transition:background .15s;white-space:nowrap;}
+.nav-cta:hover{background:rgba(74,222,128,0.14);}
+main{max-width:1080px;margin:0 auto;padding:32px 24px 80px;}
+.page-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.live-pip{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 1.6s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,64px);letter-spacing:2px;line-height:0.95;color:var(--text);margin-bottom:6px;}
+.page-title span{color:var(--accent);}
+.page-sub{font-size:14px;color:var(--text-2);font-weight:300;margin-bottom:36px;max-width:520px;line-height:1.7;}
 
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; }
+/* SESSION */
+.session-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
+.session-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+.session-card.active{border-color:var(--border-green);background:linear-gradient(135deg,var(--surface) 60%,rgba(74,222,128,0.04));}
+.session-card.overlap{border-color:rgba(245,197,24,0.25);background:linear-gradient(135deg,var(--surface) 60%,rgba(245,197,24,0.04));}
+.session-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:12px 12px 0 0;background:var(--border);}
+.session-card.active::before{background:var(--accent);}
+.session-card.overlap::before{background:var(--yellow);}
+.session-name{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+.session-card.active .session-name{color:var(--accent);}
+.session-card.overlap .session-name{color:var(--yellow);}
+.session-status{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;line-height:1;margin-bottom:4px;}
+.session-card.active .session-status{color:var(--accent);}
+.session-card.overlap .session-status{color:var(--yellow);}
+.session-card.closed .session-status{color:var(--muted);}
+.session-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);}
+.session-countdown{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--text-3);margin-top:4px;}
+.session-card.active .session-countdown{color:rgba(74,222,128,0.6);}
+.session-card.overlap .session-countdown{color:rgba(245,197,24,0.6);}
 
-/* ── NAV ── */
-nav {
-  position:sticky; top:0; z-index:100;
-  background:rgba(13,17,23,0.94); backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:0 32px; display:flex; align-items:stretch; height:52px;
-}
-.nav-wordmark {
-  font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:3px;
-  display:flex; align-items:center; margin-right:28px; text-decoration:none; white-space:nowrap;
-}
-.nav-wordmark .w1 { color:var(--text); opacity:0.75; }
-.nav-wordmark .w2 { color:var(--accent); }
-.nav-links { display:flex; align-items:stretch; gap:2px; flex:1; }
-.nav-link {
-  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px;
-  text-transform:uppercase; padding:0 16px; display:flex; align-items:center;
-  color:var(--text-3); text-decoration:none; transition:color .15s; white-space:nowrap;
-}
-.nav-link:hover { color:var(--text-2); }
-.nav-link.active { color:var(--accent); border-bottom:2px solid var(--accent); }
-.nav-cta {
-  margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px;
-  text-transform:uppercase; display:flex; align-items:center; padding:0 18px;
-  background:rgba(74,222,128,0.08); border-left:1px solid var(--border-green);
-  color:var(--accent); text-decoration:none; transition:background .15s; white-space:nowrap;
-}
-.nav-cta:hover { background:rgba(74,222,128,0.14); }
+/* EDGE CARDS */
+.edge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
+.edge-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 18px;transition:border-color 0.2s;position:relative;overflow:hidden;}
+.edge-card:hover{border-color:var(--border-green);}
+.edge-card-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;}
+.edge-card-value{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:1;margin-bottom:4px;}
+.edge-card-value.pos{color:var(--green);}
+.edge-card-value.neg{color:var(--red);}
+.edge-card-value.neu{color:var(--text);}
+.edge-card-value.warn{color:var(--yellow);}
+.edge-card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);line-height:1.5;}
+.edge-card-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-top:8px;}
+.edge-card-tag.pos{background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.2);}
+.edge-card-tag.neg{background:rgba(255,77,77,0.08);color:var(--red);border:1px solid rgba(255,77,77,0.2);}
+.edge-card-tag.neu{background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--border);}
+.edge-card-tag.warn{background:rgba(245,197,24,0.08);color:var(--yellow);border:1px solid rgba(245,197,24,0.2);}
+.edge-card-source{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(74,222,128,0.3);margin-top:8px;}
 
-/* ── PAGE ── */
-main { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
+/* BOTTOM ROW */
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.liq-feed-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);}
+.card-header-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);}
+.card-header-badge{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);}
+.feed-pip{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite;}
+.feed-list{height:280px;overflow-y:auto;padding:8px 0;}
+.feed-list::-webkit-scrollbar{width:2px;}
+.feed-list::-webkit-scrollbar-track{background:var(--bg);}
+.feed-list::-webkit-scrollbar-thumb{background:var(--border);}
+.feed-item{display:flex;align-items:center;justify-content:space-between;padding:7px 18px;border-bottom:1px solid rgba(28,42,32,0.4);animation:feedin 0.3s ease;}
+.feed-item:last-child{border-bottom:none;}
+@keyframes feedin{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.feed-item-left{display:flex;flex-direction:column;gap:2px;}
+.feed-side{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.feed-side.long{color:var(--green);}.feed-side.short{color:var(--red);}
+.feed-price{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);}
+.feed-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.feed-size{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;}
+.feed-size.long{color:var(--green);}.feed-size.short{color:var(--red);}
+.feed-size.large{color:var(--yellow);}.feed-size.whale{color:var(--purple);}
+.feed-time{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-3);}
+.feed-empty{display:flex;align-items:center;justify-content:center;height:100%;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.bias-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.bias-body{padding:18px;}
+.bias-section{margin-bottom:20px;}
+.bias-section:last-child{margin-bottom:0;}
+.bias-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+.bias-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.bias-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-2);}
+.bias-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;}
+.bias-val.pos{color:var(--green);}.bias-val.neg{color:var(--red);}.bias-val.neu{color:var(--text-2);}.bias-val.warn{color:var(--yellow);}
+.bias-bar-bg{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.bias-bar-fill{height:100%;border-radius:2px;transition:width 0.5s ease;}
+.bias-bar-fill.pos{background:var(--green);}.bias-bar-fill.neg{background:var(--red);}.bias-bar-fill.warn{background:var(--yellow);}
+.overall-read{background:var(--surface2);border:1px solid var(--border);border-left:2px solid var(--accent);border-radius:6px;padding:12px 14px;margin:0 18px 18px;font-size:12px;line-height:1.75;color:var(--text-2);font-weight:300;}
+.overall-read strong{color:var(--accent);font-weight:500;}
+.overall-read .warn{color:var(--yellow);}.overall-read .danger{color:var(--red);}
 
-.page-eyebrow {
-  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:3px;
-  text-transform:uppercase; color:var(--accent); margin-bottom:10px;
-  display:flex; align-items:center; gap:8px;
-}
-.live-pip { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:blink 1.6s infinite; flex-shrink:0; }
-@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
-
-.page-title {
-  font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,6vw,64px);
-  letter-spacing:2px; line-height:0.95; color:var(--text); margin-bottom:6px;
-}
-.page-title span { color:var(--accent); }
-.page-sub { font-size:14px; color:var(--text-2); font-weight:300; margin-bottom:36px; max-width:520px; line-height:1.7; }
-
-/* ── SESSION CLOCK ── */
-.session-bar {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:28px;
-}
-.session-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:16px 18px; position:relative; overflow:hidden;
-  transition:border-color 0.2s;
-}
-.session-card.active {
-  border-color:var(--border-green);
-  background:linear-gradient(135deg, var(--surface) 60%, rgba(74,222,128,0.04));
-}
-.session-card.overlap {
-  border-color:rgba(245,197,24,0.25);
-  background:linear-gradient(135deg, var(--surface) 60%, rgba(245,197,24,0.04));
-}
-.session-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:12px 12px 0 0;
-  background:var(--border);
-}
-.session-card.active::before { background:var(--accent); }
-.session-card.overlap::before { background:var(--yellow); }
-.session-card.closed::before { background:var(--border); }
-.session-name {
-  font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--text-3); margin-bottom:8px;
-}
-.session-card.active .session-name { color:var(--accent); }
-.session-card.overlap .session-name { color:var(--yellow); }
-.session-status {
-  font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px;
-  line-height:1; margin-bottom:4px;
-}
-.session-card.active .session-status { color:var(--accent); }
-.session-card.overlap .session-status { color:var(--yellow); }
-.session-card.closed .session-status { color:var(--muted); }
-.session-time {
-  font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-3);
-}
-.session-countdown {
-  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:1px;
-  color:var(--text-3); margin-top:4px;
-}
-.session-card.active .session-countdown { color:rgba(74,222,128,0.6); }
-.session-card.overlap .session-countdown { color:rgba(245,197,24,0.6); }
-
-/* ── EDGE STATS GRID ── */
-.edge-grid {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:28px;
-}
-.edge-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:20px 18px; transition:border-color 0.2s;
-  position:relative; overflow:hidden;
-}
-.edge-card:hover { border-color:var(--border-green); }
-.edge-card-label {
-  font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--text-3); margin-bottom:10px;
-}
-.edge-card-value {
-  font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px;
-  line-height:1; margin-bottom:4px;
-}
-.edge-card-value.pos   { color:var(--green); }
-.edge-card-value.neg   { color:var(--red); }
-.edge-card-value.neu   { color:var(--text); }
-.edge-card-value.warn  { color:var(--yellow); }
-.edge-card-sub {
-  font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-3);
-  line-height:1.5;
-}
-.edge-card-tag {
-  display:inline-block; font-family:'JetBrains Mono',monospace;
-  font-size:8px; letter-spacing:1px; text-transform:uppercase;
-  padding:2px 7px; border-radius:3px; margin-top:8px;
-}
-.edge-card-tag.pos { background:rgba(74,222,128,0.08); color:var(--green); border:1px solid rgba(74,222,128,0.2); }
-.edge-card-tag.neg { background:rgba(255,77,77,0.08); color:var(--red); border:1px solid rgba(255,77,77,0.2); }
-.edge-card-tag.neu { background:rgba(255,255,255,0.04); color:var(--text-2); border:1px solid var(--border); }
-.edge-card-tag.warn { background:rgba(245,197,24,0.08); color:var(--yellow); border:1px solid rgba(245,197,24,0.2); }
-.edge-card-source {
-  font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1px;
-  color:rgba(74,222,128,0.3); margin-top:8px;
-}
-
-/* ── BOTTOM ROW ── */
-.bottom-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-
-/* Liq feed */
-.liq-feed-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; overflow:hidden;
-}
-.card-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 18px; border-bottom:1px solid var(--border);
-  background:var(--surface2);
-}
-.card-header-title {
-  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--text-3);
-}
-.card-header-badge {
-  display:flex; align-items:center; gap:6px;
-  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--accent);
-}
-.feed-pip { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:blink 1.5s infinite; }
-.feed-list {
-  height:280px; overflow-y:auto; padding:8px 0;
-}
-.feed-list::-webkit-scrollbar { width:2px; }
-.feed-list::-webkit-scrollbar-track { background:var(--bg); }
-.feed-list::-webkit-scrollbar-thumb { background:var(--border); }
-.feed-item {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:7px 18px; border-bottom:1px solid rgba(28,42,32,0.4);
-  animation:feedin 0.3s ease;
-}
-.feed-item:last-child { border-bottom:none; }
-@keyframes feedin { from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);} }
-.feed-item-left { display:flex; flex-direction:column; gap:2px; }
-.feed-side {
-  font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.5px;
-  text-transform:uppercase; font-weight:600;
-}
-.feed-side.long  { color:var(--green); }
-.feed-side.short { color:var(--red); }
-.feed-price {
-  font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text);
-}
-.feed-item-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-.feed-size {
-  font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px;
-}
-.feed-size.long  { color:var(--green); }
-.feed-size.short { color:var(--red); }
-.feed-size.large { color:var(--yellow); }
-.feed-size.whale { color:var(--purple); }
-.feed-time { font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text-3); }
-.feed-empty {
-  display:flex; align-items:center; justify-content:center; height:100%;
-  font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--muted);
-}
-
-/* Market bias card */
-.bias-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; overflow:hidden;
-}
-.bias-body { padding:18px; }
-.bias-section { margin-bottom:20px; }
-.bias-section:last-child { margin-bottom:0; }
-.bias-label {
-  font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--text-3); margin-bottom:8px;
-}
-.bias-row {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:6px;
-}
-.bias-name {
-  font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-2);
-}
-.bias-val {
-  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600;
-}
-.bias-val.pos  { color:var(--green); }
-.bias-val.neg  { color:var(--red); }
-.bias-val.neu  { color:var(--text-2); }
-.bias-val.warn { color:var(--yellow); }
-.bias-bar-bg { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:14px; }
-.bias-bar-fill { height:100%; border-radius:2px; transition:width 0.5s ease; }
-.bias-bar-fill.pos  { background:var(--green); }
-.bias-bar-fill.neg  { background:var(--red); }
-.bias-bar-fill.warn { background:var(--yellow); }
-
-.overall-read {
-  background:var(--surface2); border:1px solid var(--border);
-  border-left:2px solid var(--accent); border-radius:6px;
-  padding:12px 14px; margin:0 18px 18px;
-  font-size:12px; line-height:1.75; color:var(--text-2); font-weight:300;
-}
-.overall-read strong { color:var(--accent); font-weight:500; }
-.overall-read .warn  { color:var(--yellow); }
-.overall-read .danger { color:var(--red); }
-
-/* ── MOBILE ── */
-@media(max-width:900px) {
-  .session-bar { grid-template-columns:1fr 1fr; }
-  .edge-grid { grid-template-columns:1fr 1fr; }
-  .bottom-row { grid-template-columns:1fr; }
-}
-@media(max-width:600px) {
-  nav { padding:0 16px; }
-  .nav-link { display:none; }
-  .nav-cta { font-size:8px; padding:0 14px; }
-  main { padding:20px 16px 60px; }
-  .session-bar { grid-template-columns:1fr 1fr; gap:8px; }
-  .edge-grid { grid-template-columns:1fr 1fr; gap:8px; }
-  .edge-card-value { font-size:22px; }
-}
+@media(max-width:900px){.session-bar{grid-template-columns:1fr 1fr;}.edge-grid{grid-template-columns:1fr 1fr;}.bottom-row{grid-template-columns:1fr;}}
+@media(max-width:600px){nav{padding:0 16px;}.nav-link{display:none;}.nav-cta{font-size:8px;padding:0 14px;}main{padding:20px 16px 60px;}.session-bar{grid-template-columns:1fr 1fr;gap:8px;}.edge-grid{grid-template-columns:1fr 1fr;gap:8px;}.edge-card-value{font-size:22px;}}
 </style>
 </head>
 <body>
@@ -305,12 +137,10 @@ main { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
 </nav>
 
 <main>
-
   <div class="page-eyebrow"><span class="live-pip"></span>Pre-Session Checklist · BTC</div>
   <h1 class="page-title">Scalper's<br><span>Edge</span></h1>
   <p class="page-sub">Everything you need to read the market before you trade. One screen. Open this before TradingView.</p>
 
-  <!-- SESSION CLOCK -->
   <div class="session-bar" id="sessionBar">
     <div class="session-card" id="sess-asia">
       <div class="session-name">Asia</div>
@@ -338,7 +168,6 @@ main { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
     </div>
   </div>
 
-  <!-- EDGE STAT CARDS -->
   <div class="edge-grid">
     <div class="edge-card">
       <div class="edge-card-label">Funding Rate</div>
@@ -370,10 +199,7 @@ main { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
     </div>
   </div>
 
-  <!-- BOTTOM ROW -->
   <div class="bottom-row">
-
-    <!-- LIVE LIQ FEED -->
     <div class="liq-feed-card">
       <div class="card-header">
         <div class="card-header-title">Live Liquidations · BTC</div>
@@ -383,8 +209,6 @@ main { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
         <div class="feed-empty">Connecting to feed...</div>
       </div>
     </div>
-
-    <!-- MARKET BIAS -->
     <div class="bias-card">
       <div class="card-header">
         <div class="card-header-title">Market Bias Read</div>
@@ -393,38 +217,27 @@ main { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
       <div class="bias-body">
         <div class="bias-section">
           <div class="bias-label">Funding</div>
-          <div class="bias-row">
-            <span class="bias-name">8hr Rate</span>
-            <span class="bias-val neu" id="b-fund-val">--</span>
-          </div>
+          <div class="bias-row"><span class="bias-name">8hr Rate</span><span class="bias-val neu" id="b-fund-val">--</span></div>
           <div class="bias-bar-bg"><div class="bias-bar-fill neu" id="b-fund-bar" style="width:50%"></div></div>
         </div>
         <div class="bias-section">
           <div class="bias-label">Open Interest 1hr Change</div>
-          <div class="bias-row">
-            <span class="bias-name">OI Delta</span>
-            <span class="bias-val neu" id="b-oi-val">--</span>
-          </div>
+          <div class="bias-row"><span class="bias-name">OI Delta</span><span class="bias-val neu" id="b-oi-val">--</span></div>
           <div class="bias-bar-bg"><div class="bias-bar-fill neu" id="b-oi-bar" style="width:50%"></div></div>
         </div>
         <div class="bias-section">
           <div class="bias-label">Taker Buy/Sell Ratio</div>
-          <div class="bias-row">
-            <span class="bias-name">Buy Ratio</span>
-            <span class="bias-val neu" id="b-taker-val">--</span>
-          </div>
+          <div class="bias-row"><span class="bias-name">Buy Ratio</span><span class="bias-val neu" id="b-taker-val">--</span></div>
           <div class="bias-bar-bg"><div class="bias-bar-fill neu" id="b-taker-bar" style="width:50%"></div></div>
         </div>
       </div>
       <div class="overall-read" id="overallRead">Loading market read...</div>
     </div>
-
   </div>
 </main>
 
 <script>
 const WORKER='https://cryptoquant-proxy.scottchristie049.workers.dev';
-const ASSETS_CFG={BTC:{sym:'BTCUSDT',mmr:0.004}};
 const TIERS=[{lev:100,r:255,g:77,b:77},{lev:50,r:245,g:197,b:24},{lev:25,r:59,g:158,b:255}];
 
 let btcPrice=null, buyWalls=[], sellWalls=[], liqLevels=[];
@@ -442,101 +255,85 @@ async function binFetch(url){
 
 const fmt=p=>p==null?'--':'$'+Math.round(p).toLocaleString('en-US');
 const fmtUsd=v=>v>=1e9?'$'+(v/1e9).toFixed(2)+'B':v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+v.toFixed(0);
-const fmtPct=v=>(v>=0?'+':'')+v.toFixed(4)+'%';
 
 // ── SESSION CLOCK ──
 const SESSIONS={
-  asia:   {start:0,  end:9,  el:'sess-asia',   type:'normal'},
-  london: {start:8,  end:17, el:'sess-london',  type:'normal'},
-  overlap:{start:13, end:17, el:'sess-overlap', type:'overlap'},
-  ny:     {start:13, end:22, el:'sess-ny',      type:'normal'},
+  asia:   {start:0, end:9,  el:'sess-asia',   type:'normal'},
+  london: {start:8, end:17, el:'sess-london',  type:'normal'},
+  overlap:{start:13,end:17, el:'sess-overlap', type:'overlap'},
+  ny:     {start:13,end:22, el:'sess-ny',      type:'normal'},
 };
-
 function updateSessions(){
-  const now=new Date();
-  const utcH=now.getUTCHours();
-  const utcM=now.getUTCMinutes();
-  const utcS=now.getUTCSeconds();
-  const utcMins=utcH*60+utcM;
-
+  const now=new Date(), utcMins=now.getUTCHours()*60+now.getUTCMinutes();
   Object.entries(SESSIONS).forEach(([key,s])=>{
     const card=document.getElementById(s.el);
     const statusEl=document.getElementById(s.el+'-status');
     const cdEl=document.getElementById(s.el+'-cd');
     const startMins=s.start*60, endMins=s.end*60;
     const isOpen=utcMins>=startMins&&utcMins<endMins;
-
     card.className='session-card '+(isOpen?(s.type==='overlap'?'overlap':'active'):'closed');
     statusEl.textContent=isOpen?'OPEN':'CLOSED';
-
     if(isOpen){
       const minsLeft=endMins-utcMins;
-      const h=Math.floor(minsLeft/60), m=minsLeft%60;
-      cdEl.textContent='Closes in '+h+'h '+m+'m';
+      cdEl.textContent='Closes in '+Math.floor(minsLeft/60)+'h '+(minsLeft%60)+'m';
     } else {
-      // next open
       let minsUntil=startMins-utcMins;
       if(minsUntil<0)minsUntil+=1440;
-      const h=Math.floor(minsUntil/60), m=minsUntil%60;
-      cdEl.textContent='Opens in '+h+'h '+m+'m';
+      cdEl.textContent='Opens in '+Math.floor(minsUntil/60)+'h '+(minsUntil%60)+'m';
     }
   });
 }
 updateSessions();
 setInterval(updateSessions,30000);
 
-// ── PRICE WEBSOCKET ──
-function startPriceFeed(){
+// ── PRICE — REST first, then WebSocket keeps it live ──
+async function fetchPriceREST(){
+  try{
+    const d=await binFetch('https://fapi.binance.com/fapi/v1/ticker/price?symbol=BTCUSDT');
+    if(d&&d.price){
+      btcPrice=parseFloat(d.price);
+      // Price is ready — kick off all data fetches immediately
+      fetchDepth();
+      fetchCQData();
+    }
+  }catch(e){console.error('Price REST:',e);}
+}
+
+function startPriceWS(){
   const ws=new WebSocket('wss://fstream.binance.com/ws/btcusdt@ticker');
   ws.onmessage=e=>{
     const d=JSON.parse(e.data);
     btcPrice=parseFloat(d.c);
   };
-  ws.onclose=()=>setTimeout(startPriceFeed,3000);
+  ws.onclose=()=>setTimeout(startPriceWS,3000);
 }
-startPriceFeed();
 
 // ── LIVE LIQ FEED ──
 const MAX_FEED=60;
 let feedItems=[];
-
 function startLiqFeed(){
   const ws=new WebSocket('wss://fstream.binance.com/ws/btcusdt@forceOrder');
   ws.onmessage=e=>{
-    const o=JSON.parse(e.data).o;
-    if(!o)return;
-    const side=o.S==='BUY'?'short':'long'; // BUY order = short position liquidated
-    const price=parseFloat(o.p);
-    const qty=parseFloat(o.q);
-    const usd=price*qty;
-    if(usd<10000)return; // filter dust
-    const now=new Date();
-    const timeStr=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    feedItems.unshift({side,price,usd,time:timeStr});
+    const o=JSON.parse(e.data).o; if(!o)return;
+    const side=o.S==='BUY'?'short':'long';
+    const price=parseFloat(o.p), qty=parseFloat(o.q), usd=price*qty;
+    if(usd<10000)return;
+    const t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    feedItems.unshift({side,price,usd,time:t});
     if(feedItems.length>MAX_FEED)feedItems=feedItems.slice(0,MAX_FEED);
     renderFeed();
   };
   ws.onclose=()=>setTimeout(startLiqFeed,3000);
 }
-
-function sizeClass(usd){
-  if(usd>=1000000)return'whale';
-  if(usd>=100000)return'large';
-  return''; // normal — use side colour
-}
-
 function renderFeed(){
   const list=document.getElementById('feedList');
-  if(!feedItems.length){
-    list.innerHTML='<div class="feed-empty">Waiting for liquidations...</div>';
-    return;
-  }
-  list.innerHTML=feedItems.map((f,i)=>{
-    const sc=sizeClass(f.usd);
+  if(!feedItems.length){list.innerHTML='<div class="feed-empty">Waiting for liquidations...</div>';return;}
+  list.innerHTML=feedItems.map(f=>{
+    const sc=f.usd>=1000000?'whale':f.usd>=100000?'large':'';
     const sizeColClass=sc||f.side;
     const label=f.side==='long'?'▼ LONG LIQ':'▲ SHORT LIQ';
     const whale=f.usd>=1000000?'🐋 ':f.usd>=100000?'⚡ ':'';
-    return`<div class="feed-item" style="${i===0?'':''}">
+    return`<div class="feed-item">
       <div class="feed-item-left">
         <span class="feed-side ${f.side}">${label}</span>
         <span class="feed-price">${fmt(f.price)}</span>
@@ -550,17 +347,16 @@ function renderFeed(){
 }
 startLiqFeed();
 
-// ── DEPTH → WALLS ──
+// ── DEPTH → WALLS + LIQ MODEL ──
 async function fetchDepth(){
   try{
     const data=await binFetch('https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=1000');
     if(!btcPrice)return;
     const price=btcPrice;
-    const rangeLow=price*0.97, rangeHigh=price*1.03;
     const bucket=price*0.001;
     const bidB={},askB={};
-    for(const[p,q]of data.bids){const fp=+p,fq=+q;if(fp<rangeLow)continue;const b=Math.floor(fp/bucket)*bucket;bidB[b]=(bidB[b]||0)+fp*fq;}
-    for(const[p,q]of data.asks){const fp=+p,fq=+q;if(fp>rangeHigh)continue;const b=Math.floor(fp/bucket)*bucket;askB[b]=(askB[b]||0)+fp*fq;}
+    for(const[p,q]of data.bids){const fp=+p,fq=+q;if(fp<price*0.97)continue;const b=Math.floor(fp/bucket)*bucket;bidB[b]=(bidB[b]||0)+fp*fq;}
+    for(const[p,q]of data.asks){const fp=+p,fq=+q;if(fp>price*1.03)continue;const b=Math.floor(fp/bucket)*bucket;askB[b]=(askB[b]||0)+fp*fq;}
     buyWalls=Object.entries(bidB).map(([p,usd])=>({price:+p,usd})).filter(w=>w.usd>=200000).sort((a,b)=>b.usd-a.usd);
     sellWalls=Object.entries(askB).map(([p,usd])=>({price:+p,usd})).filter(w=>w.usd>=200000).sort((a,b)=>b.usd-a.usd);
     buildLiqLevels(data);
@@ -569,7 +365,6 @@ async function fetchDepth(){
   setTimeout(fetchDepth,30000);
 }
 
-// ── LIQ MODEL ──
 function buildLiqLevels(depth){
   if(!btcPrice)return;
   const p=btcPrice, mmr=0.004, bucketSz=p*0.001;
@@ -625,18 +420,13 @@ async function fetchCQData(){
 // ── EDGE CARDS ──
 function updateEdgeCards(){
   const p=btcPrice;
-
-  // Funding
   if(fundingRate!==null){
     const fr=fundingRate;
-    const frPct=(fr*100).toFixed(4)+'%';
+    const frPct=(fr>=0?'+':'')+(fr*100).toFixed(4)+'%';
     const cls=fr>0.0001?'pos':fr<-0.0001?'neg':'neu';
     const tagTxt=fr>0.0001?'Longs paying — bullish lean':fr<-0.0001?'Shorts paying — bearish lean':'Neutral';
-    const tagCls=fr>0.0001?'pos':fr<-0.0001?'neg':'neu';
-    setCard('e-funding',(fr>=0?'+':'')+frPct,cls,'8hr funding rate',tagTxt,tagCls);
+    setCard('e-funding',frPct,cls,'8hr funding rate',tagTxt,cls);
   }
-
-  // OI
   if(oiCurrent!==null&&oiPrev!==null){
     const delta=oiPrev>0?((oiCurrent-oiPrev)/oiPrev*100):0;
     const cls=delta>0.5?'pos':delta<-0.5?'neg':'neu';
@@ -645,42 +435,31 @@ function updateEdgeCards(){
     const tagCls=delta>0.5?'warn':delta<-0.5?'neg':'neu';
     setCard('e-oi',(delta>=0?'+':'')+delta.toFixed(2)+'%',cls,sub,tagTxt,tagCls);
   }
-
-  // Nearest wall
   if(p&&(buyWalls.length||sellWalls.length)){
-    const nearBuy=buyWalls[0];
-    const nearSell=sellWalls[0];
-    let wallPrice=null, wallSide='', wallUsd=0;
+    const nearBuy=buyWalls[0], nearSell=sellWalls[0];
+    let wallPrice,wallSide,wallUsd;
     if(nearBuy&&nearSell){
-      const buyDist=Math.abs(nearBuy.price-p);
-      const sellDist=Math.abs(nearSell.price-p);
-      if(buyDist<sellDist){wallPrice=nearBuy.price;wallSide='buy';wallUsd=nearBuy.usd;}
+      if(Math.abs(nearBuy.price-p)<Math.abs(nearSell.price-p)){wallPrice=nearBuy.price;wallSide='buy';wallUsd=nearBuy.usd;}
       else{wallPrice=nearSell.price;wallSide='sell';wallUsd=nearSell.usd;}
     } else if(nearBuy){wallPrice=nearBuy.price;wallSide='buy';wallUsd=nearBuy.usd;}
     else{wallPrice=nearSell.price;wallSide='sell';wallUsd=nearSell.usd;}
     const dist=((wallPrice-p)/p*100).toFixed(2);
     const cls=wallSide==='buy'?'pos':'neg';
-    const tagTxt=wallSide==='buy'?'▲ Buy wall below':'▼ Sell wall above';
-    setCard('e-wall',fmt(wallPrice),cls,(dist>=0?'+':'')+dist+'% away · '+fmtUsd(wallUsd),tagTxt,cls);
+    setCard('e-wall',fmt(wallPrice),cls,(parseFloat(dist)>=0?'+':'')+dist+'% away · '+fmtUsd(wallUsd),wallSide==='buy'?'▲ Buy wall below':'▼ Sell wall above',cls);
   }
-
-  // Nearest liq cluster
   if(p&&liqLevels.length){
     const sorted=[...liqLevels].sort((a,b)=>Math.abs(a.price-p)-Math.abs(b.price-p));
     const nearest=sorted[0];
     if(nearest){
       const dist=((nearest.price-p)/p*100).toFixed(2);
       const cls=nearest.side==='long'?'neg':'pos';
-      const tagTxt=nearest.lev+'x '+nearest.side+' liq';
-      const tagCls=nearest.side==='long'?'neg':'pos';
-      setCard('e-liq',fmt(nearest.price),cls,(dist>=0?'+':'')+dist+'% · '+fmtUsd(nearest.size)+' at risk',tagTxt,tagCls);
+      setCard('e-liq',fmt(nearest.price),cls,(parseFloat(dist)>=0?'+':'')+dist+'% · '+fmtUsd(nearest.size)+' at risk',nearest.lev+'x '+nearest.side+' liq',cls);
     }
   }
 }
 
 function setCard(id,value,valueCls,sub,tagTxt,tagCls){
-  const card=document.getElementById(id);
-  if(!card)return;
+  const card=document.getElementById(id); if(!card)return;
   const valEl=card.querySelector('.edge-card-value');
   const subEl=card.querySelector('.edge-card-sub');
   const tagEl=card.querySelector('.edge-card-tag');
@@ -692,23 +471,18 @@ function setCard(id,value,valueCls,sub,tagTxt,tagCls){
 // ── BIAS READ ──
 function updateBiasRead(){
   const signals=[];
-
-  // Funding
   if(fundingRate!==null){
     const fr=fundingRate;
     const cls=fr>0.0001?'pos':fr<-0.0001?'neg':'neu';
     const barW=Math.min(100,50+Math.abs(fr)/0.001*20);
-    const barDir=fr>0?'pos':fr<0?'neg':'neu';
-    document.getElementById('b-fund-val').textContent=(fr>=0?'+':''+(fr*100).toFixed(4))+'%';
+    document.getElementById('b-fund-val').textContent=(fr>=0?'+':'')+(fr*100).toFixed(4)+'%';
     document.getElementById('b-fund-val').className='bias-val '+cls;
     document.getElementById('b-fund-bar').style.width=barW+'%';
-    document.getElementById('b-fund-bar').className='bias-bar-fill '+barDir;
+    document.getElementById('b-fund-bar').className='bias-bar-fill '+(fr>0?'pos':fr<0?'neg':'neu');
     if(fr>0.0002)signals.push({txt:'funding strongly positive — longs overextended',type:'warn'});
     else if(fr>0.00005)signals.push({txt:'funding slightly positive — mild long bias',type:'pos'});
     else if(fr<-0.00005)signals.push({txt:'funding negative — shorts paying, potential squeeze',type:'pos'});
   }
-
-  // OI
   if(oiCurrent!==null&&oiPrev!==null){
     const delta=oiPrev>0?((oiCurrent-oiPrev)/oiPrev*100):0;
     const cls=delta>0.5?'pos':delta<-0.5?'neg':'neu';
@@ -720,42 +494,26 @@ function updateBiasRead(){
     if(delta>1)signals.push({txt:'OI rising — new money entering, leverage building',type:'warn'});
     else if(delta<-1)signals.push({txt:'OI falling — positions closing, reduced conviction',type:'neg'});
   }
-
-  // Taker
   if(takerRatio!==null){
     const r=takerRatio;
-    const pct=(r*100).toFixed(1);
     const cls=r>0.55?'pos':r<0.45?'neg':'neu';
-    const barW=(r*100);
-    document.getElementById('b-taker-val').textContent=pct+'% buy';
+    document.getElementById('b-taker-val').textContent=(r*100).toFixed(1)+'% buy';
     document.getElementById('b-taker-val').className='bias-val '+cls;
-    document.getElementById('b-taker-bar').style.width=barW+'%';
+    document.getElementById('b-taker-bar').style.width=(r*100)+'%';
     document.getElementById('b-taker-bar').className='bias-bar-fill '+(r>0.5?'pos':'neg');
     if(r>0.6)signals.push({txt:'buyers aggressively initiating — strong upside pressure',type:'pos'});
     else if(r>0.52)signals.push({txt:'mild buy aggression — slight upside lean',type:'pos'});
     else if(r<0.4)signals.push({txt:'sellers initiating heavily — downside pressure',type:'neg'});
     else if(r<0.48)signals.push({txt:'mild sell aggression — slight downside lean',type:'neg'});
   }
-
-  // Overall read
   const readEl=document.getElementById('overallRead');
-  if(signals.length){
-    const txt=signals.map(s=>`<span class="${s.type}">${s.txt}</span>`).join('<br>');
-    readEl.innerHTML=txt;
-  } else {
-    readEl.innerHTML='<strong>Mixed signals.</strong> No strong directional bias right now. Wait for a cleaner setup.';
-  }
-
+  readEl.innerHTML=signals.length?signals.map(s=>`<span class="${s.type}">${s.txt}</span>`).join('<br>'):'<strong>Mixed signals.</strong> No strong directional bias right now. Wait for a cleaner setup.';
   document.getElementById('bias-updated').textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Dubai'})+' GST';
 }
 
-// ── INIT ──
-// Wait for price before depth/liq
-function waitAndFetch(){
-  if(btcPrice){fetchDepth();fetchCQData();}
-  else setTimeout(waitAndFetch,300);
-}
-setTimeout(waitAndFetch,500);
+// ── INIT — REST price first, WS keeps it updated ──
+fetchPriceREST();
+startPriceWS();
 </script>
 </body>
 </html>
